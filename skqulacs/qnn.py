@@ -7,6 +7,84 @@ from typing import Literal
 import numpy as np
 from qulacs import Observable
 
+# 基本ゲート
+I_mat = np.eye(2, dtype=complex)
+X_mat = X(0).get_matrix()
+Z_mat = Z(0).get_matrix()
+
+
+# fullsizeのgateをつくる関数.
+def make_fullgate(list_SiteAndOperator, nqubit):
+	"""
+	list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
+	関係ないqubitにIdentityを挿入して
+	I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...
+	という(2**nqubit, 2**nqubit)行列をつくる.
+	"""
+	list_Site = [SiteAndOperator[0] for SiteAndOperator in list_SiteAndOperator]
+	list_SingleGates = []  # 1-qubit gateを並べてnp.kronでreduceする
+	cnt = 0
+	for i in range(nqubit):
+		if i in list_Site:
+			list_SingleGates.append( list_SiteAndOperator[cnt][1] )
+			cnt += 1
+		else:  # 何もないsiteはidentity
+			list_SingleGates.append(I_mat)
+
+	return reduce(np.kron, list_SingleGates)
+
+
+def create_time_evol_gate(nqubit, time_step=0.77):
+	""" ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
+	:param time_step: ランダムハミルトニアンによる時間発展の経過時間
+	:return  qulacsのゲートオブジェクト
+	"""
+	ham = np.zeros((2**nqubit,2**nqubit), dtype = complex)
+	for i in range(nqubit):  # i runs 0 to nqubit-1
+		Jx = -1. + 2.*np.random.rand()  # -1~1の乱数
+		ham += Jx * make_fullgate( [ [i, X_mat] ], nqubit)
+		for j in range(i+1, nqubit):
+			J_ij = -1. + 2.*np.random.rand()
+			ham += J_ij * make_fullgate ([ [i, Z_mat], [j, Z_mat]], nqubit)
+
+	# 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
+	diag, eigen_vecs = np.linalg.eigh(ham)
+	time_evol_op = np.dot(np.dot(eigen_vecs, np.diag(np.exp(-1j*time_step*diag))), eigen_vecs.T.conj())  # e^-iHT
+
+	# qulacsのゲートに変換
+	time_evol_gate = DenseMatrix([i for i in range(nqubit)], time_evol_op)
+
+	return time_evol_gate
+
+
+def min_max_scaling(x, axis=None):
+	"""[-1, 1]の範囲に規格化"""
+	min = x.min(axis=axis, keepdims=True)
+	max = x.max(axis=axis, keepdims=True)
+	result = (x-min)/(max-min)
+	result = 2.*result-1.
+	return result
+
+
+def softmax(x):
+	"""softmax function
+	:param x: ndarray
+	"""
+	exp_x = np.exp(x)
+	y = exp_x / np.sum(np.exp(x))
+	return y
+
+def make_hamiltonian(n_qubit):
+	ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+	X_mat = X(0).get_matrix()
+	Z_mat = Z(0).get_matrix()
+	for i in range(n_qubit):
+		Jx = -1.0 + 2.0 * np.random.rand()
+		ham += Jx * make_fullgate([[i, X_mat]],n_qubit)
+		for j in range(i + 1, n_qubit):
+			J_ij = -1.0 + 2.0 * np.random.rand()
+			ham += J_ij * make_fullgate([[i, Z_mat], [j, Z_mat]],n_qubit)
+	return ham
 class QNNRegressor:
 	r"""Solve regression tasks with Quantum Neural Network.
 
@@ -53,14 +131,14 @@ class QNNRegressor:
 		parameter_count = self.u_out.get_parameter_count()
 		theta_init_a = [self.u_out.get_parameter(ind) for ind in range(parameter_count)]
 		theta_init=theta_init_a.copy()
-		print(theta_init)
+		#print(theta_init)
 		result = minimize(
 			self._cost_func, theta_init, args=(x, y), method="Nelder-Mead",
 		)
-		print(result.fun)
+		#print(result.fun)
 		theta_opt = result.x
 		
-		print(theta_opt)
+		#print(theta_opt)
 		self._update_u_out(theta_opt)
 		loss = result.fun
 		return loss, theta_opt
@@ -112,7 +190,7 @@ class QNNRegressor:
 		return u_out
 
 	def _time_evol_gate(self):
-		hamiltonian = self._make_hamiltonian()
+		hamiltonian = make_hamiltonian(self.n_qubit)
 		diag, eigen_vecs = np.linalg.eigh(hamiltonian)
 		time_evol_op = np.dot(
 			np.dot(eigen_vecs, np.diag(np.exp(-1j * self.time_step * diag))),
@@ -125,27 +203,6 @@ class QNNRegressor:
 		for i in range(param_count):
 			self.u_out.set_parameter(i, theta[i])
 
-	def _make_fullgate(self, site_and_operators):
-		site = [site_and_operator[0] for site_and_operator in site_and_operators]
-		single_gates = []
-		count = 0
-		I_mat = np.eye(2, dtype=complex)
-		for i in range(self.n_qubit):
-			if i in site:
-				single_gates.append(site_and_operators[count][1])
-				count += 1
-			else:
-				single_gates.append(I_mat)
-		return reduce(np.kron, single_gates)
+	
 
-	def _make_hamiltonian(self):
-		ham = np.zeros((2 ** self.n_qubit, 2 ** self.n_qubit), dtype=complex)
-		X_mat = X(0).get_matrix()
-		Z_mat = Z(0).get_matrix()
-		for i in range(self.n_qubit):
-			Jx = -1.0 + 2.0 * np.random.rand()
-			ham += Jx * self._make_fullgate([[i, X_mat]])
-			for j in range(i + 1, self.n_qubit):
-				J_ij = -1.0 + 2.0 * np.random.rand()
-				ham += J_ij * self._make_fullgate([[i, Z_mat], [j, Z_mat]])
-		return ham
+	
