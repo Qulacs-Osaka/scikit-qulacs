@@ -1,10 +1,12 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from numpy.random import RandomState
-from skqulacs.qnn import QNNRegressor
+from skqulacs.regressor import QNNRegressor
+
 
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
-    func_to_learn = lambda x: np.sin(x * np.pi)
+    def func_to_learn(x):
+        return np.sin(x * np.pi)
+
     seed = 0
     random_state = RandomState(seed)
 

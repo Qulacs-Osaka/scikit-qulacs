@@ -6,6 +6,7 @@ from scipy.optimize import minimize
 from typing import Literal, Tuple
 import numpy as np
 
+
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
 X_mat = X(0).get_matrix()
