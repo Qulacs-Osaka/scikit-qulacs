@@ -1,21 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from functools import reduce
-from qulacs import QuantumState, QuantumCircuit
-import qnn
 from qnn import QNNRegressor
-from qulacs import QuantumState, Observable, QuantumCircuit, ParametricQuantumCircuit
-from sklearn.metrics import log_loss
-from scipy.optimize import minimize
-
-import matplotlib.pyplot as plt
-
-from functools import reduce
-from qulacs.gate import X, Z, DenseMatrix
-import pandas as pd
-from sklearn import datasets
-from scipy.optimize import minimize
-from qulacs import Observable
 
 
 def main():
@@ -43,26 +28,17 @@ def main():
     mag_noise = 0.05
     y_train = y_train + mag_noise * np.random.randn(num_x_train)
 
-    plt.plot(x_train, y_train, "o")
-    plt.show()
-    state = QuantumState(nqubit)  # 初期状態 |000>
-    state.set_zero_state()
-    print(state.get_vector())
-
     qnn = QNNRegressor(nqubit, c_depth, time_step)
-
     res, theta_opt = qnn.fit(x_train, y_train)
     print(res)
-    plt.figure(figsize=(10, 6))
 
     xlist = np.arange(x_min, x_max, 0.02)
-    # 教師データ
-    plt.plot(x_train, y_train, "o", label="Teacher")
-
     # モデルの予測値
     y_pred = np.array([qnn.predict(x) for x in xlist])
-    plt.plot(xlist, y_pred, label="Final Model Prediction")
 
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_train, y_train, "o", label="Teacher")
+    plt.plot(xlist, y_pred, label="Final Model Prediction")
     plt.legend()
     plt.show()
 

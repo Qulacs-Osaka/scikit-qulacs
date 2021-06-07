@@ -3,9 +3,8 @@ from functools import reduce
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix
 from scipy.optimize import minimize
-from typing import Literal
+from typing import Literal, Tuple
 import numpy as np
-from qulacs import Observable
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
@@ -14,7 +13,7 @@ Z_mat = Z(0).get_matrix()
 
 
 # fullsizeのgateをつくる関数.
-def make_fullgate(list_SiteAndOperator, nqubit):
+def _make_fullgate(list_SiteAndOperator, nqubit):
     """
     list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
     関係ないqubitにIdentityを挿入して
@@ -34,7 +33,7 @@ def make_fullgate(list_SiteAndOperator, nqubit):
     return reduce(np.kron, list_SingleGates)
 
 
-def create_time_evol_gate(nqubit, time_step=0.77):
+def _create_time_evol_gate(nqubit, time_step=0.77):
     """ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
     :param time_step: ランダムハミルトニアンによる時間発展の経過時間
     :return  qulacsのゲートオブジェクト
@@ -42,10 +41,10 @@ def create_time_evol_gate(nqubit, time_step=0.77):
     ham = np.zeros((2 ** nqubit, 2 ** nqubit), dtype=complex)
     for i in range(nqubit):  # i runs 0 to nqubit-1
         Jx = -1.0 + 2.0 * np.random.rand()  # -1~1の乱数
-        ham += Jx * make_fullgate([[i, X_mat]], nqubit)
+        ham += Jx * _make_fullgate([[i, X_mat]], nqubit)
         for j in range(i + 1, nqubit):
             J_ij = -1.0 + 2.0 * np.random.rand()
-            ham += J_ij * make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
+            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
 
     # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
     diag, eigen_vecs = np.linalg.eigh(ham)
@@ -54,9 +53,21 @@ def create_time_evol_gate(nqubit, time_step=0.77):
     )  # e^-iHT
 
     # qulacsのゲートに変換
-    time_evol_gate = DenseMatrix([i for i in range(nqubit)], time_evol_op)
-
+    time_evol_gate = DenseMatrix(range(nqubit), time_evol_op)
     return time_evol_gate
+
+
+def _make_hamiltonian(n_qubit):
+    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+    X_mat = X(0).get_matrix()
+    Z_mat = Z(0).get_matrix()
+    for i in range(n_qubit):
+        Jx = -1.0 + 2.0 * np.random.rand()
+        ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
+        for j in range(i + 1, n_qubit):
+            J_ij = -1.0 + 2.0 * np.random.rand()
+            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
+    return ham
 
 
 def min_max_scaling(x, axis=None):
@@ -77,31 +88,20 @@ def softmax(x):
     return y
 
 
-def make_hamiltonian(n_qubit):
-    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
-    X_mat = X(0).get_matrix()
-    Z_mat = Z(0).get_matrix()
-    for i in range(n_qubit):
-        Jx = -1.0 + 2.0 * np.random.rand()
-        ham += Jx * make_fullgate([[i, X_mat]], n_qubit)
-        for j in range(i + 1, n_qubit):
-            J_ij = -1.0 + 2.0 * np.random.rand()
-            ham += J_ij * make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
-    return ham
-
-
 class QNNRegressor:
-    r"""Solve regression tasks with Quantum Neural Network.
+    """Solve regression tasks with Quantum Neural Network.
 
     Args:
-            n_qubit: The number of qubits.
-            solver: Kind of optimization solver.
-            circuit_arch: Form of quantum circuit.
-            observable: String representation of observable operators.
-            n_shots: The number of measurements to compute expectation.
-            cost: Kind of cost function.
+        n_qubit: The number of qubits.
+        circuit_depth: Depth of parametric gate.
+        time_step: Elapsed time in time evolution of Hamiltonian.
+        solver: Kind of optimization solver. Methods in scipy.optimize.minimize are supported.
+        circuit_arch: Form of quantum circuit.
+        observable: String representation of observable operators.
+        n_shots: The number of measurements to compute expectation.
+        cost: Kind of cost function.
     Attributes:
-            observable: Observable.
+        observable: Observable.
     """
 
     OBSERVABLE_COEF: float = 2.0
@@ -111,7 +111,7 @@ class QNNRegressor:
         n_qubit: int,
         circuit_depth: int,
         time_step: float,
-        solver: Literal["bfgs"] = "bfgs",
+        solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
         circuit_arch: Literal["default"] = "default",
         observable: str = "Z 0",
         n_shot: int = np.inf,
@@ -127,50 +127,52 @@ class QNNRegressor:
         self.n_shot = n_shot
         self.cost = cost
         self.u_out = self._u_output()
-
         self.obs = Observable(self.n_qubit)
 
-    def fit(self, x, y):
+    def fit(self, x, y) -> Tuple[float, np.ndarray]:
+        """Fit model.
+
+        Args:
+            x: train data of x.
+            y: train data of y.
+
+        Returns:
+            loss: Loss of optimized model.
+            theta_opt: Parameter of optimized model.
+        """
         self.obs.add_operator(2.0, "Z 0")
         parameter_count = self.u_out.get_parameter_count()
         theta_init_a = [self.u_out.get_parameter(ind) for ind in range(parameter_count)]
         theta_init = theta_init_a.copy()
-        # print(theta_init)
         result = minimize(
-            self._cost_func,
+            QNNRegressor._cost_func,
             theta_init,
-            args=(x, y),
-            method="Nelder-Mead",
+            args=(self, x, y),
+            method=self.solver,
         )
-        # print(result.fun)
-        theta_opt = result.x
 
-        # print(theta_opt)
+        theta_opt = result.x
         self._update_u_out(theta_opt)
         loss = result.fun
         return loss, theta_opt
 
-    def predict(self, x):
+    def predict(self, x) -> float:
+        """Predict outcome of given x."""
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
         self._u_input(x).update_quantum_state(state)
-        # print(state)
         self.u_out.update_quantum_state(state)
-        # print(state)
-        aaa = self.obs.get_expectation_value(state)
-        # print(state)
-        # print(aaa)
-        return aaa
+        return self.obs.get_expectation_value(state)
 
-    # @staticmethod
-    def _cost_func(self, theta, x_train, y_train):
-        self._update_u_out(theta)
-        y_predict = [self.predict(x) for x in x_train]
-        if self.cost == "mse":
+    @staticmethod
+    def _cost_func(theta, model: QNNRegressor, x_train, y_train):
+        model._update_u_out(theta)
+        y_predict = [model.predict(x) for x in x_train]
+        if model.cost == "mse":
             return ((y_predict - y_train) ** 2).mean()
         else:
             raise NotImplementedError(
-                f"Cost function {self.cost} is not implemented yet."
+                f"Cost function {model.cost} is not implemented yet."
             )
 
     def _u_input(self, x):
@@ -183,7 +185,7 @@ class QNNRegressor:
         return u_in
 
     def _u_output(self):
-        time_evol_gate = self._time_evol_gate()
+        time_evol_gate = _create_time_evol_gate(self.n_qubit, self.time_step)
         u_out = ParametricQuantumCircuit(self.n_qubit)
         for _ in range(self.circuit_depth):
             u_out.add_gate(time_evol_gate)
@@ -197,13 +199,13 @@ class QNNRegressor:
         return u_out
 
     def _time_evol_gate(self):
-        hamiltonian = make_hamiltonian(self.n_qubit)
+        hamiltonian = _make_hamiltonian(self.n_qubit)
         diag, eigen_vecs = np.linalg.eigh(hamiltonian)
         time_evol_op = np.dot(
             np.dot(eigen_vecs, np.diag(np.exp(-1j * self.time_step * diag))),
             eigen_vecs.T.conj(),
         )
-        return DenseMatrix([i for i in range(self.n_qubit)], time_evol_op)
+        return DenseMatrix(range(self.n_qubit), time_evol_op)
 
     def _update_u_out(self, theta):
         param_count = self.u_out.get_parameter_count()
