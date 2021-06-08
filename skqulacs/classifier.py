@@ -111,27 +111,26 @@ class QNNClassification:
             obs[i].add_operator(1., f'Z {i}')  # Z0, Z1, Z3をオブザーバブルとして設定
         self.obs = obs
 
-    def fit(self, x_list, y_list, maxiter=200):
+    def fit(self, x_train, y_train, maxiter=200):
         """
         :param x_list: fitしたいデータのxのリスト
         :param y_list: fitしたいデータのyのリスト
         :param maxiter: scipy.optimize.minimizeのイテレーション回数
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
-
-        maxiterが10の倍数でないとき、Iteration countのデバッグが10/10しか表示されない 
         """
         # 初期状態生成
-        self._set_input_state(x_list)
+        self._set_input_state(x_train)
         # 乱数でU_outを作成
         self._create_initial_output_gate()
         # 正解ラベル
-        self.y_list = y_list
+        self.y_list = y_train
         parameter_count = self.output_gate.get_parameter_count()
         theta_init = list(map(self.output_gate.get_parameter, range(parameter_count)))
 
         result = minimize(self.cost_func,
                           theta_init,
+                          args=(x_train,),
                           method='BFGS',
                           jac=self._cost_func_grad,
                           options={"maxiter": maxiter})
@@ -139,14 +138,14 @@ class QNNClassification:
         loss = result.fun
         return loss, theta_opt
 
-    def predict(self, theta):
+    def predict(self, theta, x):
         """x_listに対して、モデルの出力を計算"""
         # 入力状態準備
         # st_list = self.input_state_list
         # ここで各要素ごとにcopy()しないとディープコピーにならない
-        state_list = [state.copy() for state in self.input_state_list]
-        # U_outの更新
         self._update_output_gate(theta)
+        self._set_input_state(x)
+        state_list = [state.copy() for state in self.input_state_list]
 
         res = []
         # 出力状態計算 & 観測
@@ -215,30 +214,30 @@ class QNNClassification:
             ind) for ind in range(parameter_count)]
         return np.array(theta)
 
-    def cost_func(self, theta):
+    def cost_func(self, theta, x_train):
         """コスト関数を計算するクラス
         :param theta: 回転ゲートの角度thetaのリスト
         """
-        y_pred = self.predict(theta)
+        y_pred = self.predict(theta, x_train)
         # cross-entropy loss
         return log_loss(self.y_list, y_pred)
 
     # for BFGS
-    def _b_grad(self, theta):
+    def _cost_func_grad(self, theta, x_train):
+        y_minus_t = self.predict(theta, x_train) - self.y_list
+        B_grad_list = self._b_grad(theta, x_train)
+        grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]
+        return np.array(grad)
+
+    # for BFGS
+    def _b_grad(self, theta, x_train):
         # dB/dθのリストを返す
         theta_plus = [theta.copy() + np.eye(len(theta))[i] *
                       np.pi / 2. for i in range(len(theta))]
         theta_minus = [theta.copy() - np.eye(len(theta))[i] *
                        np.pi / 2. for i in range(len(theta))]
 
-        grad = [(self.predict(theta_plus[i]) - self.predict(theta_minus[i])
+        grad = [(self.predict(theta_plus[i], x_train) - self.predict(theta_minus[i], x_train)
                  ) / 2. for i in range(len(theta))]
 
-        return np.array(grad)
-
-    # for BFGS
-    def _cost_func_grad(self, theta):
-        y_minus_t = self.predict(theta) - self.y_list
-        B_grad_list = self._b_grad(theta)
-        grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]
         return np.array(grad)
