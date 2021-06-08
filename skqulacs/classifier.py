@@ -16,82 +16,83 @@ Z_mat = Z(0).get_matrix()
 
 # fullsizeのgateをつくる関数.
 def _make_fullgate(list_SiteAndOperator, nqubit):
-	"""
-	list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
-	関係ないqubitにIdentityを挿入して
-	I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...
-	という(2**nqubit, 2**nqubit)行列をつくる.
-	"""
-	list_Site = [SiteAndOperator[0] for SiteAndOperator in list_SiteAndOperator]
-	list_SingleGates = []  # 1-qubit gateを並べてnp.kronでreduceする
-	cnt = 0
-	for i in range(nqubit):
-		if i in list_Site:
-			list_SingleGates.append(list_SiteAndOperator[cnt][1])
-			cnt += 1
-		else:  # 何もないsiteはidentity
-			list_SingleGates.append(I_mat)
+    """
+    list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
+    関係ないqubitにIdentityを挿入して
+    I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...
+    という(2**nqubit, 2**nqubit)行列をつくる.
+    """
+    list_Site = [SiteAndOperator[0] for SiteAndOperator in list_SiteAndOperator]
+    list_SingleGates = []  # 1-qubit gateを並べてnp.kronでreduceする
+    cnt = 0
+    for i in range(nqubit):
+        if i in list_Site:
+            list_SingleGates.append(list_SiteAndOperator[cnt][1])
+            cnt += 1
+        else:  # 何もないsiteはidentity
+            list_SingleGates.append(I_mat)
 
-	return reduce(np.kron, list_SingleGates)
+    return reduce(np.kron, list_SingleGates)
 
 
 def _create_time_evol_gate(nqubit, time_step=0.77):
-	""" ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
-	:param time_step: ランダムハミルトニアンによる時間発展の経過時間
-	:return  qulacsのゲートオブジェクト
-	"""
-	ham = np.zeros((2**nqubit, 2**nqubit), dtype=complex)
-	for i in range(nqubit):  # i runs 0 to nqubit-1
-		Jx = -1. + 2.*np.random.rand()  # -1~1の乱数
-		ham += Jx * _make_fullgate([[i, X_mat]], nqubit)
-		for j in range(i+1, nqubit):
-			J_ij = -1. + 2.*np.random.rand()
-			ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
+    """ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
+    :param time_step: ランダムハミルトニアンによる時間発展の経過時間
+    :return  qulacsのゲートオブジェクト
+    """
+    ham = np.zeros((2 ** nqubit, 2 ** nqubit), dtype=complex)
+    for i in range(nqubit):  # i runs 0 to nqubit-1
+        Jx = -1.0 + 2.0 * np.random.rand()  # -1~1の乱数
+        ham += Jx * _make_fullgate([[i, X_mat]], nqubit)
+        for j in range(i + 1, nqubit):
+            J_ij = -1.0 + 2.0 * np.random.rand()
+            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
 
-	# 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
-	diag, eigen_vecs = np.linalg.eigh(ham)
-	time_evol_op = np.dot(np.dot(eigen_vecs, np.diag(
-		np.exp(-1j*time_step*diag))), eigen_vecs.T.conj())  # e^-iHT
+    # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
+    diag, eigen_vecs = np.linalg.eigh(ham)
+    time_evol_op = np.dot(
+        np.dot(eigen_vecs, np.diag(np.exp(-1j * time_step * diag))), eigen_vecs.T.conj()
+    )  # e^-iHT
 
-	# qulacsのゲートに変換
-	time_evol_gate = DenseMatrix([i for i in range(nqubit)], time_evol_op)
+    # qulacsのゲートに変換
+    time_evol_gate = DenseMatrix([i for i in range(nqubit)], time_evol_op)
 
-	return time_evol_gate
+    return time_evol_gate
 
 
 def _min_max_scaling(x, axis=None):
-	"""[-1, 1]の範囲に規格化"""
-	min = x.min(axis=axis, keepdims=True)
-	max = x.max(axis=axis, keepdims=True)
-	result = (x-min)/(max-min)
-	result = 2.*result-1.
-	return result
+    """[-1, 1]の範囲に規格化"""
+    min = x.min(axis=axis, keepdims=True)
+    max = x.max(axis=axis, keepdims=True)
+    result = (x - min) / (max - min)
+    result = 2.0 * result - 1.0
+    return result
 
 
 def _softmax(x):
-	"""softmax function
-	:param x: ndarray
-	"""
-	exp_x = np.exp(x)
-	y = exp_x / np.sum(np.exp(x))
-	return y
+    """softmax function
+    :param x: ndarray
+    """
+    exp_x = np.exp(x)
+    y = exp_x / np.sum(np.exp(x))
+    return y
 
 
 def make_hamiltonian(n_qubit):
-	ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
-	X_mat = X(0).get_matrix()
-	Z_mat = Z(0).get_matrix()
-	for i in range(n_qubit):
-		Jx = -1.0 + 2.0 * np.random.rand()
-		ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
-		for j in range(i + 1, n_qubit):
-			J_ij = -1.0 + 2.0 * np.random.rand()
-			ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
-	return ham
+    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+    X_mat = X(0).get_matrix()
+    Z_mat = Z(0).get_matrix()
+    for i in range(n_qubit):
+        Jx = -1.0 + 2.0 * np.random.rand()
+        ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
+        for j in range(i + 1, n_qubit):
+            J_ij = -1.0 + 2.0 * np.random.rand()
+            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
+    return ham
 
 
 class QNNClassification:
-    """ quantum circuit learningを用いて分類問題を解く"""
+    """quantum circuit learningを用いて分類問題を解く"""
 
     def __init__(self, n_qubit: int, circuit_depth: int, num_class: int):
         """
@@ -108,7 +109,7 @@ class QNNClassification:
         # オブザーバブルの準備
         obs = [Observable(n_qubit) for _ in range(num_class)]
         for i in range(len(obs)):
-            obs[i].add_operator(1., f'Z {i}')  # Z0, Z1, Z3をオブザーバブルとして設定
+            obs[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z3をオブザーバブルとして設定
         self.obs = obs
 
     def fit(self, x_train, y_train, maxiter=200):
@@ -128,12 +129,14 @@ class QNNClassification:
         parameter_count = self.output_gate.get_parameter_count()
         theta_init = list(map(self.output_gate.get_parameter, range(parameter_count)))
 
-        result = minimize(self.cost_func,
-                          theta_init,
-                          args=(x_train,),
-                          method='BFGS',
-                          jac=self._cost_func_grad,
-                          options={"maxiter": maxiter})
+        result = minimize(
+            self.cost_func,
+            theta_init,
+            args=(x_train,),
+            method="BFGS",
+            jac=self._cost_func_grad,
+            options={"maxiter": maxiter},
+        )
         theta_opt = result.x
         loss = result.fun
         return loss, theta_opt
@@ -158,13 +161,26 @@ class QNNClassification:
             res.append(r.tolist())
         return np.array(res)
 
+    def _set_input_state(self, x_list):
+        """入力状態のリストを作成"""
+        x_list_normalized = _min_max_scaling(x_list)  # xを[-1, 1]の範囲にスケール
+
+        state_list = []
+        for x in x_list_normalized:
+            input_gate = self._create_input_gate(x)
+            state = QuantumState(self.n_qubit)
+            input_gate.update_quantum_state(state)
+            # copy() は省略できないか?
+            state_list.append(state.copy())
+        self.input_state_list = state_list
+
     def _create_input_gate(self, x):
         # 単一のxをエンコードするゲートを作成する関数
         # xは入力特徴量(2次元)
         # xの要素は[-1, 1]の範囲内
         u_in = QuantumCircuit(self.n_qubit)
         angle_y = np.arcsin(x)
-        angle_z = np.arccos(x**2)
+        angle_z = np.arccos(x ** 2)
 
         for i in range(self.n_qubit):
             if i % 2 == 0:
@@ -175,18 +191,6 @@ class QNNClassification:
                 u_in.add_RZ_gate(i, angle_z[1])
 
         return u_in
-
-    def _set_input_state(self, x_list):
-        """入力状態のリストを作成"""
-        x_list_normalized = _min_max_scaling(x_list)  # xを[-1, 1]の範囲にスケール
-
-        state_list = []
-        for x in x_list_normalized:
-            state = QuantumState(self.n_qubit)
-            input_gate = self._create_input_gate(x)
-            input_gate.update_quantum_state(state)
-            state_list.append(state.copy())
-        self.input_state_list = state_list
 
     def _create_initial_output_gate(self):
         """output用ゲートU_outの組み立て&パラメータ初期値の設定"""
@@ -210,8 +214,7 @@ class QNNClassification:
     def _get_output_gate_parameter(self):
         """U_outのパラメータθを取得"""
         parameter_count = self.output_gate.get_parameter_count()
-        theta = [self.output_gate.get_parameter(
-            ind) for ind in range(parameter_count)]
+        theta = [self.output_gate.get_parameter(ind) for ind in range(parameter_count)]
         return np.array(theta)
 
     def cost_func(self, theta, x_train):
@@ -232,12 +235,22 @@ class QNNClassification:
     # for BFGS
     def _b_grad(self, theta, x_train):
         # dB/dθのリストを返す
-        theta_plus = [theta.copy() + np.eye(len(theta))[i] *
-                      np.pi / 2. for i in range(len(theta))]
-        theta_minus = [theta.copy() - np.eye(len(theta))[i] *
-                       np.pi / 2. for i in range(len(theta))]
+        theta_plus = [
+            theta.copy() + np.eye(len(theta))[i] * np.pi / 2.0
+            for i in range(len(theta))
+        ]
+        theta_minus = [
+            theta.copy() - np.eye(len(theta))[i] * np.pi / 2.0
+            for i in range(len(theta))
+        ]
 
-        grad = [(self.predict(theta_plus[i], x_train) - self.predict(theta_minus[i], x_train)
-                 ) / 2. for i in range(len(theta))]
+        grad = [
+            (
+                self.predict(theta_plus[i], x_train)
+                - self.predict(theta_minus[i], x_train)
+            )
+            / 2.0
+            for i in range(len(theta))
+        ]
 
         return np.array(grad)
