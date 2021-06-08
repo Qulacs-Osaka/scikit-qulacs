@@ -60,6 +60,7 @@ def test_add():
 ```bash
 make test
 ```
+If assertion fail, error contents are displayed with red. If you do not see that, all test are successful.
 
 We use `pytest` for testing. Detailed instructions are available in the [document](https://docs.pytest.org/en/6.2.x/).
 
