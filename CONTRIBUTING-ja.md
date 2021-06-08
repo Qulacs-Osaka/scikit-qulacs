@@ -21,7 +21,7 @@ git switch main
 git pull main
 ```
 
-4. ブランチを切ります．
+4. ブランチを切ります． 開発する内容をおおまかに説明するブランチ名にします．
 ```bash
 git switch -c 99-wonderful-model
 ```
@@ -50,7 +50,7 @@ git push
 1. `tests` ディレクトリに `test_*.py` というファイルを作ります． テストの内容を大まかに表すファイル名をつけます．
 2. そのファイルの中に `test_` で始まる関数を作ります． そこに実装した機能が満たすべき条件を書きます． たとえば和を計算する関数のテストは以下のようになります．
 ```python
-from skqulacs import add # This function does not exist.
+from skqulacs import add # This function does not exist in the module.
 
 def test_add():
     assert 3 == add(1, 2)
