@@ -2,7 +2,7 @@ FORMAT_TARGET = skqulacs tests
 
 .PHONY: test
 test:
-	python -m pytest
+	python -m pytest -v
 
 .PHONY: format
 format:
