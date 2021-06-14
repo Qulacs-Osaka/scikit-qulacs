@@ -20,7 +20,7 @@ def test_classify_iris():
     y_train = np.eye(3)[y_train]  # one-hot 表現 shape:(150, 3)
 
     nqubit = 4  ## qubitの数。必要とする出力の次元数よりも多い必要がある
-    c_depth = 3  ## circuitの深さ
+    c_depth = 4  ## circuitの深さ
     num_class = 3  ## 分類数（ここでは3つの品種に分類）
     qcl = QNNClassification(nqubit, c_depth, num_class)
     loss, theta_opt = qcl.fit(x_train, y_train, maxiter=10)

@@ -1,12 +1,12 @@
 from __future__ import annotations
 from functools import reduce
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
+from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix
 from scipy.optimize import minimize
-from typing import Literal
-import numpy as np
-from qulacs import Observable
 from sklearn.metrics import log_loss
+from numpy.random import RandomState
+import numpy as np
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
@@ -35,17 +35,22 @@ def _make_fullgate(list_SiteAndOperator, nqubit):
     return reduce(np.kron, list_SingleGates)
 
 
-def _create_time_evol_gate(nqubit, time_step=0.77):
+def _create_time_evol_gate(
+    nqubit, time_step=0.77, random_state: RandomState = None, seed: int = 0
+):
     """ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
     :param time_step: ランダムハミルトニアンによる時間発展の経過時間
     :return  qulacsのゲートオブジェクト
     """
+    if random_state is None:
+        random_state = RandomState(seed)
+
     ham = np.zeros((2 ** nqubit, 2 ** nqubit), dtype=complex)
     for i in range(nqubit):  # i runs 0 to nqubit-1
-        Jx = -1.0 + 2.0 * np.random.rand()  # -1~1の乱数
+        Jx = -1.0 + 2.0 * random_state.rand()  # -1~1の乱数
         ham += Jx * _make_fullgate([[i, X_mat]], nqubit)
         for j in range(i + 1, nqubit):
-            J_ij = -1.0 + 2.0 * np.random.rand()
+            J_ij = -1.0 + 2.0 * random_state.rand()
             ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
 
     # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
@@ -73,20 +78,22 @@ def _softmax(x):
     """softmax function
     :param x: ndarray
     """
-    exp_x = np.exp(x)
-    y = exp_x / np.sum(np.exp(x))
+    y = np.exp(x) / np.sum(np.exp(x))
     return y
 
 
-def make_hamiltonian(n_qubit):
+def make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
+    if random_state is None:
+        random_state = RandomState(seed)
+
     ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
     X_mat = X(0).get_matrix()
     Z_mat = Z(0).get_matrix()
     for i in range(n_qubit):
-        Jx = -1.0 + 2.0 * np.random.rand()
+        Jx = -1.0 + 2.0 * random_state.rand()
         ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
         for j in range(i + 1, n_qubit):
-            J_ij = -1.0 + 2.0 * np.random.rand()
+            J_ij = -1.0 + 2.0 * random_state.rand()
             ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
     return ham
 
@@ -94,7 +101,7 @@ def make_hamiltonian(n_qubit):
 class QNNClassification:
     """quantum circuit learningを用いて分類問題を解く"""
 
-    def __init__(self, n_qubit: int, circuit_depth: int, num_class: int):
+    def __init__(self, n_qubit: int, circuit_depth: int, num_class: int, seed: int = 0):
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
         :param c_depth: circuitの深さ
@@ -102,9 +109,11 @@ class QNNClassification:
         """
         self.n_qubit = n_qubit
         self.circuit_depth = circuit_depth
-        self.input_state_list = []  # |ψ_in>のリスト
-        self.output_gate = self._create_initial_output_gate()  # U_out
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
+        self.input_state_list = []  # |ψ_in>のリスト
+        self.theta_list = []
+        self.random_state = RandomState(seed)
+        self.output_gate = self._create_initial_output_gate()  # U_out
 
         # オブザーバブルの準備
         obs = [Observable(n_qubit) for _ in range(num_class)]
@@ -126,8 +135,7 @@ class QNNClassification:
         self._create_initial_output_gate()
         # 正解ラベル
         self.y_list = y_train
-        parameter_count = self.output_gate.get_parameter_count()
-        theta_init = list(map(self.output_gate.get_parameter, range(parameter_count)))
+        theta_init = self.theta_list
 
         result = minimize(
             self.cost_func,
@@ -137,8 +145,8 @@ class QNNClassification:
             jac=self._cost_func_grad,
             options={"maxiter": maxiter},
         )
-        theta_opt = result.x
         loss = result.fun
+        theta_opt = result.x
         return loss, theta_opt
 
     def predict(self, theta, x):
@@ -156,7 +164,7 @@ class QNNClassification:
             # U_outで状態を更新
             self.output_gate.update_quantum_state(state)
             # モデルの出力
-            r = [o.get_expectation_value(state) for o in self.obs]  # 出力多次元ver
+            r = [obs.get_expectation_value(state) for obs in self.obs]  # 出力多次元ver
             r = _softmax(r)
             res.append(r.tolist())
         return np.array(res)
@@ -171,7 +179,7 @@ class QNNClassification:
             state = QuantumState(self.n_qubit)
             input_gate.update_quantum_state(state)
             # copy() は省略できないか?
-            state_list.append(state.copy())
+            state_list.append(state)
         self.input_state_list = state_list
 
     def _create_input_gate(self, x):
@@ -195,8 +203,16 @@ class QNNClassification:
     def _create_initial_output_gate(self):
         """output用ゲートU_outの組み立て&パラメータ初期値の設定"""
         u_out = ParametricQuantumCircuit(self.n_qubit)
-        time_evol_gate = _create_time_evol_gate(self.n_qubit)
-        theta = 2.0 * np.pi * np.random.rand(self.circuit_depth, self.n_qubit, 3)
+        time_evol_gate = _create_time_evol_gate(self.n_qubit, random_state=self.random_state)
+        num_parametric_gate = 3
+        theta = (
+            2.0
+            * np.pi
+            * self.random_state.rand(
+                self.circuit_depth, self.n_qubit, num_parametric_gate
+            )
+        )
+        self.theta_list = theta.flatten()
         for d in range(self.circuit_depth):
             u_out.add_gate(time_evol_gate)
             for i in range(self.n_qubit):
@@ -207,14 +223,16 @@ class QNNClassification:
 
     def _update_output_gate(self, theta):
         """U_outをパラメータθで更新"""
-        parameter_count = len(theta)
+        parameter_count = self.output_gate.get_parameter_count()
         for i in range(parameter_count):
             self.output_gate.set_parameter(i, theta[i])
 
-    def _get_output_gate_parameter(self):
+    def _get_output_gate_parameters(self):
         """U_outのパラメータθを取得"""
         parameter_count = self.output_gate.get_parameter_count()
-        theta = [self.output_gate.get_parameter(ind) for ind in range(parameter_count)]
+        theta = [
+            self.output_gate.get_parameter(index) for index in range(parameter_count)
+        ]
         return np.array(theta)
 
     def cost_func(self, theta, x_train):
@@ -252,5 +270,4 @@ class QNNClassification:
             / 2.0
             for i in range(len(theta))
         ]
-
         return np.array(grad)
