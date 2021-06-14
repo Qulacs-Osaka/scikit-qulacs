@@ -134,7 +134,8 @@ class QNNClassification:
         # 乱数でU_outを作成
         self._create_initial_output_gate()
         # 正解ラベル
-        self.y_list = y_train
+        # one-hot 表現 shape:(150, 3)
+        self.y_list = np.eye(3)[y_train]
         theta_init = self.theta_list
 
         result = minimize(
@@ -150,6 +151,11 @@ class QNNClassification:
         return loss, theta_opt
 
     def predict(self, theta, x):
+        y_pred = self._predict_inner(theta, x)
+        y_pred = list(map(np.argmax, y_pred))
+        return y_pred
+
+    def _predict_inner(self, theta, x):
         """x_listに対して、モデルの出力を計算"""
         # 入力状態準備
         # st_list = self.input_state_list
@@ -178,7 +184,6 @@ class QNNClassification:
             input_gate = self._create_input_gate(x)
             state = QuantumState(self.n_qubit)
             input_gate.update_quantum_state(state)
-            # copy() は省略できないか?
             state_list.append(state)
         self.input_state_list = state_list
 
@@ -191,12 +196,8 @@ class QNNClassification:
         angle_z = np.arccos(x ** 2)
 
         for i in range(self.n_qubit):
-            if i % 2 == 0:
-                u_in.add_RY_gate(i, angle_y[0])
-                u_in.add_RZ_gate(i, angle_z[0])
-            else:
-                u_in.add_RY_gate(i, angle_y[1])
-                u_in.add_RZ_gate(i, angle_z[1])
+            u_in.add_RY_gate(i, angle_y[i % len(angle_y)])
+            u_in.add_RZ_gate(i, angle_z[i % len(angle_z)])
 
         return u_in
 
@@ -239,13 +240,13 @@ class QNNClassification:
         """コスト関数を計算するクラス
         :param theta: 回転ゲートの角度thetaのリスト
         """
-        y_pred = self.predict(theta, x_train)
+        y_pred = self._predict_inner(theta, x_train)
         # cross-entropy loss
         return log_loss(self.y_list, y_pred)
 
     # for BFGS
     def _cost_func_grad(self, theta, x_train):
-        y_minus_t = self.predict(theta, x_train) - self.y_list
+        y_minus_t = self._predict_inner(theta, x_train) - self.y_list
         B_grad_list = self._b_grad(theta, x_train)
         grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]
         return np.array(grad)
@@ -264,8 +265,8 @@ class QNNClassification:
 
         grad = [
             (
-                self.predict(theta_plus[i], x_train)
-                - self.predict(theta_minus[i], x_train)
+                self._predict_inner(theta_plus[i], x_train)
+                - self._predict_inner(theta_minus[i], x_train)
             )
             / 2.0
             for i in range(len(theta))
