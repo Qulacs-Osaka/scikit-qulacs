@@ -1,2 +1,13 @@
+FORMAT_TARGET = skqulacs tests
+
+.PHONY: test
+test:
+	python -m pytest -v
+
+.PHONY: format
 format:
-	black skqulacs
+	black $(FORMAT_TARGET)
+
+.PHONY: format_check
+format_check:
+	black --check --diff $(FORMAT_TARGET)
