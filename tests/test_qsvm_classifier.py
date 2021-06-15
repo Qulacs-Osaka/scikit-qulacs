@@ -7,12 +7,10 @@ from sklearn.metrics import f1_score
 from skqulacs.qsvm import QSVC
 
 
-
-
 def test_classify_iris():
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
-    x = df.loc[:, ['petal length (cm)',"petal width (cm)"]]
+    x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
     x_train, x_test, y_train, y_test = train_test_split(
         x, iris.target, test_size=0.25, random_state=0
     )
@@ -21,7 +19,7 @@ def test_classify_iris():
     n_qubit = 2  # qubitの数
     qsvm = QSVC()
     qsvm.fit(x_train, y_train)
-    y_pred = qsvm.predict(x_test)  
+    y_pred = qsvm.predict(x_test)
     assert f1_score(y_test, y_pred, average="weighted") > 0.92
 
 
