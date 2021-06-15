@@ -204,7 +204,9 @@ class QNNClassification:
     def _create_initial_output_gate(self):
         """output用ゲートU_outの組み立て&パラメータ初期値の設定"""
         u_out = ParametricQuantumCircuit(self.n_qubit)
-        time_evol_gate = _create_time_evol_gate(self.n_qubit, random_state=self.random_state)
+        time_evol_gate = _create_time_evol_gate(
+            self.n_qubit, random_state=self.random_state
+        )
         num_parametric_gate = 3
         theta = (
             2.0
