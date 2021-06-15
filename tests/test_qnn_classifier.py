@@ -26,7 +26,3 @@ def test_classify_iris():
 
     y_pred = qcl.predict(theta_opt, x_test)  # モデルのパラメータθも更新される
     assert f1_score(y_test, y_pred, average="weighted") > 0.95
-
-
-if __name__ == "__main__":
-    test_classify_iris()

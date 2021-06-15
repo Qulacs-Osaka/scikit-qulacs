@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import reduce
+from skqulacs.base import QNN
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix
@@ -98,7 +99,7 @@ def make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
     return ham
 
 
-class QNNClassification:
+class QNNClassification(QNN):
     """quantum circuit learningを用いて分類問題を解く"""
 
     def __init__(self, n_qubit: int, circuit_depth: int, num_class: int, seed: int = 0):
@@ -121,7 +122,7 @@ class QNNClassification:
             obs[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z3をオブザーバブルとして設定
         self.obs = obs
 
-    def fit(self, x_train, y_train, maxiter=200):
+    def fit(self, x_train, y_train, maxiter: int = 100):
         """
         :param x_list: fitしたいデータのxのリスト
         :param y_list: fitしたいデータのyのリスト

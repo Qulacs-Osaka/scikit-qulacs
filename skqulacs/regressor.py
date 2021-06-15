@@ -1,9 +1,10 @@
 from __future__ import annotations
 from functools import reduce
+from skqulacs.base import QNN
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix
 from scipy.optimize import minimize
-from typing import Literal, Tuple
+from typing import List, Literal, Optional, Tuple
 import numpy as np
 
 
@@ -89,7 +90,7 @@ def softmax(x):
     return y
 
 
-class QNNRegressor:
+class QNNRegressor(QNN):
     """Solve regression tasks with Quantum Neural Network.
 
     Args:
@@ -130,7 +131,9 @@ class QNNRegressor:
         self.u_out = self._u_output()
         self.obs = Observable(self.n_qubit)
 
-    def fit(self, x, y) -> Tuple[float, np.ndarray]:
+    def fit(
+        self, x_train, y_train, maxiter: Optional[int] = None
+    ) -> Tuple[float, np.ndarray]:
         """Fit model.
 
         Args:
@@ -138,7 +141,7 @@ class QNNRegressor:
             y: train data of y.
 
         Returns:
-            loss: Loss of optimized model.
+            loss: Loss of optimized cost function.
             theta_opt: Parameter of optimized model.
         """
         self.obs.add_operator(2.0, "Z 0")
@@ -148,16 +151,21 @@ class QNNRegressor:
         result = minimize(
             QNNRegressor._cost_func,
             theta_init,
-            args=(self, x, y),
+            args=(self, x_train, y_train),
             method=self.solver,
+            options={"maxiter": maxiter},
         )
 
         theta_opt = result.x
-        self._update_u_out(theta_opt)
         loss = result.fun
         return loss, theta_opt
 
-    def predict(self, x) -> float:
+    def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
+        self._update_u_out(theta)
+        y_pred = [self._predict__inner(x) for x in x_list]
+        return y_pred
+
+    def _predict__inner(self, x: float) -> float:
         """Predict outcome of given x."""
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
@@ -167,8 +175,7 @@ class QNNRegressor:
 
     @staticmethod
     def _cost_func(theta, model: QNNRegressor, x_train, y_train):
-        model._update_u_out(theta)
-        y_predict = [model.predict(x) for x in x_train]
+        y_predict = model.predict(theta, x_train)
         if model.cost == "mse":
             return ((y_predict - y_train) ** 2).mean()
         else:
@@ -176,7 +183,7 @@ class QNNRegressor:
                 f"Cost function {model.cost} is not implemented yet."
             )
 
-    def _u_input(self, x):
+    def _u_input(self, x: float):
         u_in = QuantumCircuit(self.n_qubit)
         angle_y = np.arcsin(x)
         angle_z = np.arccos(x ** 2)
@@ -208,7 +215,7 @@ class QNNRegressor:
         )
         return DenseMatrix(range(self.n_qubit), time_evol_op)
 
-    def _update_u_out(self, theta):
+    def _update_u_out(self, theta: List[float]):
         param_count = self.u_out.get_parameter_count()
         for i in range(param_count):
             self.u_out.set_parameter(i, theta[i])
