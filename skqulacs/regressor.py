@@ -141,7 +141,7 @@ class QNNRegressor(QNN):
             y: train data of y.
 
         Returns:
-            loss: Loss of optimized model.
+            loss: Loss of optimized cost function.
             theta_opt: Parameter of optimized model.
         """
         self.obs.add_operator(2.0, "Z 0")
@@ -160,7 +160,7 @@ class QNNRegressor(QNN):
         loss = result.fun
         return loss, theta_opt
 
-    def predict(self, theta: List[float], x_list: List[float]) -> float:
+    def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
         self._update_u_out(theta)
         y_pred = [self._predict__inner(x) for x in x_list]
         return y_pred
