@@ -6,8 +6,8 @@ test:
 
 .PHONY: format
 format:
-	black $(FORMAT_TARGET)
+	python -m black $(FORMAT_TARGET)
 
 .PHONY: format_check
 format_check:
-	black --check --diff $(FORMAT_TARGET)
+	python -m black --check --diff $(FORMAT_TARGET)
