@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import numpy as np
 
 
 class QNN(ABC):
     @abstractmethod
     def fit(
-        self, x_train: List[float], y_train: List[float], maxiter: int
+        self, x_train: List[float], y_train: List[float], maxiter: Optional[int]
     ) -> Tuple[float, np.ndarray]:
         """Fit the model to given train data.
 
