@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.random import RandomState
 from skqulacs.regressor import QNNRegressor
+import matplotlib.pyplot as plt
 
 
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
@@ -10,7 +11,7 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
     seed = 0
     random_state = RandomState(seed)
 
-    x_train = random_state.randint(x_min, x_max, num_x)
+    x_train = x_min + (x_max - x_min) * random_state.rand(num_x)
     y_train = func_to_learn(x_train)
 
     mag_noise = 0.05
@@ -30,8 +31,7 @@ def test_noisy_sine():
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
 
     qnn = QNNRegressor(n_qubit, c_depth, time_step)
-    loss, _ = qnn.fit(x_train, y_train)
-    assert loss < 0.002
+    _, theta = qnn.fit(x_train, y_train)
 
-    xlist = np.arange(x_min, x_max, 0.02)
-    y_pred = list(map(qnn.predict, xlist))
+    x_list = np.arange(x_min, x_max, 0.02)
+    y_pred = qnn.predict(theta, x_list)
