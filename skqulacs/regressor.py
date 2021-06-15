@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import reduce
+from skqulacs.base import QNN
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix
 from scipy.optimize import minimize
@@ -89,7 +90,7 @@ def softmax(x):
     return y
 
 
-class QNNRegressor:
+class QNNRegressor(QNN):
     """Solve regression tasks with Quantum Neural Network.
 
     Args:
@@ -130,7 +131,7 @@ class QNNRegressor:
         self.u_out = self._u_output()
         self.obs = Observable(self.n_qubit)
 
-    def fit(self, x, y) -> Tuple[float, np.ndarray]:
+    def fit(self, x_train, y_train, maxiter: int = 100) -> Tuple[float, np.ndarray]:
         """Fit model.
 
         Args:
@@ -148,8 +149,9 @@ class QNNRegressor:
         result = minimize(
             QNNRegressor._cost_func,
             theta_init,
-            args=(self, x, y),
+            args=(self, x_train, y_train),
             method=self.solver,
+            options={"maxiter": maxiter},
         )
 
         theta_opt = result.x
