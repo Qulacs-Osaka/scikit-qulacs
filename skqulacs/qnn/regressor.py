@@ -1,9 +1,5 @@
 from __future__ import annotations
-from skqulacs.qnn.qnnbase import (
-    QNN,
-    _create_time_evol_gate,
-    _make_hamiltonian
-)
+from skqulacs.qnn.qnnbase import QNN, _create_time_evol_gate, _make_hamiltonian
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix
 from scipy.optimize import minimize
