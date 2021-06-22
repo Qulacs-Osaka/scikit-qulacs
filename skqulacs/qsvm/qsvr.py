@@ -1,10 +1,6 @@
 import numpy as np
-from qulacs import QuantumState, QuantumCircuit, Observable, PauliOperator
-from qulacs.gate import H, X, Z, RX, RY, RZ, CNOT, merge, DenseMatrix, add
 from qulacs.state import inner_product
-import matplotlib.pyplot as plt
 from sklearn import svm
-
 
 from skqulacs.qsvm.qsvmbase import get_qvec
 

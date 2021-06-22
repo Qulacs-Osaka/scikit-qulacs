@@ -1,11 +1,7 @@
 from abc import ABC, abstractmethod
 from functools import reduce
 from typing import List, Optional, Tuple
-from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
-from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix
-from scipy.optimize import minimize
-from sklearn.metrics import log_loss
 from numpy.random import RandomState
 import numpy as np
 
@@ -82,7 +78,7 @@ def _softmax(x):
     return y
 
 
-def make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
+def _make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
     if random_state is None:
         random_state = RandomState(seed)
 

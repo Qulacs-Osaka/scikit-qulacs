@@ -1,12 +1,8 @@
 from __future__ import annotations
-from functools import reduce
 from skqulacs.qnn.qnnbase import (
     QNN,
-    _make_fullgate,
     _create_time_evol_gate,
-    _min_max_scaling,
-    _softmax,
-    make_hamiltonian,
+    _make_hamiltonian
 )
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix

@@ -2,15 +2,13 @@ from __future__ import annotations
 from functools import reduce
 from skqulacs.qnn.qnnbase import (
     QNN,
-    _make_fullgate,
     _create_time_evol_gate,
     _min_max_scaling,
     _softmax,
-    make_hamiltonian,
 )
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from scipy.sparse.construct import rand
-from qulacs.gate import X, Z, DenseMatrix
+from qulacs.gate import X, Z
 from scipy.optimize import minimize
 from sklearn.metrics import log_loss
 from numpy.random import RandomState

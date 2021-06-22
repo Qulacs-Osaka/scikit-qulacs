@@ -1,6 +1,5 @@
-from qulacs import QuantumState, QuantumCircuit, Observable, PauliOperator
-from qulacs.gate import H, X, Z, RX, RY, RZ, CNOT, merge, DenseMatrix, add
-from qulacs.state import inner_product
+from qulacs import QuantumState
+from qulacs.gate import H, RZ, CNOT
 import numpy as np
 
 
