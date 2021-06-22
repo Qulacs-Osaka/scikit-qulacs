@@ -10,8 +10,10 @@ cd scikit-qulacs
 
 2. 依存ライブラリや開発用ツールをインストールします．
 ```bash
-pip install -r requirements.txt
 pip install -r requirements-dev.txt
+# This installs dependencies and creates a symbolic link to this directory in 
+# the site-packages directory.
+make install
 ```
 
 次は毎回のコードの編集からマージまでの流れについてです．
@@ -71,3 +73,18 @@ CI の目的には次のようなものがあります．
 * コードが正常に確認していることを全体で共有する
 * 手元では気づかなかったエラーを発見する
 * コードがフォーマットされていることを強制することで余計な diff が生まれないようにする
+
+## Installation
+`setup-tools` を使って　site-packages に skqulacs をインストールすることができます．
+`make install` はこのディレクトリへのシンボリックリンクを作成するだけですが，この方法では完全なパッケージをビルドします．
+
+まず，`build` をインストールします．
+```bash
+pip install build
+```
+ビルドしてインストールします．
+```bash
+python -m build
+# This file name might be different among environments.
+pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
+```

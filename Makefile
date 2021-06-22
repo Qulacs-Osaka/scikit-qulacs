@@ -1,5 +1,9 @@
 FORMAT_TARGET = skqulacs tests
 
+.PHONY: install
+install:
+	pip install -e .
+
 .PHONY: test
 test:
 	python -m pytest -v

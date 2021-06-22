@@ -10,8 +10,10 @@ cd scikit-qulacs
 
 2. Install dependencies and development tools.
 ```bash
-pip install -r requirements.txt
 pip install -r requirements-dev.txt
+# This installs dependencies and creates a symbolic link to this directory in 
+# the site-packages directory.
+make install
 ```
 
 Next, workflow through modification to merge.
@@ -71,3 +73,18 @@ The purpose of CI is
 * Share our code works properly in the team.
 * Find error you cannot notice at your local machine.
 * Avoid unnecessary diff by forcing code format.
+
+## Installation
+You can install skqulacs to your python's site-packages by `setup-tools`.
+Although `make install` just creates a symlink to this directory, this method builds a complete package.
+
+First, install `build`.
+```bash
+pip install build
+```
+Then, build and install this package.
+```bash
+python -m build
+# This file name might be different among environments.
+pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
+```
