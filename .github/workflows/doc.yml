@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -24,7 +25,8 @@ jobs:
           make html
         working-directory: ./doc
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: peaceiris/actions-gh-pages@v3.7.3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          folder: ./doc/build/html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: main
+          publish_dir: ./doc/build/html
