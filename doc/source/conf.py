@@ -30,7 +30,7 @@ author = 'Qulacs-Osaka'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
-    'sphinxcontrib.napoleon',
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
 ]
 
