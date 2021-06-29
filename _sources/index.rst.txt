@@ -6,6 +6,9 @@
 Welcome to scikit-qulacs's documentation!
 =========================================
 
+`scikit-qulacs <https://github.com/Qulacs-Osaka/scikit-qulacs>`_ is a library for quantum neural network.
+This library is based on `qulacs <https://github.com/qulacs/qulacs>`_ and named after `scikit-learn <https://github.com/scikit-learn/scikit-learn>`_.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
