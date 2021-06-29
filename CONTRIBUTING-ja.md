@@ -88,3 +88,25 @@ python -m build
 # This file name might be different among environments.
 pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ```
+
+## Documentation
+このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
+
+### Build document
+まず `doc` に移動します．
+First, move into `doc`.
+```bash
+cd doc
+```
+
+以下のコマンドでドキュメントのビルドに必要な依存ライブラリをインストールできます．
+```bash
+pip install -r requirements-doc.txt
+```
+
+そして以下のコマンドを実行してください．
+```bash
+make html
+```
+
+`doc/build/html` に HTML ファイルなどのビルド成果物が入っています．
