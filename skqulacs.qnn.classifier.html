@@ -221,8 +221,62 @@
         
               <div>
                 
-  <div class="section" id="skqulacs-qnn-classifier-module">
-<h1>skqulacs.qnn.classifier module<a class="headerlink" href="#skqulacs-qnn-classifier-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-skqulacs.qnn.classifier">
+<span id="skqulacs-qnn-classifier-module"></span><h1>skqulacs.qnn.classifier module<a class="headerlink" href="#module-skqulacs.qnn.classifier" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="skqulacs.qnn.classifier.QNNClassification">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skqulacs.qnn.classifier.</span></code><code class="sig-name descname"><span class="pre">QNNClassification</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit_depth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
+<p>quantum circuit learningを用いて分類問題を解く</p>
+<dl class="py method">
+<dt id="skqulacs.qnn.classifier.QNNClassification.cost_func">
+<code class="sig-name descname"><span class="pre">cost_func</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassification.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassification.cost_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>コスト関数を計算するクラス
+:param theta: 回転ゲートの角度thetaのリスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skqulacs.qnn.classifier.QNNClassification.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassification.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassification.fit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_list</strong> – fitしたいデータのxのリスト</p></li>
+<li><p><strong>y_list</strong> – fitしたいデータのyのリスト</p></li>
+<li><p><strong>maxiter</strong> – scipy.optimize.minimizeのイテレーション回数</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>学習後のロス関数の値</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>学習後のパラメータthetaの値</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skqulacs.qnn.classifier.QNNClassification.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassification.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassification.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict outcome for given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> – Parameter of model. For most cases, give <cite>theta_opt</cite> from <cite>QNN.fit</cite>.</p></li>
+<li><p><strong>x_list</strong> – Input data to predict outcome.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of predicted data. <cite>y_pred[i]</cite> corresponds to <cite>x_list[i]</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>y_pred</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

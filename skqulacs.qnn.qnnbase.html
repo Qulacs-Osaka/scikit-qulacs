@@ -221,8 +221,56 @@
         
               <div>
                 
-  <div class="section" id="skqulacs-qnn-qnnbase-module">
-<h1>skqulacs.qnn.qnnbase module<a class="headerlink" href="#skqulacs-qnn-qnnbase-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-skqulacs.qnn.qnnbase">
+<span id="skqulacs-qnn-qnnbase-module"></span><h1>skqulacs.qnn.qnnbase module<a class="headerlink" href="#module-skqulacs.qnn.qnnbase" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="skqulacs.qnn.qnnbase.QNN">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skqulacs.qnn.qnnbase.</span></code><code class="sig-name descname"><span class="pre">QNN</span></code><a class="reference internal" href="_modules/skqulacs/qnn/qnnbase.html#QNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.qnnbase.QNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="skqulacs.qnn.qnnbase.QNN.fit">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/skqulacs/qnn/qnnbase.html#QNN.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.qnnbase.QNN.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model to given train data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_train</strong> – Train data of independent variable.</p></li>
+<li><p><strong>y_train</strong> – Train data of dependent variable.</p></li>
+<li><p><strong>maxiter</strong> – Maximum number of iterations for a cost minimization solver.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Loss of minimized cost function.
+theta_opt: Parameter of optimized model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skqulacs.qnn.qnnbase.QNN.predict">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/skqulacs/qnn/qnnbase.html#QNN.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.qnnbase.QNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict outcome for given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> – Parameter of model. For most cases, give <cite>theta_opt</cite> from <cite>QNN.fit</cite>.</p></li>
+<li><p><strong>x_list</strong> – Input data to predict outcome.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of predicted data. <cite>y_pred[i]</cite> corresponds to <cite>x_list[i]</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>y_pred</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

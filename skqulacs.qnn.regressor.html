@@ -221,8 +221,81 @@
         
               <div>
                 
-  <div class="section" id="skqulacs-qnn-regressor-module">
-<h1>skqulacs.qnn.regressor module<a class="headerlink" href="#skqulacs-qnn-regressor-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-skqulacs.qnn.regressor">
+<span id="skqulacs-qnn-regressor-module"></span><h1>skqulacs.qnn.regressor module<a class="headerlink" href="#module-skqulacs.qnn.regressor" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="skqulacs.qnn.regressor.QNNRegressor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skqulacs.qnn.regressor.</span></code><code class="sig-name descname"><span class="pre">QNNRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit_depth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal[BFGS,</span> <span class="pre">Nelder</span> <span class="pre">-</span> <span class="pre">Mead]</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit_arch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">default</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observable</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Z</span> <span class="pre">0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">mse</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mse'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
+<p>Solve regression tasks with Quantum Neural Network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_qubit</strong> – The number of qubits.</p></li>
+<li><p><strong>circuit_depth</strong> – Depth of parametric gate.</p></li>
+<li><p><strong>time_step</strong> – Elapsed time in time evolution of Hamiltonian.</p></li>
+<li><p><strong>solver</strong> – Kind of optimization solver. Methods in scipy.optimize.minimize are supported.</p></li>
+<li><p><strong>circuit_arch</strong> – Form of quantum circuit.</p></li>
+<li><p><strong>observable</strong> – String representation of observable operators.</p></li>
+<li><p><strong>n_shots</strong> – The number of measurements to compute expectation.</p></li>
+<li><p><strong>cost</strong> – Kind of cost function.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="skqulacs.qnn.regressor.QNNRegressor.observable">
+<code class="sig-name descname"><span class="pre">observable</span></code><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.observable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Observable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="skqulacs.qnn.regressor.QNNRegressor.OBSERVABLE_COEF">
+<code class="sig-name descname"><span class="pre">OBSERVABLE_COEF</span></code><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><em class="property"> <span class="pre">=</span> <span class="pre">2.0</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.OBSERVABLE_COEF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="skqulacs.qnn.regressor.QNNRegressor.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – train data of x.</p></li>
+<li><p><strong>y</strong> – train data of y.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Loss of optimized cost function.
+theta_opt: Parameter of optimized model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skqulacs.qnn.regressor.QNNRegressor.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict outcome for given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> – Parameter of model. For most cases, give <cite>theta_opt</cite> from <cite>QNN.fit</cite>.</p></li>
+<li><p><strong>x_list</strong> – Input data to predict outcome.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of predicted data. <cite>y_pred[i]</cite> corresponds to <cite>x_list[i]</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>y_pred</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
