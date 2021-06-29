@@ -92,6 +92,8 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ## Documentation
 API document of this library is available here: https://qulacs-osaka.github.io/scikit-qulacs/index.html
 
+The documentation is built and deployed on pushing(merged from PR) to `main` branch.
+
 ### Build document
 First, move into `doc`.
 ```bash

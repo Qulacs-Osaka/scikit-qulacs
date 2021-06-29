@@ -92,6 +92,8 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ## Documentation
 このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
 
+このドキュメントは `main` ブランチにプッシュ(PR からのマージ)したときにビルドされ，デプロイされます．
+
 ### Build document
 まず `doc` に移動します．
 First, move into `doc`.
