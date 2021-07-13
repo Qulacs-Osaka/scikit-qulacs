@@ -192,7 +192,7 @@ class QNNRegressor(QNN):
         return np.array(grad)
     """
     def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
-        self.circuit.update_parameter(theta)
+        self.circuit.update_parameters(theta)
         y_pred = [self._predict__inner(x) for x in x_list]
         return y_pred
 

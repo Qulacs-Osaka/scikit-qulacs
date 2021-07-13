@@ -50,7 +50,6 @@ def u_output(
     circuit_depth: int,
     time_step: float,
 ):
-    time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
     u_out = ParametricQuantumCircuit(n_qubit)
     for _ in range(circuit_depth):
         u_out.add_gate(time_evol_gate)
@@ -62,6 +61,25 @@ def u_output(
             angle = 2.0 * np.pi * np.random.rand()
             u_out.add_parametric_RX_gate(i, angle)
     return u_out
+
+
+def create_circuit(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
+    circuit = LearningCircuit(n_qubit, time_step)
+    for i in range(n_qubit):
+        circuit.add_input_RX_gate(i, np.arcsin)
+        circuit.add_input_RZ_gate(i, lambda x: np.arccos(x ** 2))
+
+    time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
+    for _ in range(c_depth):
+        circuit.add_gate(time_evol_gate)
+        for i in range(n_qubit):
+            angle = 2.0 * np.pi * np.random.rand()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * np.random.rand()
+            circuit.add_parametric_RZ_gate(i, angle)
+            angle = 2.0 * np.pi * np.random.rand()
+            circuit.add_parametric_RX_gate(i, angle)
+    return circuit
 
 
 def test_noisy_sine():
@@ -96,3 +114,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+    circuit = create_circuit(n_qubit, c_depth, time_step)
+    qnn = QNNRegressor(n_qubit, circuit)
+    _, theta = qnn.fit(x_train, y_train, maxiter=1000)
+
+    x_list = np.arange(x_min, x_max, 0.02)
+    y_pred = qnn.predict(theta, x_list)
+    plt.plot(x_train, y_train, "o")
+    plt.plot(x_list, y_pred)
+    plt.show()
