@@ -1,5 +1,4 @@
 from __future__ import annotations
-from functools import reduce
 from skqulacs.qnn.qnnbase import (
     QNN,
     _make_fullgate,
@@ -11,6 +10,9 @@ from skqulacs.qnn.qnnbase import (
 )
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from qulacs.gate import X, Z, DenseMatrix, RX, RY, RZ
+from skqulacs.circuit import LearningCircuit
+from skqulacs.qnn.qnnbase import QNN, _create_time_evol_gate, _make_hamiltonian
+from qulacs import QuantumState, QuantumCircuit, Observable
 from scipy.optimize import minimize
 from typing import List, Literal, Optional, Tuple
 import numpy as np
@@ -29,9 +31,8 @@ class QNNRegressor(QNN):
     def __init__(
         self,
         n_qubit: int,
-        circuit_depth: int,
+        circuit: LearningCircuit,
         seed: int = 0,
-        time_step: float = 0.7,
         solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
         circuit_arch: Literal["default"] = "default",
         n_shot: int = np.inf,
@@ -43,8 +44,7 @@ class QNNRegressor(QNN):
 
         """
         self.n_qubit = n_qubit
-        self.circuit_depth = circuit_depth
-        self.time_step = time_step
+        self.circuit = circuit
         self.solver = solver
         self.circuit_arch = circuit_arch
 
@@ -56,7 +56,6 @@ class QNNRegressor(QNN):
 
         self.obss = []
         self.random_state = RandomState(seed)
-        self.seed = seed
 
         self.output_gate = self._init_output_gate()  # U_out
         self.n_outputs = 0
@@ -91,8 +90,7 @@ class QNNRegressor(QNN):
         for i in range(self.n_qubit):
             self.obss[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
 
-        theta_init = self._get_output_gate_parameters()
-        print(theta_init)
+        theta_init = self.get_parameters()
         result = minimize(
             self.cost_func,
             theta_init,
@@ -101,7 +99,6 @@ class QNNRegressor(QNN):
             # jac=self._cost_func_grad,
             options={"maxiter": maxiter},
         )
-        print(self._get_output_gate_parameters())
         loss = result.fun
         theta_opt = result.x
         return loss, theta_opt
@@ -117,9 +114,7 @@ class QNNRegressor(QNN):
         res = []
         # 出力状態計算 & 観測
         for x in x_list:
-            state = self._get_input_state(x)
-            # U_outで状態を更新
-            self.output_gate.update_quantum_state(state)
+            state = self.circuit.run(x)
             # モデルの出力
             r = [
                 self.obss[i].get_expectation_value(state) for i in range(self.n_qubit)
@@ -127,54 +122,11 @@ class QNNRegressor(QNN):
             res.append(r)
         return np.array(res)
 
-    def _get_input_state(self, x):
-        # xはn_features次元のnp.array()
-        state = QuantumState(self.n_qubit)
-
-        for i in range(self.n_qubit):
-            xa = x[i % len(x)]
-            xa = min(1, max(-1, xa))
-            RY(i, np.arcsin(xa)).update_quantum_state(state)
-            RZ(i, np.arccos(xa * xa)).update_quantum_state(state)
-        return state
-
-    def _init_output_gate(self):
-        u_out = ParametricQuantumCircuit(self.n_qubit)
-        time_evol_gate = _create_time_evol_gate(
-            self.n_qubit, time_step=self.time_step, random_state=self.random_state
-        )
-
-        for _ in range(self.circuit_depth):
-
-            u_out.add_gate(time_evol_gate)
-            for i in range(self.n_qubit):
-                angle = 2.0 * np.pi * self.random_state.rand() - np.pi
-                u_out.add_parametric_RX_gate(i, angle)
-                angle = 2.0 * np.pi * self.random_state.rand() - np.pi
-                u_out.add_parametric_RZ_gate(i, angle)
-                angle = 2.0 * np.pi * self.random_state.rand() - np.pi
-                u_out.add_parametric_RX_gate(i, angle)
-        return u_out
-
-    def _update_output_gate(self, theta):
-        """U_outをパラメータθで更新"""
-        parameter_count = self.output_gate.get_parameter_count()
-        for i in range(parameter_count):
-            self.output_gate.set_parameter(i, theta[i])
-
-    def _get_output_gate_parameters(self):
-        """U_outのパラメータθを取得"""
-        parameter_count = self.output_gate.get_parameter_count()
-        theta = [
-            self.output_gate.get_parameter(index) for index in range(parameter_count)
-        ]
-        return np.array(theta)
-
     def cost_func(self, theta, x_train, y_train):
         # 生のデータを入れる
         if self.cost == "mse":
             # mse (default)
-            self._update_output_gate(theta)
+            self.circuit.update_parameters(theta)
             y_pred = self.predict(x_train)
             costa = mean_squared_error(y_pred, y_train)
             cost = ((y_pred - y_train) ** 2).mean()
@@ -187,11 +139,11 @@ class QNNRegressor(QNN):
 
     def get_y_scale_param(self, y):
         # 複数入力がある場合に対応したい
-        saisyo = np.min(y, axis=0)
-        saidai = np.max(y, axis=0)
-        sa = (saidai - saisyo) / 2 * 1.7
+        minimum = np.min(y, axis=0)
+        maximum = np.max(y, axis=0)
+        sa = (maximum - minimum) / 2 * 1.7
 
-        return [saisyo, saidai, sa]
+        return [minimum, maximum, sa]
 
     def do_y_scale(self, y):
         # yを[-1,1]の範囲に収める
@@ -239,3 +191,12 @@ class QNNRegressor(QNN):
         ]
         return np.array(grad)
     """
+    def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
+        self.circuit.update_parameter(theta)
+        y_pred = [self._predict__inner(x) for x in x_list]
+        return y_pred
+
+    def _predict__inner(self, x: float) -> float:
+        """Predict outcome of given x."""
+        state = self.circuit.run(x)
+        return self.observable.get_expectation_value(state)

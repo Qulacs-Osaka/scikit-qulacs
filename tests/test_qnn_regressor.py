@@ -1,3 +1,4 @@
+from skqulacs.circuit import LearningCircuit
 import numpy as np
 import random
 from numpy.random import RandomState
@@ -7,6 +8,9 @@ from sklearn.metrics import mean_squared_error
 
 def func_to_learn(x):
     return np.sin(x[0] * x[1] * np.pi)
+from qulacs import QuantumCircuit, ParametricQuantumCircuit
+from skqulacs.qnn.qnnbase import _create_time_evol_gate
+import matplotlib.pyplot as plt
 
 
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
@@ -29,6 +33,35 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
     mag_noise = 0.0005
     y_train += mag_noise * random_state.randn(num_x)
     return x_train, y_train
+
+
+def u_input(x: float, n_qubit: int):
+    u_in = QuantumCircuit(n_qubit)
+    angle_y = np.arcsin(x)
+    angle_z = np.arccos(x ** 2)
+    for i in range(n_qubit):
+        u_in.add_RY_gate(i, angle_y)
+        u_in.add_RZ_gate(i, angle_z)
+    return u_in
+
+
+def u_output(
+    n_qubit: int,
+    circuit_depth: int,
+    time_step: float,
+):
+    time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
+    u_out = ParametricQuantumCircuit(n_qubit)
+    for _ in range(circuit_depth):
+        u_out.add_gate(time_evol_gate)
+        for i in range(n_qubit):
+            angle = 2.0 * np.pi * np.random.rand()
+            u_out.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * np.random.rand()
+            u_out.add_parametric_RZ_gate(i, angle)
+            angle = 2.0 * np.pi * np.random.rand()
+            u_out.add_parametric_RX_gate(i, angle)
+    return u_out
 
 
 def test_noisy_sine():
@@ -58,6 +91,8 @@ def test_noisy_sine():
 def main():
     test_noisy_sine()
 
+    qnn = QNNRegressor(circuit)
+    _, theta = qnn.fit(x_train, y_train, maxiter=1000)
 
 if __name__ == "__main__":
     main()
