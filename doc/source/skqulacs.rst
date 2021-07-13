@@ -10,6 +10,14 @@ Subpackages
    skqulacs.qnn
    skqulacs.qsvm
 
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   skqulacs.circuit
+
 Module contents
 ---------------
 

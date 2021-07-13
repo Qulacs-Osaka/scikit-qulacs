@@ -64,7 +64,7 @@ def u_output(
 
 
 def create_circuit(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
-    circuit = LearningCircuit(n_qubit, time_step)
+    circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
         circuit.add_input_RX_gate(i, np.arcsin)
         circuit.add_input_RZ_gate(i, lambda x: np.arccos(x ** 2))
@@ -120,6 +120,6 @@ if __name__ == "__main__":
 
     x_list = np.arange(x_min, x_max, 0.02)
     y_pred = qnn.predict(theta, x_list)
-    plt.plot(x_train, y_train, "o")
-    plt.plot(x_list, y_pred)
-    plt.show()
+    # plt.plot(x_train, y_train, "o")
+    # plt.plot(x_list, y_pred)
+    # plt.show()

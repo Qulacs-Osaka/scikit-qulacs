@@ -5,6 +5,7 @@ from qulacs import QuantumState, ParametricQuantumCircuit
 
 
 class _Axis(Enum):
+    """Specifying axis. Used in inner private method in LearningCircuit."""
     X = auto()
     Y = auto()
     Z = auto()
@@ -22,7 +23,7 @@ class _Parameter:
     """
 
     pos: int
-    theta_pos: Optional[int]  # position at theta list.
+    theta_pos: Optional[int]
     value: Optional[float]
     func: Union[
         Callable[[float], float], Callable[[float, float], float], None
@@ -35,18 +36,41 @@ class _Parameter:
     def is_input(self) -> bool:
         return self.func is not None
 
-    def set_value(self, value: float):
-        self.value = value
+    def calculate_angle(self, x: float) -> float:
+        """Calculate angle for rotation gate from input data x.
+
+        Args:
+            x: Input data encoded by self.func.
+        """
+        if self.is_learning_parameter():
+            return self.func(x)
+        return self.func(self.value, x)
 
 
 class LearningCircuit:
+    """Construct and run quantum circuit for QNN.
+
+    Args:
+        n_qubit: The number of qubits in the circuit.
+
+    Examples:
+        >>> from skqulacs.circuit import LearningCircuit
+        >>> from skqulacs.qnn.regressor import QNNRegressor
+        >>> n_qubit = 2
+        >>> circuit = LearningCircuit(n_qubit)
+        >>> circuit.add_parametric_RX_gate(0, 0.5)
+        >>> circuit.add_input_RZ_gate(1, np.arcsin)
+        >>> model = QNNRegressor(n_qubit, circuit)
+        >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
+        >>> x_list = np.arange(x_min, x_max, 0.02)
+        >>> y_pred = qnn.predict(theta, x_list)
+    """
+
     def __init__(
         self,
         n_qubit: int,
-        time_step: float,
     ) -> None:
         self.n_qubit = n_qubit
-        self.time_step = time_step
         self._circuit = ParametricQuantumCircuit(n_qubit)
         self._parameter_list: List[_Parameter] = []
         self._learning_gate_count = 0
@@ -207,31 +231,36 @@ class LearningCircuit:
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Z, input_func)
 
     def update_parameters(self, theta: List[float]):
+        """Update learning parameter of the circuit.
+
+        Args:
+            theta: New learning parameter.
+        """
         for parameter in self._parameter_list:
             if parameter.is_learning_parameter():
-                print(parameter.pos, self._circuit.get_parameter_count())
-                parameter.set_value(theta[parameter.theta_pos])
+                parameter.value = theta[parameter.theta_pos]
                 if not parameter.is_input():
+                    # For non-input parameter, just update.
                     self._circuit.set_parameter(
                         parameter.pos, theta[parameter.theta_pos]
                     )
 
     def get_parameters(self):
-        theta = [p.value for p in self._parameter_list if p.is_learning_parameter()]
-        return theta
+        theta_list = [
+            p.value for p in self._parameter_list if p.is_learning_parameter()
+        ]
+        return theta_list
 
     def run(self, x: float) -> QuantumState:
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
         for parameter in self._parameter_list:
             if parameter.is_input():
-                angle = (
-                    parameter.func(parameter.value, x)
-                    if parameter.is_learning_parameter()
-                    else parameter.func(x)
-                )
+                # Input parameter is updated here, not update_parameters(),
+                # because input parameter is determined with input data.
+                angle = parameter.calculate_angle(x)
+                parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
-                parameter.set_value(angle)
         self._circuit.update_quantum_state(state)
         return state
 
@@ -284,6 +313,8 @@ class LearningCircuit:
             _Parameter(self._circuit.get_parameter_count(), None, None, input_func)
         )
 
+        # Input gate is implemented with parametric gate because this gate should be
+        # updated with input data in every iteration.
         if target == _Axis.X:
             self._circuit.add_parametric_RX_gate(index, 0.0)
         elif target == _Axis.Y:
