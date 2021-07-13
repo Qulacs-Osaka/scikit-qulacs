@@ -204,13 +204,23 @@
                 
   <h1>Source code for skqulacs.qnn.regressor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">skqulacs.qnn.qnnbase</span> <span class="kn">import</span> <span class="n">QNN</span><span class="p">,</span> <span class="n">_create_time_evol_gate</span><span class="p">,</span> <span class="n">_make_hamiltonian</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.qnnbase</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QNN</span><span class="p">,</span>
+    <span class="n">_make_fullgate</span><span class="p">,</span>
+    <span class="n">_create_time_evol_gate</span><span class="p">,</span>
+    <span class="n">_get_x_scale_param</span><span class="p">,</span>
+    <span class="n">_min_max_scaling</span><span class="p">,</span>
+    <span class="n">_softmax</span><span class="p">,</span>
+    <span class="n">make_hamiltonian</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">QuantumState</span><span class="p">,</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">ParametricQuantumCircuit</span><span class="p">,</span> <span class="n">Observable</span>
-<span class="kn">from</span> <span class="nn">qulacs.gate</span> <span class="kn">import</span> <span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">DenseMatrix</span>
+<span class="kn">from</span> <span class="nn">qulacs.gate</span> <span class="kn">import</span> <span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">DenseMatrix</span><span class="p">,</span> <span class="n">RX</span><span class="p">,</span> <span class="n">RY</span><span class="p">,</span> <span class="n">RZ</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
 
 <span class="c1"># 基本ゲート</span>
 <span class="n">I_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
@@ -219,134 +229,221 @@
 
 
 <div class="viewcode-block" id="QNNRegressor"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor">[docs]</a><span class="k">class</span> <span class="nc">QNNRegressor</span><span class="p">(</span><span class="n">QNN</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Solve regression tasks with Quantum Neural Network.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        n_qubit: The number of qubits.</span>
-<span class="sd">        circuit_depth: Depth of parametric gate.</span>
-<span class="sd">        time_step: Elapsed time in time evolution of Hamiltonian.</span>
-<span class="sd">        solver: Kind of optimization solver. Methods in scipy.optimize.minimize are supported.</span>
-<span class="sd">        circuit_arch: Form of quantum circuit.</span>
-<span class="sd">        observable: String representation of observable operators.</span>
-<span class="sd">        n_shots: The number of measurements to compute expectation.</span>
-<span class="sd">        cost: Kind of cost function.</span>
-<span class="sd">    Attributes:</span>
-<span class="sd">        observable: Observable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">OBSERVABLE_COEF</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="sd">&quot;&quot;&quot;quantum circuit learningを用いて分類問題を解く&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">circuit_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
         <span class="n">solver</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;BFGS&quot;</span><span class="p">,</span> <span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">,</span>
         <span class="n">circuit_arch</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-        <span class="n">observable</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Z 0&quot;</span><span class="p">,</span>
         <span class="n">n_shot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
         <span class="n">cost</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mse&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある</span>
+<span class="sd">        :param c_depth: circuitの深さ</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit_depth</span> <span class="o">=</span> <span class="n">circuit_depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">time_step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit_arch</span> <span class="o">=</span> <span class="n">circuit_arch</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observable</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observable</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OBSERVABLE_COEF</span><span class="p">,</span> <span class="n">observable</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">n_shot</span> <span class="o">=</span> <span class="n">n_shot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">u_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_u_output</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># yのスケーリングのパラメータ</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">obss</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_output_gate</span><span class="p">()</span>  <span class="c1"># U_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="QNNRegressor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Fit model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x: train data of x.</span>
-<span class="sd">            y: train data of y.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            loss: Loss of optimized cost function.</span>
-<span class="sd">            theta_opt: Parameter of optimized model.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param x_list: fitしたいデータのxのリスト</span>
+<span class="sd">        :param y_list: fitしたいデータのyのリスト</span>
+<span class="sd">        :param maxiter: scipy.optimize.minimizeのイテレーション回数</span>
+<span class="sd">        :return: 学習後のロス関数の値</span>
+<span class="sd">        :return: 学習後のパラメータthetaの値</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="s2">&quot;Z 0&quot;</span><span class="p">)</span>
-        <span class="n">parameter_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_out</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
-        <span class="n">theta_init_a</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">u_out</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parameter_count</span><span class="p">)]</span>
-        <span class="n">theta_init</span> <span class="o">=</span> <span class="n">theta_init_a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># 乱数でU_outを作成</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_output_gate</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="n">_get_x_scale_param</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_y_scale_param</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+        <span class="c1"># x_trainからscaleのparamを取得</span>
+        <span class="c1"># regreはyもscaleさせる</span>
+        <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">_min_max_scaling</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span><span class="p">)</span>
+        <span class="n">y_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_y_scale</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">obss</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">y_train</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Z0, Z1, Z2をオブザーバブルとして設定</span>
+
+        <span class="n">theta_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_gate_parameters</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">theta_init</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
-            <span class="n">QNNRegressor</span><span class="o">.</span><span class="n">_cost_func</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">,</span>
             <span class="n">theta_init</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
             <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span>
+            <span class="c1"># jac=self._cost_func_grad,</span>
             <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
         <span class="p">)</span>
-
-        <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_output_gate_parameters</span><span class="p">())</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
+        <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
         <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">theta_opt</span></div>
 
-<div class="viewcode-block" id="QNNRegressor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">x_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_u_out</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-        <span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_predict__inner</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_list</span><span class="p">]</span>
+<div class="viewcode-block" id="QNNRegressor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]):</span>
+        <span class="c1"># x_test = array-like of of shape (n_samples, n_features)</span>
+        <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">_min_max_scaling</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">y_pred</span></div>
 
-    <span class="k">def</span> <span class="nf">_predict__inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Predict outcome of given x.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_predict_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_list</span><span class="p">):</span>
+        <span class="c1"># 入力xに関して、量子回路を通した生のデータを表示</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 出力状態計算 &amp; 観測</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_list</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_state</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="c1"># U_outで状態を更新</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="c1"># モデルの出力</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">obss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+            <span class="p">]</span>  <span class="c1"># 出力多次元ver</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_input_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># xはn_features次元のnp.array()</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">set_zero_state</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_u_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">u_out</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_cost_func</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">QNNRegressor</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
-        <span class="n">y_predict</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x_train</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">cost</span> <span class="o">==</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">((</span><span class="n">y_predict</span> <span class="o">-</span> <span class="n">y_train</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_u_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="n">u_in</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="n">angle_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">angle_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
-            <span class="n">u_in</span><span class="o">.</span><span class="n">add_RY_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle_y</span><span class="p">)</span>
-            <span class="n">u_in</span><span class="o">.</span><span class="n">add_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle_z</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">u_in</span>
+            <span class="n">xa</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+            <span class="n">xa</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">xa</span><span class="p">))</span>
+            <span class="n">RY</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">xa</span><span class="p">))</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">RZ</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">xa</span> <span class="o">*</span> <span class="n">xa</span><span class="p">))</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span>
 
-    <span class="k">def</span> <span class="nf">_u_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">time_evol_gate</span> <span class="o">=</span> <span class="n">_create_time_evol_gate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_init_output_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">u_out</span> <span class="o">=</span> <span class="n">ParametricQuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+        <span class="n">time_evol_gate</span> <span class="o">=</span> <span class="n">_create_time_evol_gate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
+        <span class="p">)</span>
+
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit_depth</span><span class="p">):</span>
+
             <span class="n">u_out</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">time_evol_gate</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
-                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
                 <span class="n">u_out</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
-                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
                 <span class="n">u_out</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
-                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
                 <span class="n">u_out</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">u_out</span>
 
-    <span class="k">def</span> <span class="nf">_time_evol_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">_make_hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="n">diag</span><span class="p">,</span> <span class="n">eigen_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">)</span>
-        <span class="n">time_evol_op</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eigen_vecs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">*</span> <span class="n">diag</span><span class="p">))),</span>
-            <span class="n">eigen_vecs</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">DenseMatrix</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">),</span> <span class="n">time_evol_op</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_update_output_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;U_outをパラメータθで更新&quot;&quot;&quot;</span>
+        <span class="n">parameter_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parameter_count</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_update_u_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-        <span class="n">param_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_out</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_count</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">u_out</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+    <span class="k">def</span> <span class="nf">_get_output_gate_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;U_outのパラメータθを取得&quot;&quot;&quot;</span>
+        <span class="n">parameter_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_gate</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parameter_count</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QNNRegressor.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="c1"># 生のデータを入れる</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">==</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
+            <span class="c1"># mse (default)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_output_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+            <span class="n">costa</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="p">((</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y_train</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">costa</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">costa</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="QNNRegressor.get_y_scale_param"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.get_y_scale_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_y_scale_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="c1"># 複数入力がある場合に対応したい</span>
+        <span class="n">saisyo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">saidai</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sa</span> <span class="o">=</span> <span class="p">(</span><span class="n">saidai</span> <span class="o">-</span> <span class="n">saisyo</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="mf">1.7</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">saisyo</span><span class="p">,</span> <span class="n">saidai</span><span class="p">,</span> <span class="n">sa</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="QNNRegressor.do_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.do_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">do_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="c1"># yを[-1,1]の範囲に収める</span>
+        <span class="c1"># print([((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y])</span>
+        <span class="k">return</span> <span class="p">[((</span><span class="n">ya</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">ya</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="QNNRegressor.rev_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.rev_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_inr</span><span class="p">):</span>
+        <span class="c1"># y_inrに含まれる数を、　self.scale_paramを用いて復元する</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="p">((</span><span class="n">ya</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">ya</span> <span class="ow">in</span> <span class="n">y_inr</span>
+        <span class="p">]</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # for BFGS</span>
+<span class="sd">    def _cost_func_grad(self, theta, x_train):</span>
+<span class="sd">        x_scaled=_min_max_scaling(x_test)</span>
+<span class="sd">        y_minus_t = self._predict_inner(theta, x_scaled) - self.y_list</span>
+<span class="sd">        B_grad_list = self._b_grad(theta, x_scaled)</span>
+<span class="sd">        grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]</span>
+<span class="sd">        return np.array(grad)</span>
+
+<span class="sd">    # for BFGS</span>
+<span class="sd">    def _b_grad(self, theta, x_train):</span>
+<span class="sd">        # dB/dθのリストを返す</span>
+<span class="sd">        theta_plus = [</span>
+<span class="sd">            theta.copy() + np.eye(len(theta))[i] * np.pi / 2.0</span>
+<span class="sd">            for i in range(len(theta))</span>
+<span class="sd">        ]</span>
+<span class="sd">        theta_minus = [</span>
+<span class="sd">            theta.copy() - np.eye(len(theta))[i] * np.pi / 2.0</span>
+<span class="sd">            for i in range(len(theta))</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        grad = [</span>
+<span class="sd">            (</span>
+<span class="sd">                self._predict_inner(theta_plus[i], x_train)</span>
+<span class="sd">                - self._predict_inner(theta_minus[i], x_train)</span>
+<span class="sd">            )</span>
+<span class="sd">            / 2.0</span>
+<span class="sd">            for i in range(len(theta))</span>
+<span class="sd">        ]</span>
+<span class="sd">        return np.array(grad)</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
 </pre></div>
 
               </div>
