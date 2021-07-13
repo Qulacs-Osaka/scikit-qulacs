@@ -2,17 +2,21 @@ from __future__ import annotations
 from functools import reduce
 from skqulacs.qnn.qnnbase import (
     QNN,
+    _make_fullgate,
     _create_time_evol_gate,
+    _get_x_scale_param,
     _min_max_scaling,
     _softmax,
+    make_hamiltonian,
 )
 from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
 from scipy.sparse.construct import rand
-from qulacs.gate import X, Z
+from qulacs.gate import X, Z, DenseMatrix, RX, RY, RZ
 from scipy.optimize import minimize
 from sklearn.metrics import log_loss
 from numpy.random import RandomState
 import numpy as np
+from numpy.random import RandomState
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
@@ -23,7 +27,18 @@ Z_mat = Z(0).get_matrix()
 class QNNClassification(QNN):
     """quantum circuit learningを用いて分類問題を解く"""
 
-    def __init__(self, n_qubit: int, circuit_depth: int, num_class: int, seed: int = 0):
+    def __init__(
+        self,
+        n_qubit: int,
+        circuit_depth: int,
+        num_class: int,
+        seed: int = 0,
+        time_step: float = 0.7,
+        solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
+        circuit_arch: Literal["default"] = "default",
+        n_shot: int = np.inf,
+        cost: Literal["log_loss"] = "log_loss",
+    ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
         :param c_depth: circuitの深さ
@@ -32,18 +47,23 @@ class QNNClassification(QNN):
         self.n_qubit = n_qubit
         self.circuit_depth = circuit_depth
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
-        self.input_state_list = []  # |ψ_in>のリスト
-        self.theta_list = []
+        self.time_step = time_step
+        self.solver = solver
+        self.circuit_arch = circuit_arch
+
+        self.n_shot = n_shot
+        self.cost = cost
+
+        self.scale_x_param = []
+        self.scale_y_param = []  # yのスケーリングのパラメータ
+
+        self.obss = []
         self.random_state = RandomState(seed)
-        self.output_gate = self._create_initial_output_gate()  # U_out
+        self.seed = seed
 
-        # オブザーバブルの準備
-        obs = [Observable(n_qubit) for _ in range(num_class)]
-        for i in range(len(obs)):
-            obs[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z3をオブザーバブルとして設定
-        self.obs = obs
+        self.output_gate = self._init_output_gate()  # U_out
 
-    def fit(self, x_train, y_train, maxiter: int = 100):
+    def fit(self, x_train, y_train, maxiter: Optional[int] = None):
         """
         :param x_list: fitしたいデータのxのリスト
         :param y_list: fitしたいデータのyのリスト
@@ -51,99 +71,83 @@ class QNNClassification(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-        # 初期状態生成
-        self._set_input_state(x_train)
-        # 乱数でU_outを作成
-        self._create_initial_output_gate()
-        # 正解ラベル
-        # one-hot 表現 shape:(150, 3)
-        self.y_list = np.eye(3)[y_train]
-        theta_init = self.theta_list
 
+        # 乱数でU_outを作成
+        self._init_output_gate()
+
+        self.scale_x_param = _get_x_scale_param(x_train)
+        self.scale_y_param = self.get_y_scale_param(y_train)
+        # x_trainからscaleのparamを取得
+        # classはyにone-hot表現をする
+        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        y_scaled = self.do_y_scale(y_train)
+
+        self.obss = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
+        for i in range(self.n_qubit):
+            self.obss[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
+
+        theta_init = self._get_output_gate_parameters()
         result = minimize(
             self.cost_func,
             theta_init,
-            args=(x_train,),
-            method="BFGS",
-            jac=self._cost_func_grad,
+            args=(x_train, y_train),
+            method=self.solver,
+            # jac=self._cost_func_grad,
             options={"maxiter": maxiter},
         )
         loss = result.fun
         theta_opt = result.x
         return loss, theta_opt
 
-    def predict(self, theta, x):
-        y_pred = self._predict_inner(theta, x)
-        y_pred = list(map(np.argmax, y_pred))
+    def predict(self, x_test: List[List[float]]):
+        # x_test = array-like of of shape (n_samples, n_features)
+        x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
         return y_pred
 
-    def _predict_inner(self, theta, x):
-        """x_listに対して、モデルの出力を計算"""
-        # 入力状態準備
-        # st_list = self.input_state_list
-        # ここで各要素ごとにcopy()しないとディープコピーにならない
-        self._update_output_gate(theta)
-        self._set_input_state(x)
-        state_list = [state.copy() for state in self.input_state_list]
-
+    def _predict_inner(self, x_list):
+        # 入力xに関して、量子回路を通した生のデータを表示
         res = []
         # 出力状態計算 & 観測
-        for state in state_list:
+        # print(self.obss)
+        for x in x_list:
+            state = self._get_input_state(x)
             # U_outで状態を更新
             self.output_gate.update_quantum_state(state)
             # モデルの出力
-            r = [obs.get_expectation_value(state) for obs in self.obs]  # 出力多次元ver
-            r = _softmax(r)
-            res.append(r.tolist())
+            r = [
+                self.obss[i].get_expectation_value(state) for i in range(self.n_qubit)
+            ]  # 出力多次元ver
+            res.append(r)
         return np.array(res)
 
-    def _set_input_state(self, x_list):
-        """入力状態のリストを作成"""
-        x_list_normalized = _min_max_scaling(x_list)  # xを[-1, 1]の範囲にスケール
-
-        state_list = []
-        for x in x_list_normalized:
-            input_gate = self._create_input_gate(x)
-            state = QuantumState(self.n_qubit)
-            input_gate.update_quantum_state(state)
-            state_list.append(state)
-        self.input_state_list = state_list
-
-    def _create_input_gate(self, x):
-        # 単一のxをエンコードするゲートを作成する関数
-        # xは入力特徴量(2次元)
-        # xの要素は[-1, 1]の範囲内
-        u_in = QuantumCircuit(self.n_qubit)
-        angle_y = np.arcsin(x)
-        angle_z = np.arccos(x ** 2)
+    def _get_input_state(self, x):
+        # xはn_features次元のnp.array()
+        state = QuantumState(self.n_qubit)
 
         for i in range(self.n_qubit):
-            u_in.add_RY_gate(i, angle_y[i % len(angle_y)])
-            u_in.add_RZ_gate(i, angle_z[i % len(angle_z)])
+            xa = x[i % len(x)]
+            xa = min(1, max(-1, xa))
+            RY(i, np.arcsin(xa)).update_quantum_state(state)
+            RZ(i, np.arccos(xa * xa)).update_quantum_state(state)
+        return state
 
-        return u_in
-
-    def _create_initial_output_gate(self):
-        """output用ゲートU_outの組み立て&パラメータ初期値の設定"""
+    def _init_output_gate(self):
         u_out = ParametricQuantumCircuit(self.n_qubit)
         time_evol_gate = _create_time_evol_gate(
-            self.n_qubit, random_state=self.random_state
+            self.n_qubit, time_step=self.time_step, random_state=self.random_state
         )
-        num_parametric_gate = 3
-        theta = (
-            2.0
-            * np.pi
-            * self.random_state.rand(
-                self.circuit_depth, self.n_qubit, num_parametric_gate
-            )
-        )
-        self.theta_list = theta.flatten()
-        for d in range(self.circuit_depth):
+
+        for _ in range(self.circuit_depth):
+
             u_out.add_gate(time_evol_gate)
             for i in range(self.n_qubit):
-                u_out.add_parametric_RX_gate(i, theta[d, i, 0])
-                u_out.add_parametric_RZ_gate(i, theta[d, i, 1])
-                u_out.add_parametric_RX_gate(i, theta[d, i, 2])
+                angle = 2.0 * np.pi * self.random_state.rand()
+                u_out.add_parametric_RX_gate(i, angle)
+                angle = 2.0 * np.pi * self.random_state.rand()
+                u_out.add_parametric_RZ_gate(i, angle)
+                angle = 2.0 * np.pi * self.random_state.rand()
+                u_out.add_parametric_RX_gate(i, angle)
         return u_out
 
     def _update_output_gate(self, theta):
@@ -160,14 +164,96 @@ class QNNClassification(QNN):
         ]
         return np.array(theta)
 
-    def cost_func(self, theta, x_train):
-        """コスト関数を計算するクラス
-        :param theta: 回転ゲートの角度thetaのリスト
-        """
-        y_pred = self._predict_inner(theta, x_train)
-        # cross-entropy loss
-        return log_loss(self.y_list, y_pred)
+    def cost_func(self, theta, x_train, y_train):
+        # 生のデータを入れる
+        if self.cost == "log_loss":
+            # cross-entropy loss (default)
+            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+            y_scaled = self.do_y_scale(y_train)
+            self._update_output_gate(theta)
+            y_pred = self._predict_inner(x_scaled)
+            # print(y_pred)
+            # predについて、softmaxをする
+            ypf = []
+            for i in range(len(y_pred)):
+                for j in range(len(self.scale_y_param[0])):
+                    hid = self.scale_y_param[1][j]
+                    wa = 0
+                    for k in range(self.scale_y_param[0][j]):
+                        wa += np.exp(5 * y_pred[i][hid + k])
+                    # print(wa)
+                    for k in range(self.scale_y_param[0][j]):
+                        ypf.append(np.exp(5 * y_pred[i][hid + k]) / wa)
+            # print(ypf)
+            ysf = y_scaled.ravel()
+            # print(ypf)
+            cost = 0
+            cost_debug = [0, 0, 0, 0, 0, 0]
+            for i in range(len(ysf)):
+                if ysf[i] == 1:
+                    cost -= np.log(ypf[i])
+                    cost_debug[i % 3] -= np.log(ypf[i])
+                else:
+                    cost -= np.log(1 - ypf[i])
+                    cost_debug[3 + i % 3] -= np.log(1 - ypf[i])
+                # print(ypf[i],ysf[i])
+            cost /= len(ysf)
+            # print("debag gosa=")
+            print(cost)
+            print(cost_debug)
+            return cost
+        else:
+            raise NotImplementedError(
+                f"Cost function {self.cost} is not implemented yet."
+            )
 
+    def get_y_scale_param(self, y):
+        # 複数入力がある場合に対応したい
+        # yの最大値をもつ
+        syurui = np.max(y, axis=0)
+        syurui = syurui.astype(int)
+        syurui = syurui + 1
+        if not isinstance(syurui, np.ndarray):
+            eee = syurui
+            syurui = np.zeros(1, dtype=int)
+            syurui[0] = eee
+        rui = np.concatenate((np.zeros(1, dtype=int), syurui.cumsum()))
+        # print(rui)
+        # print(syurui)
+        return [syurui, rui]
+
+    def do_y_scale(self, y):
+        # yをone-hot表現にする 複数入力への対応もする
+        clsnum = int(self.scale_y_param[1][-1])
+        res = np.zeros((len(y), clsnum), dtype=int)
+        # print(clsnum)
+        for i in range(len(y)):
+            if y.ndim == 1:
+                res[i][y[i]] = 1
+            else:
+                for j in range(len(y[i])):
+                    res[i][y[i][j] + self.scale_y_param[1][j]] = 1
+        return res
+
+    def rev_y_scale(self, y_inr):
+        # argmaxをとる
+        # one-hot表現の受け取りをしたら、それを与えられた番号にして返す
+        print(y_inr)
+        res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
+        for i in range(len(y_inr)):
+            for j in range(len(self.scale_y_param[0])):
+                hid = self.scale_y_param[1][j]
+                sai = -9999
+                arg = 0
+                print(self.scale_y_param[0][j])
+                for k in range(self.scale_y_param[0][j]):
+                    if sai < y_inr[i][hid + k]:
+                        sai = y_inr[i][hid + k]
+                        arg = k
+                res[i][j] = arg
+        return res
+
+    """
     # for BFGS
     def _cost_func_grad(self, theta, x_train):
         y_minus_t = self._predict_inner(theta, x_train) - self.y_list
@@ -196,3 +282,4 @@ class QNNClassification(QNN):
             for i in range(len(theta))
         ]
         return np.array(grad)
+    """
