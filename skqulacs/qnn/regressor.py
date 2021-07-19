@@ -10,7 +10,6 @@ from sklearn.metrics import mean_squared_error
 from skqulacs.circuit import LearningCircuit
 from scipy.optimize import minimize
 from typing import List, Literal, Optional, Tuple
-from numpy.random import RandomState
 import numpy as np
 
 # 基本ゲート
@@ -26,7 +25,6 @@ class QNNRegressor(QNN):
         self,
         n_qubit: int,
         circuit: LearningCircuit,
-        seed: int = 0,
         solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
         n_shot: int = np.inf,
         cost: Literal["mse"] = "mse",
@@ -52,7 +50,6 @@ class QNNRegressor(QNN):
             for i in range(self.n_qubit):
                 observable.add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
             self.observables.append(observable)
-        self.random_state = RandomState(seed)
 
         self.n_outputs = 0
 

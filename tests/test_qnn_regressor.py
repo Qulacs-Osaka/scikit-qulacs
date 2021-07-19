@@ -1,8 +1,7 @@
 from typing import List, Tuple
 from skqulacs.circuit import LearningCircuit
 import numpy as np
-import random
-from numpy.random import RandomState
+from numpy.random import default_rng
 from skqulacs.qnn import QNNRegressor
 from skqulacs.qnn.qnnbase import _create_time_evol_gate
 from sklearn.metrics import mean_squared_error
@@ -41,24 +40,21 @@ def sine_two_vars(x: List[float]) -> float:
 def generate_noisy_sine_two_vars(
     x_min: float, x_max: float, num_x: int
 ) -> Tuple[List[List[float]], List[float]]:
-    random_state = RandomState(0)
-    x_train = []
-    y_train = []
-    for _ in range(num_x):
-        xa = random_state.uniform(x_min, x_max)
-        xb = random_state.uniform(x_min, x_max)
-        x_train.append([xa, xb])
-        y_train.append(sine_two_vars([xa, xb]))
-        # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
-    mag_noise = 0.0005
-    y_train += mag_noise * random_state.randn(num_x)
+    rng = default_rng(0)
+    x_train = [
+        [rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)
+    ]
+    # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
+    y_train = [sine_two_vars(x) for x in x_train]
+    mag_noise = 0.001
+    y_train += mag_noise * rng.random(num_x)
     return x_train, y_train
 
 
 def test_noisy_sine_two_vars():
     x_min = -0.5
     x_max = 0.5
-    num_x = 100
+    num_x = 50
     x_train, y_train = generate_noisy_sine_two_vars(x_min, x_max, num_x)
 
     n_qubit = 4
@@ -81,22 +77,18 @@ def sine(x: float) -> float:
 def generate_noisy_sine(
     x_min: float, x_max: float, num_x: int
 ) -> Tuple[List[List[float]], List[float]]:
-    random_state = RandomState(0)
-    x_train = []
-    y_train = []
-    for _ in range(num_x):
-        x = random_state.uniform(x_min, x_max)
-        x_train.append([x])
-        y_train.append(sine(x))
+    rng = default_rng(0)
+    x_train = [[rng.uniform(x_min, x_max)] for _ in range(num_x)]
+    y_train = [sine(x[0]) for x in x_train]
     mag_noise = 0.01
-    y_train += mag_noise * random_state.randn(num_x)
+    y_train += mag_noise * rng.random(num_x)
     return x_train, y_train
 
 
 def test_noisy_sine():
     x_min = -1.0
     x_max = 1.0
-    num_x = 100
+    num_x = 50
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
 
     n_qubit = 3
