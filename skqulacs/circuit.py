@@ -248,7 +248,8 @@ class LearningCircuit:
                         parameter.pos, theta[parameter.theta_pos]
                     )
 
-    def get_parameters(self):
+    def get_parameters(self) -> List[float]:
+        """Get a list of learning parameters."""
         theta_list = [
             p.value for p in self._parameter_list if p.is_learning_parameter()
         ]

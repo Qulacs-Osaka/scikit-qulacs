@@ -28,7 +28,6 @@ class QNNRegressor(QNN):
         circuit: LearningCircuit,
         seed: int = 0,
         solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
-        circuit_arch: Literal["default"] = "default",
         n_shot: int = np.inf,
         cost: Literal["mse"] = "mse",
     ) -> None:
@@ -40,7 +39,6 @@ class QNNRegressor(QNN):
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.solver = solver
-        self.circuit_arch = circuit_arch
 
         self.n_shot = n_shot
         self.cost = cost
@@ -59,7 +57,10 @@ class QNNRegressor(QNN):
         self.n_outputs = 0
 
     def fit(
-        self, x_train, y_train, maxiter: Optional[int] = None
+        self,
+        x_train: List[List[float]],
+        y_train: List[float],
+        maxiter: Optional[int] = None,
     ) -> Tuple[float, np.ndarray]:
         """
         :param x_list: fitしたいデータのxのリスト
