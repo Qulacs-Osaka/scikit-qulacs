@@ -1,11 +1,7 @@
 from abc import ABC, abstractmethod
 from functools import reduce
 from typing import List, Optional, Tuple
-from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
-from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix
-from scipy.optimize import minimize
-from sklearn.metrics import log_loss
 from numpy.random import RandomState
 import numpy as np
 
@@ -66,13 +62,13 @@ def _create_time_evol_gate(
 
 
 def _get_x_scale_param(x):
-    saisyo = np.min(x, axis=0)
-    saidai = np.max(x, axis=0)
-    sa = (saidai - saisyo) / 2
-    return [saisyo, saidai, sa]
+    minimum = np.min(x, axis=0)
+    maximum = np.max(x, axis=0)
+    sa = (maximum - minimum) / 2
+    return [minimum, maximum, sa]
 
 
-def _min_max_scaling(x, scale_x_param):
+def _min_max_scaling(x: List[List[float]], scale_x_param):
     """[-1, 1]の範囲に規格化"""
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
 
@@ -86,7 +82,6 @@ def _softmax(x):
 
 
 def make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
-    # 手元のryoshiにあるのを、こっちにこぴる
     if random_state is None:
         random_state = RandomState(seed)
 

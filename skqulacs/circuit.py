@@ -6,6 +6,7 @@ from qulacs import QuantumState, ParametricQuantumCircuit
 
 class _Axis(Enum):
     """Specifying axis. Used in inner private method in LearningCircuit."""
+
     X = auto()
     Y = auto()
     Z = auto()
@@ -42,9 +43,9 @@ class _Parameter:
         Args:
             x: Input data encoded by self.func.
         """
-        if self.is_learning_parameter():
-            return self.func(x)
-        return self.func(self.value, x)
+        if self.is_learning_parameter() and self.is_input:
+            return self.func(self.value, x)
+        return self.func(x)
 
 
 class LearningCircuit:
