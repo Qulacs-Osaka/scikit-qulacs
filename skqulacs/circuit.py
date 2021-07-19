@@ -12,6 +12,10 @@ class _Axis(Enum):
     Z = auto()
 
 
+InputFunc = Callable[[List[float]], float]  # Depends on x
+InputFuncWithParam = Callable[[float, List[float]], float]  # Depends on theta, x
+
+
 @dataclass
 class _Parameter:
     """Manage a parameter of ParametricQuantumCircuit.
@@ -26,9 +30,7 @@ class _Parameter:
     pos: int
     theta_pos: Optional[int]
     value: Optional[float]
-    func: Union[
-        Callable[[float], float], Callable[[float, float], float], None
-    ] = field(default=None)
+    func: Union[InputFunc, InputFuncWithParam, None] = field(default=None)
 
     def is_learning_parameter(self) -> bool:
         """Return if this parameter is for learning."""
@@ -37,7 +39,7 @@ class _Parameter:
     def is_input(self) -> bool:
         return self.func is not None
 
-    def calculate_angle(self, x: float) -> float:
+    def calculate_angle(self, x: List[float]) -> float:
         """Calculate angle for rotation gate from input data x.
 
         Args:
@@ -132,7 +134,7 @@ class LearningCircuit:
     def add_input_RX_gate(
         self,
         index: int,
-        input_func: Callable[[float], float] = lambda x: x,
+        input_func: InputFunc = lambda x: x[0],
     ):
         """
         Args:
@@ -144,7 +146,7 @@ class LearningCircuit:
     def add_input_RY_gate(
         self,
         index: int,
-        input_func: Callable[[float], float] = lambda x: x,
+        input_func: InputFunc = lambda x: x[0],
     ):
         """
         Args:
@@ -156,7 +158,7 @@ class LearningCircuit:
     def add_input_RZ_gate(
         self,
         index: int,
-        input_func: Callable[[float], float] = lambda x: x,
+        input_func: InputFunc = lambda x: x[0],
     ):
         """
         Args:
@@ -193,7 +195,7 @@ class LearningCircuit:
         self,
         index: int,
         parameter: float,
-        input_func: Callable[[float, float], float] = lambda theta, x: x,
+        input_func: InputFuncWithParam = lambda theta, x: x[0],
     ):
         """
         Args:
@@ -207,7 +209,7 @@ class LearningCircuit:
         self,
         index: int,
         parameter: float,
-        input_func: Callable[[float, float], float] = lambda theta, x: x,
+        input_func: InputFuncWithParam = lambda theta, x: x[0],
     ):
         """
         Args:
@@ -221,7 +223,7 @@ class LearningCircuit:
         self,
         index: int,
         parameter: float,
-        input_func: Callable[[float, float], float] = lambda theta, x: x,
+        input_func: InputFuncWithParam = lambda theta, x: x[0],
     ):
         """
         Args:
@@ -252,13 +254,21 @@ class LearningCircuit:
         ]
         return theta_list
 
-    def run(self, x: float) -> QuantumState:
+    def run(self, x: List[float]) -> QuantumState:
+        """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
+
+        Arguments:
+            x: Input data whose shape is (n_features).
+
+        Returns:
+            state: Quantum state applied the circuit.
+        """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
         for parameter in self._parameter_list:
             if parameter.is_input():
                 # Input parameter is updated here, not update_parameters(),
-                # because input parameter is determined with input data.
+                # because input parameter is determined with input data x.
                 angle = parameter.calculate_angle(x)
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
@@ -308,7 +318,7 @@ class LearningCircuit:
         self,
         index: int,
         target: _Axis,
-        input_func: Callable[[float], float] = lambda x: x,
+        input_func: InputFunc,
     ):
         self._parameter_list.append(
             _Parameter(self._circuit.get_parameter_count(), None, None, input_func)
@@ -330,7 +340,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         target: _Axis,
-        input_func: Callable[[float], float] = lambda x: x,
+        input_func: InputFuncWithParam,
     ):
         self._parameter_list.append(
             _Parameter(

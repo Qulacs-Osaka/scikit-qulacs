@@ -69,11 +69,11 @@ class QNNRegressor(QNN):
         :return: 学習後のパラメータthetaの値
         """
         self.scale_x_param = _get_x_scale_param(x_train)
-        self.scale_y_param = self.get_y_scale_param(y_train)
+        self.scale_y_param = self._get_y_scale_param(y_train)
         # x_trainからscaleのparamを取得
         # regreはyもscaleさせる
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        y_scaled = self.do_y_scale(y_train)
+        # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        # y_scaled = self._do_y_scale(y_train)
 
         if y_train.ndim == 2:
             self.n_outputs = len(y_train[0])
@@ -93,21 +93,28 @@ class QNNRegressor(QNN):
         theta_opt = result.x
         return loss, theta_opt
 
-    def predict(self, x_test: List[List[float]]):
-        # x_test = array-like of of shape (n_samples, n_features)
+    def predict(self, x_test: List[List[float]]) -> List[float]:
+        """Predict outcome for each input data in `x_test`.
+
+        Arguments:
+            x_test: Input data whose shape is (n_samples, n_features).
+
+        Returns:
+            y_pred: Predicted outcome.
+        """
         x_scaled = _min_max_scaling(x_test, self.scale_x_param)
-        y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
+        y_pred = self._rev_y_scale(self._predict_inner(x_scaled))
         return y_pred
 
-    def _predict_inner(self, x_list):
-        # 入力xに関して、量子回路を通した生のデータを表示
+    def _predict_inner(self, x_list: List[List[float]]):
         res = []
         # 出力状態計算 & 観測
         for x in x_list:
             state = self.circuit.run(x)
             # モデルの出力
             r = [
-                self.observables[i].get_expectation_value(state) for i in range(self.n_qubit)
+                self.observables[i].get_expectation_value(state)
+                for i in range(self.n_qubit)
             ]  # 出力多次元ver
             res.append(r)
         return np.array(res)
@@ -123,7 +130,7 @@ class QNNRegressor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def get_y_scale_param(self, y):
+    def _get_y_scale_param(self, y):
         # 複数入力がある場合に対応したい
         minimum = np.min(y, axis=0)
         maximum = np.max(y, axis=0)
@@ -131,12 +138,12 @@ class QNNRegressor(QNN):
 
         return [minimum, maximum, sa]
 
-    def do_y_scale(self, y):
+    def _do_y_scale(self, y):
         # yを[-1,1]の範囲に収める
         # print([((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y])
         return [((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y]
 
-    def rev_y_scale(self, y_inr):
+    def _rev_y_scale(self, y_inr):
         # y_inrに含まれる数を、　self.scale_paramを用いて復元する
         return [
             (

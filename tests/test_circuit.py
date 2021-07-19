@@ -13,6 +13,6 @@ def test_parametric_gate():
 
 def test_parametric_input_gate():
     circuit = LearningCircuit(2)
-    circuit.add_parametric_input_RX_gate(1, 0.5, lambda theta, x: theta + x)
-    circuit.run(1.0)
+    circuit.add_parametric_input_RX_gate(1, 0.5, lambda theta, x: theta + x[0])
+    circuit.run([1.0])
     assert [1.5] == circuit.get_parameters()

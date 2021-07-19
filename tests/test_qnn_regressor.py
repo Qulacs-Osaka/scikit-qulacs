@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from skqulacs.circuit import LearningCircuit
 import numpy as np
 import random
@@ -9,11 +9,13 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
 
-def func_to_learn(x):
+def func_to_learn(x: List[float]) -> float:
     return np.sin(x[0] * x[1] * np.pi)
 
 
-def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
+def generate_noisy_sine(
+    x_min: float, x_max: float, num_x: int
+) -> Tuple[List[List[float]], List[float]]:
     seed = 0
     random_state = RandomState(seed)
 
@@ -38,7 +40,9 @@ def create_circuit(n_qubit: int, c_depth: int, time_step: float) -> LearningCirc
     circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
         circuit.add_input_RX_gate(i, lambda x: np.arcsin(preprocess_x(x, i)))
-        circuit.add_input_RZ_gate(i, lambda x: np.arccos(preprocess_x(x, i) * preprocess_x(x, i)))
+        circuit.add_input_RZ_gate(
+            i, lambda x: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
+        )
 
     time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
     for _ in range(c_depth):
