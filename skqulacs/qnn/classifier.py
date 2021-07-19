@@ -135,7 +135,7 @@ class QNNClassification(QNN):
     def _init_output_gate(self):
         u_out = ParametricQuantumCircuit(self.n_qubit)
         time_evol_gate = _create_time_evol_gate(
-            self.n_qubit, time_step=self.time_step, random_state=self.random_state
+            self.n_qubit, time_step=self.time_step, rng=self.random_state
         )
 
         for _ in range(self.circuit_depth):

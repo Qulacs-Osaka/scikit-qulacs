@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
 from functools import reduce
 from typing import List, Optional, Tuple
-from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
-from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix
-from scipy.optimize import minimize
-from sklearn.metrics import log_loss
-from numpy.random import RandomState
+from numpy.random import Generator, default_rng
 import numpy as np
 
 # 基本ゲート
@@ -36,23 +32,16 @@ def _make_fullgate(list_SiteAndOperator, nqubit):
 
 
 def _create_time_evol_gate(
-    nqubit, time_step=0.77, random_state: RandomState = None, seed: int = 0
+    n_qubit, time_step=0.77, rng: Generator = None, seed: int = 0
 ):
     """ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる
     :param time_step: ランダムハミルトニアンによる時間発展の経過時間
     :return  qulacsのゲートオブジェクト
     """
-    if random_state is None:
-        random_state = RandomState(seed)
+    if rng is None:
+        rng = default_rng(seed)
 
-    ham = np.zeros((2 ** nqubit, 2 ** nqubit), dtype=complex)
-    for i in range(nqubit):  # i runs 0 to nqubit-1
-        Jx = -1.0 + 2.0 * random_state.rand()  # -1~1の乱数
-        ham += Jx * _make_fullgate([[i, X_mat]], nqubit)
-        for j in range(i + 1, nqubit):
-            J_ij = -1.0 + 2.0 * random_state.rand()
-            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], nqubit)
-
+    ham = make_hamiltonian(n_qubit, rng)
     # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
     diag, eigen_vecs = np.linalg.eigh(ham)
     time_evol_op = np.dot(
@@ -60,19 +49,19 @@ def _create_time_evol_gate(
     )  # e^-iHT
 
     # qulacsのゲートに変換
-    time_evol_gate = DenseMatrix([i for i in range(nqubit)], time_evol_op)
+    time_evol_gate = DenseMatrix([i for i in range(n_qubit)], time_evol_op)
 
     return time_evol_gate
 
 
 def _get_x_scale_param(x):
-    saisyo = np.min(x, axis=0)
-    saidai = np.max(x, axis=0)
-    sa = (saidai - saisyo) / 2
-    return [saisyo, saidai, sa]
+    minimum = np.min(x, axis=0)
+    maximum = np.max(x, axis=0)
+    sa = (maximum - minimum) / 2
+    return [minimum, maximum, sa]
 
 
-def _min_max_scaling(x, scale_x_param):
+def _min_max_scaling(x: List[List[float]], scale_x_param):
     """[-1, 1]の範囲に規格化"""
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
 
@@ -85,19 +74,16 @@ def _softmax(x):
     return y
 
 
-def make_hamiltonian(n_qubit, random_state: RandomState = None, seed: int = 0):
-    # 手元のryoshiにあるのを、こっちにこぴる
-    if random_state is None:
-        random_state = RandomState(seed)
+def make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
+    if rng is None:
+        rng = default_rng(seed)
 
     ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
-    X_mat = X(0).get_matrix()
-    Z_mat = Z(0).get_matrix()
     for i in range(n_qubit):
-        Jx = -1.0 + 2.0 * random_state.rand()
+        Jx = rng.uniform(-1.0, 1.0)
         ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
         for j in range(i + 1, n_qubit):
-            J_ij = -1.0 + 2.0 * random_state.rand()
+            J_ij = rng.uniform(-1.0, 1.0)
             ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
     return ham
 
