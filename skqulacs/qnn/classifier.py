@@ -15,6 +15,7 @@ from qulacs.gate import X, Z, DenseMatrix, RX, RY, RZ
 from scipy.optimize import minimize
 from sklearn.metrics import log_loss
 from skqulacs.typing import Literal
+from typing import List, Optional
 from numpy.random import RandomState
 import numpy as np
 
