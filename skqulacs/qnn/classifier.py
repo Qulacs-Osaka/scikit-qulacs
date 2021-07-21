@@ -14,9 +14,9 @@ from scipy.sparse.construct import rand
 from qulacs.gate import X, Z, DenseMatrix, RX, RY, RZ
 from scipy.optimize import minimize
 from sklearn.metrics import log_loss
+from skqulacs.typing import Literal
 from numpy.random import RandomState
 import numpy as np
-from numpy.random import RandomState
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)

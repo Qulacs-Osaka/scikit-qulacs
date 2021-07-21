@@ -6,10 +6,11 @@ from skqulacs.qnn.qnnbase import (
 )
 from qulacs import Observable
 from qulacs.gate import X, Z
+from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
 from skqulacs.circuit import LearningCircuit
-from scipy.optimize import minimize
-from typing import List, Literal, Optional, Tuple
+from skqulacs.typing import Literal
+from typing import List, Optional, Tuple
 import numpy as np
 
 # 基本ゲート
