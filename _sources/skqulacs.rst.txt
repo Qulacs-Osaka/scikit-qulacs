@@ -17,6 +17,7 @@ Submodules
    :maxdepth: 4
 
    skqulacs.circuit
+   skqulacs.typing
 
 Module contents
 ---------------
