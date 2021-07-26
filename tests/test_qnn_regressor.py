@@ -1,36 +1,10 @@
 from typing import List, Tuple
-from skqulacs.circuit import LearningCircuit
 import numpy as np
 from numpy.random import default_rng
+from skqulacs.circuit import create_ansatz
 from skqulacs.qnn import QNNRegressor
-from skqulacs.qnn.qnnbase import _create_time_evol_gate
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-
-
-def create_circuit(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
-    def preprocess_x(x: List[float], index: int):
-        xa = x[index % len(x)]
-        return min(1, max(-1, xa))
-
-    circuit = LearningCircuit(n_qubit)
-    for i in range(n_qubit):
-        circuit.add_input_RY_gate(i, lambda x: np.arcsin(preprocess_x(x, i)))
-        circuit.add_input_RZ_gate(
-            i, lambda x: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
-        )
-
-    time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
-    for _ in range(c_depth):
-        circuit.add_gate(time_evol_gate)
-        for i in range(n_qubit):
-            angle = 2.0 * np.pi * np.random.rand()
-            circuit.add_parametric_RX_gate(i, angle)
-            angle = 2.0 * np.pi * np.random.rand()
-            circuit.add_parametric_RZ_gate(i, angle)
-            angle = 2.0 * np.pi * np.random.rand()
-            circuit.add_parametric_RX_gate(i, angle)
-    return circuit
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -60,7 +34,7 @@ def test_noisy_sine_two_vars():
     n_qubit = 4
     depth = 3
     time_step = 0.5
-    circuit = create_circuit(n_qubit, depth, time_step)
+    circuit = create_ansatz(n_qubit, depth, time_step)
     qnn = QNNRegressor(n_qubit, circuit)
     qnn.fit(x_train, y_train, maxiter=1000)
 
@@ -94,7 +68,7 @@ def test_noisy_sine():
     n_qubit = 3
     depth = 3
     time_step = 0.5
-    circuit = create_circuit(n_qubit, depth, time_step)
+    circuit = create_ansatz(n_qubit, depth, time_step)
     qnn = QNNRegressor(n_qubit, circuit)
     qnn.fit(x_train, y_train, maxiter=500)
 
