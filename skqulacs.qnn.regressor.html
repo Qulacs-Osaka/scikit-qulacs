@@ -89,12 +89,34 @@
      </i>
     </label>
     <ul class="current">
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="skqulacs.circuit.html">
+       skqulacs.circuit package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="skqulacs.circuit.circuit.html">
+         skqulacs.circuit.circuit module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="skqulacs.circuit.pre_defined.html">
+         skqulacs.circuit.pre_defined module
+        </a>
+       </li>
+      </ul>
+     </li>
      <li class="toctree-l3 current active has-children">
       <a class="reference internal" href="skqulacs.qnn.html">
        skqulacs.qnn package
       </a>
-      <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-      <label for="toctree-checkbox-3">
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -120,8 +142,8 @@
       <a class="reference internal" href="skqulacs.qsvm.html">
        skqulacs.qsvm package
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-      <label for="toctree-checkbox-4">
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -142,11 +164,6 @@
         </a>
        </li>
       </ul>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="skqulacs.circuit.html">
-       skqulacs.circuit module
-      </a>
      </li>
      <li class="toctree-l3">
       <a class="reference internal" href="skqulacs.typing.html">
@@ -235,7 +252,7 @@
 <span id="skqulacs-qnn-regressor-module"></span><h1>skqulacs.qnn.regressor module<a class="headerlink" href="#module-skqulacs.qnn.regressor" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="skqulacs.qnn.regressor.QNNRegressor">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skqulacs.qnn.regressor.</span></code><code class="sig-name descname"><span class="pre">QNNRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="skqulacs.circuit.html#skqulacs.circuit.LearningCircuit" title="skqulacs.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal[BFGS,</span> <span class="pre">Nelder</span> <span class="pre">-</span> <span class="pre">Mead]</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">mse</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mse'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skqulacs.qnn.regressor.</span></code><code class="sig-name descname"><span class="pre">QNNRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal[BFGS,</span> <span class="pre">Nelder</span> <span class="pre">-</span> <span class="pre">Mead]</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">mse</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mse'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
 <p>quantum circuit learningを用いて分類問題を解く</p>
 <dl class="py method">

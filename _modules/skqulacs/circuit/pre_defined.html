@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skqulacs.qsvm.qsvr &#8212; scikit-qulacs  documentation</title>
+    <title>skqulacs.circuit.pre_defined &#8212; scikit-qulacs  documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -229,45 +229,45 @@
         
               <div>
                 
-  <h1>Source code for skqulacs.qsvm.qsvr</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">qulacs.state</span> <span class="kn">import</span> <span class="n">inner_product</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+  <h1>Source code for skqulacs.circuit.pre_defined</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.circuit</span> <span class="kn">import</span> <span class="n">LearningCircuit</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.qnnbase</span> <span class="kn">import</span> <span class="n">_create_time_evol_gate</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">skqulacs.qsvm.qsvmbase</span> <span class="kn">import</span> <span class="n">get_qvec</span>
 
+<div class="viewcode-block" id="create_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</span>
 
-<div class="viewcode-block" id="QSVR"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR">[docs]</a><span class="k">class</span> <span class="nc">QSVR</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tlotstep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regr</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVR</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tlotstep</span> <span class="o">=</span> <span class="n">tlotstep</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; n_qubit = 4</span>
+<span class="sd">        &gt;&gt;&gt; circuit = create_ansatz(n_qubit, 3, 0.5)</span>
+<span class="sd">        &gt;&gt;&gt; qnn = QNNRegressor(n_qubit, circuit)</span>
+<span class="sd">        &gt;&gt;&gt; qnn.fit(x_train, y_train)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="QSVR.fit"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>  <span class="c1"># サンプル数の二乗の情報量　距離を入れる</span>
-        <span class="c1"># xとyのカーネルを計算する</span>
-        <span class="c1"># そのために、UΦxを計算する</span>
-        <span class="c1"># expを含む計算なので、トロッター法を使って計算する</span>
-        <span class="c1"># その後、|Φx&gt; = UΦx H  UΦx H |0&gt;^n を行う</span>
-        <span class="c1"># その後、　x[i]とx[j]]の類似度は、　内積をとって計算する</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_qvec</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlotstep</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-                <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">xa</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">xa</span><span class="p">))</span>
 
-<div class="viewcode-block" id="QSVR.predict"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">):</span>
-        <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)))</span>  <span class="c1"># サンプル数の二乗の情報量　距離を入れる</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)):</span>
-            <span class="n">x_qc</span> <span class="o">=</span> <span class="n">get_qvec</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlotstep</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)):</span>
-                <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="n">x_qc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span></div></div>
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">LearningCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RY_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)))</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RZ_gate</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">time_evol_gate</span> <span class="o">=</span> <span class="n">_create_time_evol_gate</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c_depth</span><span class="p">):</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">time_evol_gate</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circuit</span></div>
 </pre></div>
 
               </div>
