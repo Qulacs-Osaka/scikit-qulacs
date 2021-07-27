@@ -58,7 +58,12 @@ class QNNClassification(QNN):
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
-        self.obss = []
+        self.observables = []
+        for _ in range(n_qubit):
+            observable = Observable(n_qubit)
+            for i in range(n_qubit):
+                observable.add_operator(1.0, f"Z{i}")
+            self.observables.append(observable)
         self.random_state = RandomState(seed)
         self.seed = seed
 
@@ -83,10 +88,6 @@ class QNNClassification(QNN):
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self.do_y_scale(y_train)
 
-        self.obss = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
-        for i in range(self.n_qubit):
-            self.obss[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
-
         theta_init = self._get_output_gate_parameters()
         result = minimize(
             self.cost_func,
@@ -110,14 +111,14 @@ class QNNClassification(QNN):
         # 入力xに関して、量子回路を通した生のデータを表示
         res = []
         # 出力状態計算 & 観測
-        # print(self.obss)
         for x in x_list:
             state = self._get_input_state(x)
             # U_outで状態を更新
             self.output_gate.update_quantum_state(state)
             # モデルの出力
             r = [
-                self.obss[i].get_expectation_value(state) for i in range(self.n_qubit)
+                self.observables[i].get_expectation_value(state)
+                for i in range(self.n_qubit)
             ]  # 出力多次元ver
             res.append(r)
         return np.array(res)
