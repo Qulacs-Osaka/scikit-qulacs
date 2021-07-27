@@ -183,6 +183,14 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, parameter, _Axis.Z)
 
+    def add_CNOT_gate(self, indexA: int, indexB: int):
+        """
+        Args:
+            indexA: Index of qubit to CNOT gate.
+            indexB: Index of qubit to CNOT gate.
+        """
+        self._circuit.add_CNOT_gate(indexA, indexB)
+
     def add_input_RX_gate(
         self,
         index: int,

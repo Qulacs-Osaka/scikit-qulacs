@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from skqulacs.circuit import LearningCircuit
+from skqulacs.circuit import create_farhi_circuit
 import numpy as np
 from numpy.random import default_rng
 from skqulacs.qnn import QNNRegressor
@@ -7,38 +8,6 @@ from skqulacs.qnn.qnnbase import _create_time_evol_gate
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import random
-
-
-
-def create_farhi_circuit(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
-    def preprocess_x(x: List[float], index: int):
-        xa = x[index % len(x)]
-        return min(1, max(-1, xa))
-
-    circuit = LearningCircuit(n_qubit)
-    for i in range(n_qubit):
-        circuit.add_input_RY_gate(i, lambda x,i=i: np.arcsin(preprocess_x(x, i)))
-        circuit.add_input_RZ_gate(
-            i, lambda x,i=i: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
-        )
-
-    zyu = list(range(n_qubit))
-    for _ in range(c_depth):
-        random.shuffle(zyu)
-        #今回の回路はdepthを多めにとったほうがいいかも
-        #最低でもn_qubitはほしいかも
-        for i in range(0,n_qubit-1,2):
-            anglex = 2.0 * np.pi * np.random.rand() 
-            angley = 2.0 * np.pi * np.random.rand() 
-            circuit.add_CNOT_gate(zyu[i+1],zyu[i])
-            circuit.add_parametric_RX_gate(zyu[i], anglex)
-            circuit.add_parametric_RY_gate(zyu[i], angley)
-            circuit.add_CNOT_gate(zyu[i+1],zyu[i])
-            anglex = 2.0 * np.pi * np.random.rand() 
-            angley = 2.0 * np.pi * np.random.rand() 
-            circuit.add_parametric_RY_gate(zyu[i], -angley)
-            circuit.add_parametric_RX_gate(zyu[i], -anglex)
-    return circuit
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -76,10 +45,10 @@ def test_noisy_sine_two_vars():
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     print(loss)
-    #assert loss < 0.1
-    aaa=[]
+    # assert loss < 0.1
+    aaa = []
     for i in range(num_x):
-        aaa.append([x_test[i][0],x_test[i][1],y_test[i],y_pred[i]])
+        aaa.append([x_test[i][0], x_test[i][1], y_test[i], y_pred[i]])
     aaa.sort()
     for i in range(num_x):
         print(aaa[i])
