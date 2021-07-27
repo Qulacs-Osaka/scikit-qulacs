@@ -20,9 +20,12 @@ def create_ansatz(n_qubit: int, c_depth: int, time_step: float) -> LearningCircu
 
     circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
-        circuit.add_input_RY_gate(i, lambda x: np.arcsin(preprocess_x(x, i)))
+        # Capture copy of i by `i=i`.
+        # Without this, i in lambda is a reference to the i, so the lambda always
+        # recognize i as n_qubit - 1.
+        circuit.add_input_RY_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
         circuit.add_input_RZ_gate(
-            i, lambda x: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
+            i, lambda x, i=i: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
         )
 
     time_evol_gate = _create_time_evol_gate(n_qubit, time_step)
