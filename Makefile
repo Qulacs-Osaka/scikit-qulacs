@@ -1,17 +1,26 @@
-FORMAT_TARGET = skqulacs tests
+FORMAT_TARGET := skqulacs tests
+PIP_INSTALL := pip install
+PYTEST := python -m pytest -v
+BLACK := python -m black
 
 .PHONY: install
 install:
-	pip install -e .
+	$(PIP_INSTALL) -e .
 
 .PHONY: test
 test:
-	python -m pytest -v
+	$(PYTEST)
+
+tests/%.py: FORCE
+	$(PYTEST) $@
+
+# Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
+FORCE:
 
 .PHONY: format
 format:
-	python -m black $(FORMAT_TARGET)
+	$(BLACK) $(FORMAT_TARGET)
 
 .PHONY: format_check
 format_check:
-	python -m black --check --diff $(FORMAT_TARGET)
+	$(BLACK) --check --diff $(FORMAT_TARGET)

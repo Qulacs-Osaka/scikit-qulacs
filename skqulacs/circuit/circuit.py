@@ -116,7 +116,7 @@ class LearningCircuit:
             x: Input data whose shape is (n_features).
 
         Returns:
-            state: Quantum state applied the circuit.
+            Quantum state applied the circuit.
         """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()

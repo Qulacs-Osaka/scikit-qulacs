@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   skqulacs.circuit
    skqulacs.qnn
    skqulacs.qsvm
 
@@ -16,7 +17,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   skqulacs.circuit
+   skqulacs.typing
 
 Module contents
 ---------------
