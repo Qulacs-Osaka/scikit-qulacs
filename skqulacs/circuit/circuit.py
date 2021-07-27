@@ -285,9 +285,9 @@ class LearningCircuit:
         if target == _Axis.X:
             self._circuit.add_RX_gate(index, angle)
         elif target == _Axis.Y:
-            self._circuit.add_parametric_RY_gate(index, angle)
+            self._circuit.add_RY_gate(index, angle)
         elif target == _Axis.Z:
-            self._circuit.add_parametric_RZ_gate(index, angle)
+            self._circuit.add_RZ_gate(index, angle)
         else:
             raise NotImplementedError
 
