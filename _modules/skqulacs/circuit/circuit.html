@@ -415,6 +415,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="LearningCircuit.add_CNOT_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_CNOT_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexA</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indexB</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            indexA: Index of qubit to CNOT gate.</span>
+<span class="sd">            indexB: Index of qubit to CNOT gate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">indexA</span><span class="p">,</span> <span class="n">indexB</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="LearningCircuit.add_input_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_input_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_input_RX_gate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
