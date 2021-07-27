@@ -64,6 +64,12 @@ make test
 ```
 If assertion fail, error contents are displayed with red. If you do not see that, all test are successful.
 
+You might want to run tests only in specific files.
+In that case, run `make` with file(s) you want to test.
+```
+make tests/test_circuit.py tests/test_qnn_regressor.py
+```
+
 We use `pytest` for testing. Detailed instructions are available in the [document](https://docs.pytest.org/en/6.2.x/).
 
 ## CI
