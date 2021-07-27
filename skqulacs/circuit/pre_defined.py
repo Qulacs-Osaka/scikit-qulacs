@@ -2,6 +2,7 @@ from .circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import _create_time_evol_gate
 from typing import List
 import numpy as np
+import random
 
 
 def create_ansatz(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
