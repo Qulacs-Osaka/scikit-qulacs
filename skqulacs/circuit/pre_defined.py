@@ -4,6 +4,7 @@ from typing import List
 import numpy as np
 import random
 
+
 def create_ansatz(n_qubit: int, c_depth: int, time_step: float) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
