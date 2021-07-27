@@ -19,6 +19,15 @@ InputFuncWithParam = Callable[[float, List[float]], float]  # Depends on theta, 
 @dataclass
 class _Parameter:
     """Manage a parameter of ParametricQuantumCircuit.
+    This class manages index and value of parameter, which is a little complicated.
+    There is two member variables: pos and theta_pos.
+    pos is an index of ParametricQuantumCircuit.
+    And theta_pos is an index of learning parameters.
+    This is used by method of LearningCircuit which has "parametric" in its name.
+
+    Example of a relationship between pos and theta_pos is following:
+    [(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]
+    Here "-" means absence.
 
     Args:
         pos: Index at LearningCircuit._circuit.
@@ -77,6 +86,49 @@ class LearningCircuit:
         self._circuit = ParametricQuantumCircuit(n_qubit)
         self._parameter_list: List[_Parameter] = []
         self._learning_gate_count = 0
+
+    def update_parameters(self, theta: List[float]):
+        """Update learning parameter of the circuit.
+
+        Args:
+            theta: New learning parameter.
+        """
+        for parameter in self._parameter_list:
+            if parameter.is_learning_parameter():
+                parameter.value = theta[parameter.theta_pos]
+                if not parameter.is_input():
+                    # For non-input parameter, just update.
+                    self._circuit.set_parameter(
+                        parameter.pos, theta[parameter.theta_pos]
+                    )
+
+    def get_parameters(self) -> List[float]:
+        """Get a list of learning parameters."""
+        theta_list = [
+            p.value for p in self._parameter_list if p.is_learning_parameter()
+        ]
+        return theta_list
+
+    def run(self, x: List[float]) -> QuantumState:
+        """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
+
+        Arguments:
+            x: Input data whose shape is (n_features).
+
+        Returns:
+            state: Quantum state applied the circuit.
+        """
+        state = QuantumState(self.n_qubit)
+        state.set_zero_state()
+        for parameter in self._parameter_list:
+            if parameter.is_input():
+                # Input parameter is updated here, not update_parameters(),
+                # because input parameter is determined with input data x.
+                angle = parameter.calculate_angle(x)
+                parameter.value = angle
+                self._circuit.set_parameter(parameter.pos, angle)
+        self._circuit.update_quantum_state(state)
+        return state
 
     def add_gate(self, gate):
         """Add arbitrary gate.
@@ -232,49 +284,6 @@ class LearningCircuit:
             input_func: Function transforming this gate's parameter and index value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Z, input_func)
-
-    def update_parameters(self, theta: List[float]):
-        """Update learning parameter of the circuit.
-
-        Args:
-            theta: New learning parameter.
-        """
-        for parameter in self._parameter_list:
-            if parameter.is_learning_parameter():
-                parameter.value = theta[parameter.theta_pos]
-                if not parameter.is_input():
-                    # For non-input parameter, just update.
-                    self._circuit.set_parameter(
-                        parameter.pos, theta[parameter.theta_pos]
-                    )
-
-    def get_parameters(self) -> List[float]:
-        """Get a list of learning parameters."""
-        theta_list = [
-            p.value for p in self._parameter_list if p.is_learning_parameter()
-        ]
-        return theta_list
-
-    def run(self, x: List[float]) -> QuantumState:
-        """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
-
-        Arguments:
-            x: Input data whose shape is (n_features).
-
-        Returns:
-            state: Quantum state applied the circuit.
-        """
-        state = QuantumState(self.n_qubit)
-        state.set_zero_state()
-        for parameter in self._parameter_list:
-            if parameter.is_input():
-                # Input parameter is updated here, not update_parameters(),
-                # because input parameter is determined with input data x.
-                angle = parameter.calculate_angle(x)
-                parameter.value = angle
-                self._circuit.set_parameter(parameter.pos, angle)
-        self._circuit.update_quantum_state(state)
-        return state
 
     def _add_R_gate_inner(
         self,
