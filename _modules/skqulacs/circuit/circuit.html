@@ -517,9 +517,9 @@
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_RX_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RY_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_RY_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_RZ_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
