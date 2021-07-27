@@ -9,6 +9,7 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import random
 
+
 def sine_two_vars(x: List[float]) -> float:
     return np.sin(np.pi * x[0] * x[1])
 
@@ -44,10 +45,10 @@ def test_noisy_sine_two_vars():
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     print(loss)
-    #assert loss < 0.1
-    aaa=[]
+    # assert loss < 0.1
+    aaa = []
     for i in range(num_x):
-        aaa.append([x_test[i][0],x_test[i][1],y_test[i],y_pred[i]])
+        aaa.append([x_test[i][0], x_test[i][1], y_test[i], y_pred[i]])
     aaa.sort()
     for i in range(num_x):
         print(aaa[i])
