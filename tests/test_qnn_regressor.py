@@ -75,7 +75,7 @@ def test_noisy_sine():
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.1
+    assert loss < 0.25
     return x_test, y_test, y_pred
 
 
