@@ -89,6 +89,8 @@ class QNNRegressor(QNN):
                 # jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
+            loss = result.fun
+            theta_opt = result.x
         elif self.solver == "BFGS":
             result = minimize(
                 self.cost_func,
@@ -98,11 +100,40 @@ class QNNRegressor(QNN):
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
+            loss = result.fun
+            theta_opt = result.x
+        elif self.solver == "Adam":
+            pr_A = 0.25
+            pr_Bi = 0.6
+            pr_Bt = 0.99
+            pr_ips = 0.0000001
+            # ここまでがハイパーパラメータ
+            Bix = 0
+            Btx = 0
+
+            moment = np.zeros(len(theta_init))
+            vel = 0
+            theta_now = theta_init
+            maxiter *= len(x_train)
+            for iter in range(0, maxiter, 5):
+                grad = self._cost_func_grad(
+                    theta_now,
+                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
+                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
+                )
+                moment = moment * pr_Bi + (1 - pr_Bi) * grad
+                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
+                Bix = Bix * pr_Bi + (1 - pr_Bi)
+                Btx = Btx * pr_Bt + (1 - pr_Bt)
+                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
+                if iter % len(x_train) < 5:
+                    print(self.cost_func(theta_now, x_train, y_train))
+
+            loss = self.cost_func(theta_now, x_train, y_train)
+            theta_opt = theta_now
         else:
             raise NotImplementedError
 
-        loss = result.fun
-        theta_opt = result.x
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]) -> List[float]:
