@@ -73,3 +73,45 @@ def create_farhi_circuit(
             circuit.add_parametric_RY_gate(zyu[i], -angley)
             circuit.add_parametric_RX_gate(zyu[i], -anglex)
     return circuit
+
+
+def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
+    def preprocess_x(x: List[float], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+
+    circuit = LearningCircuit(n_qubit)
+    for i in range(n_qubit):
+        circuit.add_H_gate(i)
+
+    for tlotkai in range(tlotstep):
+        for i in range(n_qubit):
+            j = (i + 1) % n_qubit
+            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
+            circuit.add_CNOT_gate(i, j)
+            circuit.add_input_RZ_gate(
+                j,
+                lambda x, i=i: (
+                    (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
+                )
+                / tlotstep,
+            )
+            circuit.add_CNOT_gate(i, j)
+
+    for i in range(n_qubit):
+        circuit.add_H_gate(i)
+
+    for tlotkai in range(tlotstep):
+        for i in range(n_qubit):
+            j = (i + 1) % n_qubit
+            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
+            circuit.add_CNOT_gate(i, j)
+            circuit.add_input_RZ_gate(
+                j,
+                lambda x, i=i: (
+                    (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
+                )
+                / tlotstep,
+            )
+            circuit.add_CNOT_gate(i, j)
+    return circuit

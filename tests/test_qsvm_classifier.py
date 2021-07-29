@@ -5,6 +5,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from skqulacs.qsvm import QSVC
+from skqulacs.circuit import create_defqsv
 
 
 def test_classify_iris():
@@ -17,9 +18,11 @@ def test_classify_iris():
     x_train = x_train.to_numpy()
     x_test = x_test.to_numpy()
     n_qubit = 2  # qubitの数
-    qsvm = QSVC()
+    circuit = create_defqsv(n_qubit, 4)
+    qsvm = QSVC(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
+    print(f1_score(y_test, y_pred, average="weighted"))
     assert f1_score(y_test, y_pred, average="weighted") > 0.92
 
 
