@@ -312,16 +312,60 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="n">theta_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">,</span>
-            <span class="n">theta_init</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
-            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span>
-            <span class="c1"># jac=self._cost_func_grad,</span>
-            <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
-        <span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
-        <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">,</span>
+                <span class="n">theta_init</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
+                <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span>
+                <span class="c1"># jac=self._cost_func_grad,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
+            <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;BFGS&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">,</span>
+                <span class="n">theta_init</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
+                <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span>
+                <span class="n">jac</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
+            <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;Adam&quot;</span><span class="p">:</span>
+            <span class="n">pr_A</span> <span class="o">=</span> <span class="mf">0.25</span>
+            <span class="n">pr_Bi</span> <span class="o">=</span> <span class="mf">0.6</span>
+            <span class="n">pr_Bt</span> <span class="o">=</span> <span class="mf">0.99</span>
+            <span class="n">pr_ips</span> <span class="o">=</span> <span class="mf">0.0000001</span>
+            <span class="c1"># ここまでがハイパーパラメータ</span>
+            <span class="n">Bix</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">Btx</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">moment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta_init</span><span class="p">))</span>
+            <span class="n">vel</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">theta_now</span> <span class="o">=</span> <span class="n">theta_init</span>
+            <span class="n">maxiter</span> <span class="o">*=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+            <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+                <span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">(</span>
+                    <span class="n">theta_now</span><span class="p">,</span>
+                    <span class="n">x_train</span><span class="p">[</span><span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span> <span class="p">:</span> <span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">],</span>
+                    <span class="n">y_train</span><span class="p">[</span><span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span> <span class="p">:</span> <span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">moment</span> <span class="o">=</span> <span class="n">moment</span> <span class="o">*</span> <span class="n">pr_Bi</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bi</span><span class="p">)</span> <span class="o">*</span> <span class="n">grad</span>
+                <span class="n">vel</span> <span class="o">=</span> <span class="n">vel</span> <span class="o">*</span> <span class="n">pr_Bt</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">,</span> <span class="n">grad</span><span class="p">)</span>
+                <span class="n">Bix</span> <span class="o">=</span> <span class="n">Bix</span> <span class="o">*</span> <span class="n">pr_Bi</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bi</span><span class="p">)</span>
+                <span class="n">Btx</span> <span class="o">=</span> <span class="n">Btx</span> <span class="o">*</span> <span class="n">pr_Bt</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bt</span><span class="p">)</span>
+                <span class="n">theta_now</span> <span class="o">-=</span> <span class="n">pr_A</span> <span class="o">/</span> <span class="p">(((</span><span class="n">vel</span> <span class="o">/</span> <span class="n">Btx</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">pr_ips</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">moment</span> <span class="o">/</span> <span class="n">Bix</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">))</span>
+
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+            <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">theta_now</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
         <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">theta_opt</span></div>
 
 <div class="viewcode-block" id="QNNRegressor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
@@ -384,37 +428,41 @@
             <span class="k">for</span> <span class="n">ya</span> <span class="ow">in</span> <span class="n">y_inr</span>
         <span class="p">]</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    # for BFGS</span>
-<span class="sd">    def _cost_func_grad(self, theta, x_train):</span>
-<span class="sd">        x_scaled=_min_max_scaling(x_test)</span>
-<span class="sd">        y_minus_t = self._predict_inner(theta, x_scaled) - self.y_list</span>
-<span class="sd">        B_grad_list = self._b_grad(theta, x_scaled)</span>
-<span class="sd">        grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]</span>
-<span class="sd">        return np.array(grad)</span>
+    <span class="k">def</span> <span class="nf">_cost_func_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="c1"># print(1)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">_min_max_scaling</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span><span class="p">)</span>
+        <span class="n">y_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_y_scale</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+        <span class="n">mto</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">bbb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">):</span>
+                    <span class="n">bbb</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bbb</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span>
 
-<span class="sd">    # for BFGS</span>
-<span class="sd">    def _b_grad(self, theta, x_train):</span>
-<span class="sd">        # dB/dθのリストを返す</span>
-<span class="sd">        theta_plus = [</span>
-<span class="sd">            theta.copy() + np.eye(len(theta))[i] * np.pi / 2.0</span>
-<span class="sd">            for i in range(len(theta))</span>
-<span class="sd">        ]</span>
-<span class="sd">        theta_minus = [</span>
-<span class="sd">            theta.copy() - np.eye(len(theta))[i] * np.pi / 2.0</span>
-<span class="sd">            for i in range(len(theta))</span>
-<span class="sd">        ]</span>
+        <span class="c1"># print(5)</span>
 
-<span class="sd">        grad = [</span>
-<span class="sd">            (</span>
-<span class="sd">                self._predict_inner(theta_plus[i], x_train)</span>
-<span class="sd">                - self._predict_inner(theta_minus[i], x_train)</span>
-<span class="sd">            )</span>
-<span class="sd">            / 2.0</span>
-<span class="sd">            for i in range(len(theta))</span>
-<span class="sd">        ]</span>
-<span class="sd">        return np.array(grad)</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+        <span class="n">theta_plus</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mf">20.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="n">theta_minus</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mf">20.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+        <span class="p">]</span>
+
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta_plus</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">aaa_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta_minus</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">aaa_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)):</span>
+                <span class="n">grad</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">aaa_f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">aaa_m</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">bbb</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="mf">10.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">grad</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grad</span></div>
 </pre></div>
 
               </div>
