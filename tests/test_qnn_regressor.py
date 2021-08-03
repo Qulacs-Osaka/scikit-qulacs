@@ -35,13 +35,15 @@ def test_noisy_sine_two_vars():
     depth = 3
     time_step = 0.5
     circuit = create_ansatz(n_qubit, depth, time_step)
-    qnn = QNNRegressor(n_qubit, circuit)
-    qnn.fit(x_train, y_train, maxiter=1000)
+    qnn = QNNRegressor(n_qubit, circuit, "BFGS")
+    qnn.fit(x_train, y_train, maxiter=6)
 
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
+    print(loss)
     assert loss < 0.1
+    return x_test, y_test, y_pred
 
 
 def sine(x: float) -> float:
@@ -69,8 +71,8 @@ def test_noisy_sine():
     depth = 3
     time_step = 0.5
     circuit = create_ansatz(n_qubit, depth, time_step)
-    qnn = QNNRegressor(n_qubit, circuit)
-    qnn.fit(x_train, y_train, maxiter=500)
+    qnn = QNNRegressor(n_qubit, circuit, "BFGS")
+    qnn.fit(x_train, y_train, maxiter=6)
 
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
@@ -80,7 +82,7 @@ def test_noisy_sine():
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine()
+    x_test, y_test, y_pred = test_noisy_sine_two_vars()
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()
