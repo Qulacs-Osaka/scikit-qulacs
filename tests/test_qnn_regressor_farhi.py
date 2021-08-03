@@ -81,6 +81,7 @@ def test_noisy_sine():
     depth = 6
     time_step = 0.5
     circuit = create_farhi_circuit(n_qubit, depth, time_step)
+    print(circuit._circuit)
     qnn = QNNRegressor(n_qubit, circuit, "BFGS")
     qnn.fit(x_train, y_train, maxiter=7)
     # BFGSじゃないなら600
@@ -93,7 +94,7 @@ def test_noisy_sine():
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine_two_vars()
+    x_test, y_test, y_pred = test_noisy_sine()
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()

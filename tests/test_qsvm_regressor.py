@@ -3,6 +3,7 @@ import random
 from numpy.random import RandomState
 from skqulacs.qsvm import QSVR
 from sklearn.metrics import mean_squared_error
+from skqulacs.circuit import create_defqsv
 
 
 def func_to_learn(x):
@@ -24,8 +25,8 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
         x_train.append([xa, xb, xc, xd])
         y_train.append(func_to_learn([xa, xb, xc, xd]))
         # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
-    print(x_train)
-    print(y_train)
+    # print(x_train)
+    # print(y_train)
     mag_noise = 0.05
     y_train += mag_noise * random_state.randn(num_x)
     return x_train, y_train
@@ -39,7 +40,9 @@ def test_noisy_sine():
     num_x = 300
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
 
-    qsvm = QSVR()
+    n_qubit = 4
+    circuit = create_defqsv(n_qubit, 4)
+    qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
     loss = 0
     x_test, y_test = generate_noisy_sine(x_min, x_max, 100)
@@ -48,6 +51,7 @@ def test_noisy_sine():
     print(loss)
     for i in range(len(x_test)):
         print([x_test[i][0], x_test[i][1], y_test[i], y_pred[i]])
+    print(loss)
     assert loss < 0.008
 
 
