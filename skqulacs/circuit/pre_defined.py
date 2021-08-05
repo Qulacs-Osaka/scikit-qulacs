@@ -1,5 +1,5 @@
 from .circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import _create_time_evol_gate
+from ..qnn.qnnbase import _create_time_evol_gate
 from typing import List, Optional
 from numpy.random import default_rng
 import numpy as np

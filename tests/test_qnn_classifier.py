@@ -26,6 +26,4 @@ def test_classify_iris():
     qcl.fit(x_train, y_train, maxiter=500)
 
     y_pred = qcl.predict(x_test)
-    print(f1_score(y_test, y_pred, average="weighted"))
-    # assert f1_score(y_test, y_pred, average="weighted") > 0.9
-    assert False
+    assert f1_score(y_test, y_pred, average="weighted") > 0.9
