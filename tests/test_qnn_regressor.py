@@ -38,7 +38,7 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int):
     n_qubit = 4
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step)
+    circuit = create_ansatz(n_qubit, depth, time_step, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
 
