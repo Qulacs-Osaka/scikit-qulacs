@@ -160,7 +160,6 @@ class QNNClassification(QNN):
     def rev_y_scale(self, y_inr):
         # argmaxをとる
         # one-hot表現の受け取りをしたら、それを与えられた番号にして返す
-        print(y_inr)
         res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
         for i in range(len(y_inr)):
             for j in range(len(self.scale_y_param[0])):
