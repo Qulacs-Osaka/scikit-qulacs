@@ -2,6 +2,8 @@ FORMAT_TARGET := skqulacs tests
 PIP_INSTALL := pip install
 PYTEST := python -m pytest -v
 BLACK := python -m black
+FLAKE8 := python -m flake8
+FLAKE8_IGNORE := --ignore=E501
 
 .PHONY: install
 install:
@@ -24,3 +26,7 @@ format:
 .PHONY: format_check
 format_check:
 	$(BLACK) --check --diff $(FORMAT_TARGET)
+
+.PHONY: lint
+lint:
+	$(FLAKE8) $(FLAKE8_IGNORE)

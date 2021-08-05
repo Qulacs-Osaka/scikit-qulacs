@@ -1,28 +1,15 @@
 from __future__ import annotations
-from functools import reduce
+from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import (
     QNN,
-    _make_fullgate,
-    _create_time_evol_gate,
     _get_x_scale_param,
     _min_max_scaling,
-    _softmax,
-    make_hamiltonian,
 )
-from qulacs import QuantumState, QuantumCircuit, ParametricQuantumCircuit, Observable
-from scipy.sparse.construct import rand
-from qulacs.gate import X, Z, DenseMatrix, RX, RY, RZ
+from qulacs import Observable
 from scipy.optimize import minimize
-from sklearn.metrics import log_loss
 from skqulacs.typing import Literal
 from typing import List, Optional
-from numpy.random import RandomState
 import numpy as np
-
-# 基本ゲート
-I_mat = np.eye(2, dtype=complex)
-X_mat = X(0).get_matrix()
-Z_mat = Z(0).get_matrix()
 
 
 class QNNClassification(QNN):
@@ -31,12 +18,9 @@ class QNNClassification(QNN):
     def __init__(
         self,
         n_qubit: int,
-        circuit_depth: int,
+        circuit: LearningCircuit,
         num_class: int,
-        seed: int = 0,
-        time_step: float = 0.7,
         solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
-        circuit_arch: Literal["default"] = "default",
         n_shot: int = np.inf,
         cost: Literal["log_loss"] = "log_loss",
     ) -> None:
@@ -46,11 +30,9 @@ class QNNClassification(QNN):
         :param num_class: 分類の数（=測定するqubitの数）
         """
         self.n_qubit = n_qubit
-        self.circuit_depth = circuit_depth
+        self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
-        self.time_step = time_step
         self.solver = solver
-        self.circuit_arch = circuit_arch
 
         self.n_shot = n_shot
         self.cost = cost
@@ -58,11 +40,9 @@ class QNNClassification(QNN):
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
-        self.obss = []
-        self.random_state = RandomState(seed)
-        self.seed = seed
-
-        self.output_gate = self._init_output_gate()  # U_out
+        self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
+        for i in range(n_qubit):
+            self.observables[i].add_operator(1.0, f"Z {i}")
 
     def fit(self, x_train, y_train, maxiter: Optional[int] = None):
         """
@@ -73,9 +53,6 @@ class QNNClassification(QNN):
         :return: 学習後のパラメータthetaの値
         """
 
-        # 乱数でU_outを作成
-        self._init_output_gate()
-
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
         # x_trainからscaleのparamを取得
@@ -83,11 +60,7 @@ class QNNClassification(QNN):
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self.do_y_scale(y_train)
 
-        self.obss = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
-        for i in range(self.n_qubit):
-            self.obss[i].add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
-
-        theta_init = self._get_output_gate_parameters()
+        theta_init = self.circuit.get_parameters()
         result = minimize(
             self.cost_func,
             theta_init,
@@ -112,58 +85,14 @@ class QNNClassification(QNN):
         # 出力状態計算 & 観測
         # print(self.obss)
         for x in x_list:
-            state = self._get_input_state(x)
-            # U_outで状態を更新
-            self.output_gate.update_quantum_state(state)
+            state = self.circuit.run(x)
             # モデルの出力
             r = [
-                self.obss[i].get_expectation_value(state) for i in range(self.n_qubit)
+                self.observables[i].get_expectation_value(state)
+                for i in range(self.n_qubit)
             ]  # 出力多次元ver
             res.append(r)
         return np.array(res)
-
-    def _get_input_state(self, x):
-        # xはn_features次元のnp.array()
-        state = QuantumState(self.n_qubit)
-
-        for i in range(self.n_qubit):
-            xa = x[i % len(x)]
-            xa = min(1, max(-1, xa))
-            RY(i, np.arcsin(xa)).update_quantum_state(state)
-            RZ(i, np.arccos(xa * xa)).update_quantum_state(state)
-        return state
-
-    def _init_output_gate(self):
-        u_out = ParametricQuantumCircuit(self.n_qubit)
-        time_evol_gate = _create_time_evol_gate(
-            self.n_qubit, time_step=self.time_step, rng=self.random_state
-        )
-
-        for _ in range(self.circuit_depth):
-
-            u_out.add_gate(time_evol_gate)
-            for i in range(self.n_qubit):
-                angle = 2.0 * np.pi * self.random_state.rand()
-                u_out.add_parametric_RX_gate(i, angle)
-                angle = 2.0 * np.pi * self.random_state.rand()
-                u_out.add_parametric_RZ_gate(i, angle)
-                angle = 2.0 * np.pi * self.random_state.rand()
-                u_out.add_parametric_RX_gate(i, angle)
-        return u_out
-
-    def _update_output_gate(self, theta):
-        """U_outをパラメータθで更新"""
-        parameter_count = self.output_gate.get_parameter_count()
-        for i in range(parameter_count):
-            self.output_gate.set_parameter(i, theta[i])
-
-    def _get_output_gate_parameters(self):
-        """U_outのパラメータθを取得"""
-        parameter_count = self.output_gate.get_parameter_count()
-        theta = [
-            self.output_gate.get_parameter(index) for index in range(parameter_count)
-        ]
-        return np.array(theta)
 
     def cost_func(self, theta, x_train, y_train):
         # 生のデータを入れる
@@ -171,7 +100,7 @@ class QNNClassification(QNN):
             # cross-entropy loss (default)
             x_scaled = _min_max_scaling(x_train, self.scale_x_param)
             y_scaled = self.do_y_scale(y_train)
-            self._update_output_gate(theta)
+            self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
             # print(y_pred)
             # predについて、softmaxをする
