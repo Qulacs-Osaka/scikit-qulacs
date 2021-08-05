@@ -7,7 +7,6 @@ from skqulacs.qnn import QNNRegressor
 from skqulacs.qnn.qnnbase import _create_time_evol_gate
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-import random
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -36,22 +35,13 @@ def test_noisy_sine_two_vars():
 
     n_qubit = 4
     depth = 6
-    time_step = 0.5
-    circuit = create_farhi_circuit(n_qubit, depth, time_step)
+    circuit = create_farhi_circuit(n_qubit, depth)
     qnn = QNNRegressor(n_qubit, circuit, "Adam")
     qnn.fit(x_train, y_train, maxiter=6)
     # BFGSじゃないなら600
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    print(loss)
-    # assert loss < 0.1
-    aaa = []
-    for i in range(num_x):
-        aaa.append([x_test[i][0], x_test[i][1], y_test[i], y_pred[i]])
-    aaa.sort()
-    for i in range(num_x):
-        print(aaa[i])
     assert loss < 0.1
     return x_test, y_test, y_pred
 
@@ -79,8 +69,7 @@ def test_noisy_sine():
 
     n_qubit = 3
     depth = 6
-    time_step = 0.5
-    circuit = create_farhi_circuit(n_qubit, depth, time_step)
+    circuit = create_farhi_circuit(n_qubit, depth)
     print(circuit._circuit)
     qnn = QNNRegressor(n_qubit, circuit, "BFGS")
     qnn.fit(x_train, y_train, maxiter=7)
@@ -88,7 +77,6 @@ def test_noisy_sine():
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    print(loss)
     assert loss < 0.1
     return x_test, y_test, y_pred
 
