@@ -65,7 +65,7 @@ def generate_noisy_sine(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 15), ("Nelder-Mead", 300), ("Adam", 10)]
+    ("solver", "maxiter"), [("BFGS", 20), ("Nelder-Mead", 300), ("Adam", 10)]
 )
 def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
@@ -76,7 +76,7 @@ def test_noisy_sine(solver: str, maxiter: int):
     n_qubit = 3
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step)
+    circuit = create_ansatz(n_qubit, depth, time_step, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
 
