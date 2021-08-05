@@ -61,11 +61,11 @@ def create_farhi_circuit(
         )
 
     zyu = list(range(n_qubit))
+    rng = default_rng(seed)
     for _ in range(c_depth):
-        random.shuffle(zyu)
+        rng.shuffle(zyu)
         # 今回の回路はdepthを多めにとったほうがいいかも
         # 最低でもn_qubitはほしいかも
-        rng = default_rng(seed)
         for i in range(0, n_qubit - 1, 2):
             angle_x = 2.0 * np.pi * rng.random()
             angle_y = 2.0 * np.pi * rng.random()

@@ -5,18 +5,12 @@ from skqulacs.qnn.qnnbase import (
     _min_max_scaling,
 )
 from qulacs import Observable
-from qulacs.gate import X, Z
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
 from skqulacs.circuit import LearningCircuit
 from skqulacs.typing import Literal
 from typing import List, Optional, Tuple
 import numpy as np
-
-# 基本ゲート
-I_mat = np.eye(2, dtype=complex)
-X_mat = X(0).get_matrix()
-Z_mat = Z(0).get_matrix()
 
 
 class QNNRegressor(QNN):
@@ -26,8 +20,7 @@ class QNNRegressor(QNN):
         self,
         n_qubit: int,
         circuit: LearningCircuit,
-        solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
-        n_shot: int = np.inf,
+        solver: Literal["Adam", "BFGS", "Nelder-Mead"] = "Nelder-Mead",
         cost: Literal["mse"] = "mse",
     ) -> None:
         """
@@ -38,21 +31,14 @@ class QNNRegressor(QNN):
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.solver = solver
-
-        self.n_shot = n_shot
         self.cost = cost
 
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
-        self.observables = []
-        for _ in range(n_qubit):
-            observable = Observable(n_qubit)
-            for i in range(self.n_qubit):
-                observable.add_operator(1.0, f"Z {i}")  # Z0, Z1, Z2をオブザーバブルとして設定
-            self.observables.append(observable)
-
-        self.n_outputs = 0
+        self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
+        for i in range(n_qubit):
+            self.observables[i].add_operator(1.0, f"Z {i}")
 
     def fit(
         self,
@@ -127,7 +113,7 @@ class QNNRegressor(QNN):
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
                 if iter % len(x_train) < 5:
-                    print(self.cost_func(theta_now, x_train, y_train))
+                    self.cost_func(theta_now, x_train, y_train)
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
@@ -197,7 +183,6 @@ class QNNRegressor(QNN):
         ]
 
     def _cost_func_grad(self, theta, x_train, y_train):
-        # print(1)
         self.circuit.update_parameters(theta)
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self._do_y_scale(y_train)
@@ -209,8 +194,6 @@ class QNNRegressor(QNN):
                     bbb[h][i] = (-y_scaled[h][i] + mto[h][i]) / self.n_outputs
             else:
                 bbb[h] = (-y_scaled[h] + mto[h]) / self.n_outputs
-
-        # print(5)
 
         theta_plus = [
             theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))

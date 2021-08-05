@@ -21,7 +21,6 @@ class QNNClassification(QNN):
         circuit: LearningCircuit,
         num_class: int,
         solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
-        n_shot: int = np.inf,
         cost: Literal["log_loss"] = "log_loss",
     ) -> None:
         """
@@ -33,8 +32,6 @@ class QNNClassification(QNN):
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
         self.solver = solver
-
-        self.n_shot = n_shot
         self.cost = cost
 
         self.scale_x_param = []
@@ -101,7 +98,6 @@ class QNNClassification(QNN):
             y_scaled = self.do_y_scale(y_train)
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
-            # print(y_pred)
             # predについて、softmaxをする
             ypf = []
             for i in range(len(y_pred)):
@@ -114,14 +110,11 @@ class QNNClassification(QNN):
                         ypf.append(np.exp(5 * y_pred[i][hid + k]) / wa)
             ysf = y_scaled.ravel()
             cost = 0
-            cost_debug = [0, 0, 0, 0, 0, 0]
             for i in range(len(ysf)):
                 if ysf[i] == 1:
                     cost -= np.log(ypf[i])
-                    cost_debug[i % 3] -= np.log(ypf[i])
                 else:
                     cost -= np.log(1 - ypf[i])
-                    cost_debug[3 + i % 3] -= np.log(1 - ypf[i])
             cost /= len(ysf)
             return cost
         else:
@@ -140,15 +133,12 @@ class QNNClassification(QNN):
             syurui = np.zeros(1, dtype=int)
             syurui[0] = eee
         rui = np.concatenate((np.zeros(1, dtype=int), syurui.cumsum()))
-        # print(rui)
-        # print(syurui)
         return [syurui, rui]
 
     def do_y_scale(self, y):
         # yをone-hot表現にする 複数入力への対応もする
         clsnum = int(self.scale_y_param[1][-1])
         res = np.zeros((len(y), clsnum), dtype=int)
-        # print(clsnum)
         for i in range(len(y)):
             if y.ndim == 1:
                 res[i][y[i]] = 1
