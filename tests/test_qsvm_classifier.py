@@ -22,7 +22,6 @@ def test_classify_iris():
     qsvm = QSVC(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
-    print(f1_score(y_test, y_pred, average="weighted"))
     assert f1_score(y_test, y_pred, average="weighted") > 0.92
 
 

@@ -1,5 +1,6 @@
-from typing import List, Tuple
+import pytest
 import numpy as np
+from typing import List, Tuple
 from numpy.random import default_rng
 from skqulacs.circuit import create_ansatz
 from skqulacs.qnn import QNNRegressor
@@ -25,7 +26,10 @@ def generate_noisy_sine_two_vars(
     return x_train, y_train
 
 
-def test_noisy_sine_two_vars():
+@pytest.mark.parametrize(
+    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 300), ("Adam", 10)]
+)
+def test_noisy_sine_two_vars(solver: str, maxiter: int):
     x_min = -0.5
     x_max = 0.5
     num_x = 50
@@ -34,14 +38,13 @@ def test_noisy_sine_two_vars():
     n_qubit = 4
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step)
-    qnn = QNNRegressor(n_qubit, circuit, "BFGS")
-    qnn.fit(x_train, y_train, maxiter=6)
+    circuit = create_ansatz(n_qubit, depth, time_step, 0)
+    qnn = QNNRegressor(n_qubit, circuit, solver)
+    qnn.fit(x_train, y_train, maxiter)
 
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    print(loss)
     assert loss < 0.1
     return x_test, y_test, y_pred
 
@@ -61,7 +64,10 @@ def generate_noisy_sine(
     return x_train, y_train
 
 
-def test_noisy_sine():
+@pytest.mark.parametrize(
+    ("solver", "maxiter"), [("BFGS", 20), ("Nelder-Mead", 300), ("Adam", 10)]
+)
+def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
     x_max = 1.0
     num_x = 50
@@ -70,14 +76,14 @@ def test_noisy_sine():
     n_qubit = 3
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step)
-    qnn = QNNRegressor(n_qubit, circuit, "BFGS")
-    qnn.fit(x_train, y_train, maxiter=6)
+    circuit = create_ansatz(n_qubit, depth, time_step, 0)
+    qnn = QNNRegressor(n_qubit, circuit, solver)
+    qnn.fit(x_train, y_train, maxiter)
 
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.25
+    assert loss < 0.2
     return x_test, y_test, y_pred
 
 

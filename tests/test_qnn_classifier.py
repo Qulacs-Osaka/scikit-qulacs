@@ -1,5 +1,4 @@
-import numpy as np
-import matplotlib.pyplot as plt
+from skqulacs.circuit.pre_defined import create_ansatz
 import pandas as pd
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
@@ -19,12 +18,12 @@ def test_classify_iris():
     x_test = x_test.to_numpy()
 
     nqubit = 5  ## qubitの数。必要とする出力の次元数以上の必要がある
-    c_depth = 2  ## circuitの深さ
+    c_depth = 3  ## circuitの深さ
+    time_step = 0.5
     num_class = 3  ## 分類数（ここでは3つの品種に分類）
-    qcl = QNNClassification(nqubit, c_depth, num_class, seed=0)
-    _, theta_opt = qcl.fit(x_train, y_train, maxiter=300)
+    circuit = create_ansatz(nqubit, c_depth, time_step, 0)
+    qcl = QNNClassification(nqubit, circuit, num_class)
+    qcl.fit(x_train, y_train, maxiter=500)
 
-    y_pred = qcl.predict(x_test)  # モデルのパラメータθも更新される
-    print(y_test)
-    print(y_pred)
+    y_pred = qcl.predict(x_test)
     assert f1_score(y_test, y_pred, average="weighted") > 0.9
