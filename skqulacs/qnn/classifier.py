@@ -83,7 +83,6 @@ class QNNClassification(QNN):
         # 入力xに関して、量子回路を通した生のデータを表示
         res = []
         # 出力状態計算 & 観測
-        # print(self.obss)
         for x in x_list:
             state = self.circuit.run(x)
             # モデルの出力
@@ -111,12 +110,9 @@ class QNNClassification(QNN):
                     wa = 0
                     for k in range(self.scale_y_param[0][j]):
                         wa += np.exp(5 * y_pred[i][hid + k])
-                    # print(wa)
                     for k in range(self.scale_y_param[0][j]):
                         ypf.append(np.exp(5 * y_pred[i][hid + k]) / wa)
-            # print(ypf)
             ysf = y_scaled.ravel()
-            # print(ypf)
             cost = 0
             cost_debug = [0, 0, 0, 0, 0, 0]
             for i in range(len(ysf)):
@@ -126,11 +122,7 @@ class QNNClassification(QNN):
                 else:
                     cost -= np.log(1 - ypf[i])
                     cost_debug[3 + i % 3] -= np.log(1 - ypf[i])
-                # print(ypf[i],ysf[i])
             cost /= len(ysf)
-            # print("debag gosa=")
-            print(cost)
-            print(cost_debug)
             return cost
         else:
             raise NotImplementedError(
@@ -175,7 +167,6 @@ class QNNClassification(QNN):
                 hid = self.scale_y_param[1][j]
                 sai = -9999
                 arg = 0
-                print(self.scale_y_param[0][j])
                 for k in range(self.scale_y_param[0][j]):
                     if sai < y_inr[i][hid + k]:
                         sai = y_inr[i][hid + k]

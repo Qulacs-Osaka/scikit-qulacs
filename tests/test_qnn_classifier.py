@@ -25,7 +25,7 @@ def test_classify_iris():
     num_class = 3  ## 分類数（ここでは3つの品種に分類）
     circuit = create_ansatz(nqubit, c_depth, time_step)
     qcl = QNNClassification(nqubit, circuit, num_class)
-    qcl.fit(x_train, y_train, maxiter=300)
+    qcl.fit(x_train, y_train, maxiter=500)
 
-    y_pred = qcl.predict(x_test)  # モデルのパラメータθも更新される
+    y_pred = qcl.predict(x_test)
     assert f1_score(y_test, y_pred, average="weighted") > 0.9
