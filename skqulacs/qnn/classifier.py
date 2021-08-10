@@ -58,16 +58,59 @@ class QNNClassification(QNN):
         y_scaled = self.do_y_scale(y_train)
 
         theta_init = self.circuit.get_parameters()
-        result = minimize(
-            self.cost_func,
-            theta_init,
-            args=(x_train, y_train),
-            method=self.solver,
-            # jac=self._cost_func_grad,
-            options={"maxiter": maxiter},
-        )
-        loss = result.fun
-        theta_opt = result.x
+        if self.solver == "Nelder-Mead":
+            result = minimize(
+                self.cost_func,
+                theta_init,
+                args=(x_train, y_train),
+                method=self.solver,
+                # jac=self._cost_func_grad,
+                options={"maxiter": maxiter},
+            )
+            loss = result.fun
+            theta_opt = result.x
+        elif self.solver == "BFGS":
+            result = minimize(
+                self.cost_func,
+                theta_init,
+                args=(x_train, y_train),
+                method=self.solver,
+                jac=self._cost_func_grad,
+                options={"maxiter": maxiter},
+            )
+            loss = result.fun
+            theta_opt = result.x
+        elif self.solver == "Adam":
+            pr_A = 0.25
+            pr_Bi = 0.6
+            pr_Bt = 0.99
+            pr_ips = 0.0000001
+            # ここまでがハイパーパラメータ
+            Bix = 0
+            Btx = 0
+
+            moment = np.zeros(len(theta_init))
+            vel = 0
+            theta_now = theta_init
+            maxiter *= len(x_train)
+            for iter in range(0, maxiter, 5):
+                grad = self._cost_func_grad(
+                    theta_now,
+                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
+                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
+                )
+                moment = moment * pr_Bi + (1 - pr_Bi) * grad
+                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
+                Bix = Bix * pr_Bi + (1 - pr_Bi)
+                Btx = Btx * pr_Bt + (1 - pr_Bt)
+                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
+                if iter % len(x_train) < 5:
+                    self.cost_func(theta_now, x_train, y_train)
+
+            loss = self.cost_func(theta_now, x_train, y_train)
+            theta_opt = theta_now
+        else:
+            raise NotImplementedError
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]):
@@ -163,33 +206,43 @@ class QNNClassification(QNN):
                 res[i][j] = arg
         return res
 
-    """
-    # for BFGS
-    def _cost_func_grad(self, theta, x_train):
-        y_minus_t = self._predict_inner(theta, x_train) - self.y_list
-        B_grad_list = self._b_grad(theta, x_train)
-        grad = [np.sum(y_minus_t * B_gr) for B_gr in B_grad_list]
-        return np.array(grad)
+    def _cost_func_grad(self, theta, x_train, y_train):
+        self.circuit.update_parameters(theta)
+        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        y_scaled = self.do_y_scale(y_train)
+        mto = self._predict_inner(x_scaled).copy()
+        bbb = np.zeros((len(x_train), self.n_qubit))
+        for h in range(len(x_train)):
+            for j in range(len(self.scale_y_param[0])):
+                hid = self.scale_y_param[1][j]
+                wa = 0
+                for k in range(self.scale_y_param[0][j]):
+                    wa += np.exp(5 * mto[h][hid + k])
+                # print(wa)
+                for k in range(self.scale_y_param[0][j]):
+                    mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
+            for i in range(len(y_scaled[0])):
+                if y_scaled[h][i] == 0:
+                    bbb[h][i] = 1.0 / (1.0 - mto[h][i])
+                else:
+                    bbb[h][i] = -1.0 / (mto[h][i])
 
-    # for BFGS
-    def _b_grad(self, theta, x_train):
-        # dB/dθのリストを返す
         theta_plus = [
-            theta.copy() + np.eye(len(theta))[i] * np.pi / 2.0
-            for i in range(len(theta))
+            theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
         theta_minus = [
-            theta.copy() - np.eye(len(theta))[i] * np.pi / 2.0
-            for i in range(len(theta))
+            theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
 
-        grad = [
-            (
-                self._predict_inner(theta_plus[i], x_train)
-                - self._predict_inner(theta_minus[i], x_train)
-            )
-            / 2.0
-            for i in range(len(theta))
-        ]
-        return np.array(grad)
-    """
+        grad = np.zeros(len(theta))
+        for i in range(len(theta)):
+            self.circuit.update_parameters(theta_plus[i])
+            aaa_f = self._predict_inner(x_scaled)
+            self.circuit.update_parameters(theta_minus[i])
+            aaa_m = self._predict_inner(x_scaled)
+            for j in range(len(x_train)):
+                grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
+
+        self.circuit.update_parameters(theta)
+        grad /= len(x_train)
+        return grad
