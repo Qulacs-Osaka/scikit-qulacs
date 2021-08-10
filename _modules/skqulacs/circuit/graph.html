@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skqulacs.qsvm.qsvr &#8212; scikit-qulacs  documentation</title>
+    <title>skqulacs.circuit.graph &#8212; scikit-qulacs  documentation</title>
     
   <link href="../../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -234,51 +234,48 @@
         
               <div>
                 
-  <h1>Source code for skqulacs.qsvm.qsvr</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">qulacs.state</span> <span class="kn">import</span> <span class="n">inner_product</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+  <h1>Source code for skqulacs.circuit.graph</h1><div class="highlight"><pre>
+<span></span><span class="c1"># 回路のグラフ化をできます。量子状態の棒グラフ、縮約した後の玉表示</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">QuantumState</span>
+
+<span class="c1"># bar(x, y, color=[&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;pink&quot;, &quot;orange&quot;], width=0.5)</span>
+
+<span class="c1"># def show_amplitude(state)</span>
 
 
-<span class="kn">from</span> <span class="nn">skqulacs.qsvm.qsvmbase</span> <span class="kn">import</span> <span class="n">get_qvec</span>
+<div class="viewcode-block" id="show_blochsphere"><a class="viewcode-back" href="../../../skqulacs.circuit.graph.html#skqulacs.circuit.graph.show_blochsphere">[docs]</a><span class="k">def</span> <span class="nf">show_blochsphere</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">bit</span><span class="p">):</span>
 
-<span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">LearningCircuit</span>
+    <span class="n">n_qubit</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_qubit_count</span><span class="p">()</span>
+    <span class="n">observableX</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="n">observableX</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;X </span><span class="si">{</span><span class="n">bit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># オブザーバブルを設定</span>
+    <span class="n">observableY</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="n">observableY</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Y </span><span class="si">{</span><span class="n">bit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># オブザーバブルを設定</span>
+    <span class="n">observableZ</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="n">observableZ</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">bit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># オブザーバブルを設定</span>
 
+    <span class="n">X</span> <span class="o">=</span> <span class="n">observableX</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">observableY</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">observableZ</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 
-<div class="viewcode-block" id="QSVR"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR">[docs]</a><span class="k">class</span> <span class="nc">QSVR</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regr</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVR</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">0</span>
-
-<div class="viewcode-block" id="QSVR.fit"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="c1"># print(x)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>  <span class="c1"># サンプル数の二乗の情報量　距離を入れる</span>
-        <span class="c1"># xとyのカーネルを計算する</span>
-        <span class="c1"># そのために、UΦxを計算する</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-            <span class="c1"># print(self.data_states[i])</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-                <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="p">)</span>
-
-        <span class="c1"># print(kar)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">regr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="QSVR.predict"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvr.html#skqulacs.qsvm.qsvr.QSVR.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">):</span>
-        <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)))</span>  <span class="c1"># サンプル数の二乗の情報量　距離を入れる</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)):</span>
-            <span class="n">x_qc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)):</span>
-                <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="n">x_qc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="c1"># print(kar)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span></div></div>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># sphere</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_wireframe</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightskyblue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X-axis&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y-axis&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Z-axis&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </pre></div>
 
               </div>
