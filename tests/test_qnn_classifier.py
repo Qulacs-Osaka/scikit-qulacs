@@ -1,3 +1,4 @@
+import pytest
 from skqulacs.circuit.pre_defined import create_ansatz
 import pandas as pd
 from sklearn import datasets
@@ -7,7 +8,10 @@ from sklearn.metrics import f1_score
 from skqulacs.qnn import QNNClassification
 
 
-def test_classify_iris():
+@pytest.mark.parametrize(
+    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 500), ("Adam", 12)]
+)
+def test_classify_iris(solver: str, maxiter: int):
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
     x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
@@ -22,8 +26,8 @@ def test_classify_iris():
     time_step = 0.5
     num_class = 3  ## 分類数（ここでは3つの品種に分類）
     circuit = create_ansatz(nqubit, c_depth, time_step, 0)
-    qcl = QNNClassification(nqubit, circuit, num_class)
-    qcl.fit(x_train, y_train, maxiter=500)
+    qcl = QNNClassification(nqubit, circuit, num_class, solver)
+    qcl.fit(x_train, y_train, maxiter)
 
     y_pred = qcl.predict(x_test)
-    assert f1_score(y_test, y_pred, average="weighted") > 0.9
+    assert f1_score(y_test, y_pred, average="weighted") > 0.85
