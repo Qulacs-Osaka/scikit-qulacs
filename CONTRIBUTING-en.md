@@ -20,7 +20,7 @@ Next, workflow through modification to merge.
 3. Synchronize with `main`(not necessary for the first time).
 ```bash
 git switch main
-git pull main
+git pull # Shorthand for `git pull origin main`
 ```
 
 4. Create branch with name describing what you are going to develop.

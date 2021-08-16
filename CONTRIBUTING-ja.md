@@ -20,7 +20,7 @@ make install
 3. `main` と同期します(初回は不要)
 ```bash
 git switch main
-git pull main
+git pull # Shorthand for `git pull origin main`
 ```
 
 4. ブランチを切ります． 開発する内容をおおまかに説明するブランチ名にします．
