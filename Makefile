@@ -1,4 +1,4 @@
-FORMAT_TARGET := skqulacs tests
+TARGET_DIR := skqulacs tests
 PIP_INSTALL := pip install
 PYTEST := python -m pytest -v
 BLACK := python -m black
@@ -21,12 +21,12 @@ FORCE:
 
 .PHONY: format
 format:
-	$(BLACK) $(FORMAT_TARGET)
+	$(BLACK) $(TARGET_DIR)
 
 .PHONY: format_check
 format_check:
-	$(BLACK) --check --diff $(FORMAT_TARGET)
+	$(BLACK) --check --diff $(TARGET_DIR)
 
 .PHONY: lint
 lint:
-	$(FLAKE8) $(FLAKE8_IGNORE)
+	$(FLAKE8) $(FLAKE8_IGNORE) $(TARGET_DIR)
