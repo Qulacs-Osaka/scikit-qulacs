@@ -1,6 +1,5 @@
-import numpy as np
-from qulacs import Observable, QuantumState
-from qulacs.gate import to_matrix_gate, X, CNOT, H, RX, RY
+from qulacs import QuantumState
+from qulacs.gate import CNOT, H, RY
 from skqulacs.circuit import show_blochsphere
 
 

@@ -5,10 +5,12 @@ from qulacs.gate import X, Z, DenseMatrix
 from numpy.random import Generator, default_rng
 import numpy as np
 
+
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
 X_mat = X(0).get_matrix()
 Z_mat = Z(0).get_matrix()
+
 
 # fullsizeのgateをつくる関数.
 def _make_fullgate(list_SiteAndOperator, nqubit):

@@ -54,8 +54,8 @@ class QNNClassification(QNN):
         self.scale_y_param = self.get_y_scale_param(y_train)
         # x_trainからscaleのparamを取得
         # classはyにone-hot表現をする
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        y_scaled = self.do_y_scale(y_train)
+        # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        # y_scaled = self.do_y_scale(y_train)
 
         theta_init = self.circuit.get_parameters()
         if self.solver == "Nelder-Mead":

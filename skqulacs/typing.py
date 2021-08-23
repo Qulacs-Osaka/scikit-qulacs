@@ -1,4 +1,4 @@
 try:
     from typing import Literal
-except:
+except ImportError:
     from typing_extensions import Literal
