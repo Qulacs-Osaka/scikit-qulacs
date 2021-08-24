@@ -218,7 +218,6 @@ class QNNClassification(QNN):
                 wa = 0
                 for k in range(self.scale_y_param[0][j]):
                     wa += np.exp(5 * mto[h][hid + k])
-                # print(wa)
                 for k in range(self.scale_y_param[0][j]):
                     mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
             for i in range(len(y_scaled[0])):
