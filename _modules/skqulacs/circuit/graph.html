@@ -238,16 +238,10 @@
 <span></span><span class="c1"># 回路のグラフ化をできます。量子状態の棒グラフ、縮約した後の玉表示</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
-<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">QuantumState</span>
-
-<span class="c1"># bar(x, y, color=[&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;pink&quot;, &quot;orange&quot;], width=0.5)</span>
-
-<span class="c1"># def show_amplitude(state)</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span>
 
 
 <div class="viewcode-block" id="show_blochsphere"><a class="viewcode-back" href="../../../skqulacs.circuit.graph.html#skqulacs.circuit.graph.show_blochsphere">[docs]</a><span class="k">def</span> <span class="nf">show_blochsphere</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">bit</span><span class="p">):</span>
-
     <span class="n">n_qubit</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_qubit_count</span><span class="p">()</span>
     <span class="n">observableX</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
     <span class="n">observableX</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;X </span><span class="si">{</span><span class="n">bit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># オブザーバブルを設定</span>
@@ -265,7 +259,7 @@
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="c1"># sphere</span>
-    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="p">:</span> <span class="mi">8</span><span class="n">j</span><span class="p">]</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
