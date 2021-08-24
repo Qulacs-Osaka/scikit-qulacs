@@ -1,16 +1,10 @@
 # 回路のグラフ化をできます。量子状態の棒グラフ、縮約した後の玉表示
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from qulacs import Observable, QuantumState
-
-# bar(x, y, color=["red", "blue", "green", "pink", "orange"], width=0.5)
-
-# def show_amplitude(state)
+from qulacs import Observable
 
 
 def show_blochsphere(state, bit):
-
     n_qubit = state.get_qubit_count()
     observableX = Observable(n_qubit)
     observableX.add_operator(1.0, f"X {bit}")  # オブザーバブルを設定
@@ -28,7 +22,7 @@ def show_blochsphere(state, bit):
     ax = fig.add_subplot(111, projection="3d")
     ax.set_box_aspect((1, 1, 1))
     # sphere
-    u, v = np.mgrid[0 : 2 * np.pi : 8j, 0 : np.pi : 8j]
+    u, v = np.mgrid[0 : (2 * np.pi) : 8j, 0 : np.pi : 8j]
     x = np.cos(u) * np.sin(v)
     y = np.sin(u) * np.sin(v)
     z = np.cos(v)

@@ -36,9 +36,13 @@ class QNNRegressor(QNN):
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
-        self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
-        for i in range(n_qubit):
-            self.observables[i].add_operator(1.0, f"Z {i}")
+        self.observables = []
+        for _ in range(n_qubit):
+            observable = Observable(n_qubit)
+            for i in range(self.n_qubit):
+                # Z0, Z1, Z2をオブザーバブルとして設定
+                observable.add_operator(1.0, f"Z {i}")
+            self.observables.append(observable)
 
     def fit(
         self,

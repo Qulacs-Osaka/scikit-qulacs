@@ -54,7 +54,7 @@ class _Parameter:
         Args:
             x: Input data encoded by self.func.
         """
-        if self.is_learning_parameter() and self.is_input:
+        if self.is_learning_parameter() and self.is_input():
             return self.func(self.value, x)
         return self.func(x)
 

@@ -21,13 +21,13 @@ def generate_noisy_sine_two_vars(
     ]
     # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
     y_train = [sine_two_vars(x) for x in x_train]
-    mag_noise = 0.001
+    mag_noise = 0.01
     y_train += mag_noise * rng.random(num_x)
     return x_train, y_train
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 300), ("Adam", 10)]
+    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 1000), ("Adam", 10)]
 )
 def test_noisy_sine_two_vars(solver: str, maxiter: int):
     x_min = -0.5
@@ -85,7 +85,7 @@ def test_noisy_sine(solver: str, maxiter: int):
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine()
+    x_test, y_test, y_pred = test_noisy_sine("Nelder-Mead", 1000)
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()

@@ -1,10 +1,6 @@
 import numpy as np
 from qulacs.state import inner_product
 from sklearn import svm
-
-
-from skqulacs.qsvm.qsvmbase import get_qvec
-
 from skqulacs.circuit import LearningCircuit
 
 

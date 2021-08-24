@@ -3,7 +3,6 @@ from ..qnn.qnnbase import _create_time_evol_gate
 from typing import List, Optional
 from numpy.random import default_rng
 import numpy as np
-import random
 
 
 def create_ansatz(

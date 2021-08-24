@@ -31,8 +31,6 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
 
 
 def test_noisy_sine():
-    ########  パラメータ  #############
-
     x_min = -0.5
     x_max = 0.5
     num_x = 300

@@ -65,7 +65,7 @@ def generate_noisy_sine(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 20), ("Nelder-Mead", 300), ("Adam", 10)]
+    ("solver", "maxiter"), [("BFGS", 20), ("Nelder-Mead", 300), ("Adam", 20)]
 )
 def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
@@ -83,12 +83,12 @@ def test_noisy_sine(solver: str, maxiter: int):
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.2
+    assert loss < 0.02
     return x_test, y_test, y_pred
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine_two_vars()
+    x_test, y_test, y_pred = test_noisy_sine("Nelder-Mead", 1000)
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()
