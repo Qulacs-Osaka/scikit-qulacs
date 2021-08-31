@@ -90,6 +90,7 @@ class QNNRegressor(QNN):
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
+            print(self._cost_func_grad(result.x, x_train, y_train))
             loss = result.fun
             theta_opt = result.x
         elif self.solver == "Adam":
@@ -167,8 +168,10 @@ class QNNRegressor(QNN):
         # 複数入力がある場合に対応したい
         minimum = np.min(y, axis=0)
         maximum = np.max(y, axis=0)
-        sa = (maximum - minimum) / 2 * 1.7
-
+        sa = (maximum - minimum) / 2
+        minimum -= sa * 0.4
+        maximum += sa * 0.4
+        sa *= 1.4
         return [minimum, maximum, sa]
 
     def _do_y_scale(self, y):
@@ -193,11 +196,11 @@ class QNNRegressor(QNN):
         mto = self._predict_inner(x_scaled).copy()
         bbb = np.zeros((len(x_train), self.n_qubit))
         for h in range(len(x_train)):
-            if self.n_outputs == 2:
+            if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
                     bbb[h][i] = (-y_scaled[h][i] + mto[h][i]) / self.n_outputs
             else:
-                bbb[h] = (-y_scaled[h] + mto[h]) / self.n_outputs
+                bbb[h][0] = (-y_scaled[h] + mto[h][0]) / self.n_outputs
 
         theta_plus = [
             theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
