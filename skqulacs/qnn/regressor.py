@@ -108,8 +108,8 @@ class QNNRegressor(QNN):
             for iter in range(0, maxiter, 5):
                 grad = self._cost_func_grad(
                     theta_now,
-                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
-                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
+                    x_train[iter % len(x_train): iter % len(x_train) + 5],
+                    y_train[iter % len(y_train): iter % len(y_train) + 5],
                 )
                 moment = moment * pr_Bi + (1 - pr_Bi) * grad
                 vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
@@ -180,7 +180,7 @@ class QNNRegressor(QNN):
         # y_inrに含まれる数を、　self.scale_paramを用いて復元する
         return [
             (
-                ((ya[0 : self.n_outputs] + 1) * self.scale_y_param[2])
+                ((ya[0: self.n_outputs] + 1) * self.scale_y_param[2])
                 + self.scale_y_param[0]
             )
             for ya in y_inr
