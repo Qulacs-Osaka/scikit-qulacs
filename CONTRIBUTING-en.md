@@ -34,7 +34,7 @@ make fix
 make test
 ```
 
-1. Commit and push modified files.
+6. Commit and push modified files.
 ```bash
 git add MODIFIED_FILE
 git commit
@@ -74,11 +74,11 @@ We use `pytest` for testing. Detailed instructions are available in the [documen
 
 ## CI
 Run CI at GitHub Actions. You cannot merge a branch unless CI passes.
-In CI, we run tests and check code format.
+In CI, we run tests and check code format and linter error.
 The purpose of CI is
 * Share our code works properly in the team.
 * Find error you cannot notice at your local machine.
-* Avoid unnecessary diff by forcing code format.
+* Avoid unnecessary diff by forcing code format and linter error.
 
 ## Installation
 You can install skqulacs to your python's site-packages by `setup-tools`.
