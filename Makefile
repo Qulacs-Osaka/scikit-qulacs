@@ -34,3 +34,9 @@ lint:
 .PHONY: lint_check
 lint_check:
 	$(LINTER) $(LINTER_OPTS) --diff $(TARGET_DIR)
+
+.PHONY: fix
+fix: format lint
+
+.PHONY: check
+check: format_check lint_check

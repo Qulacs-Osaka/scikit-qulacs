@@ -28,13 +28,13 @@ git pull # Shorthand for `git pull origin main`
 git switch -c 99-wonderful-model
 ```
 
-5. Run test and format code before commit.
+5. Format, lint and test code before commit. `make fix` is equivalent to `make format && make lint`
 ```bash
-make format
+make fix
 make test
 ```
 
-6. Commit and push modified files.
+1. Commit and push modified files.
 ```bash
 git add MODIFIED_FILE
 git commit

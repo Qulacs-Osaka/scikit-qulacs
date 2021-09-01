@@ -96,8 +96,8 @@ class QNNClassification(QNN):
             for iter in range(0, maxiter, 5):
                 grad = self._cost_func_grad(
                     theta_now,
-                    x_train[iter % len(x_train): iter % len(x_train) + 5],
-                    y_train[iter % len(y_train): iter % len(y_train) + 5],
+                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
+                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
                 )
                 moment = moment * pr_Bi + (1 - pr_Bi) * grad
                 vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)

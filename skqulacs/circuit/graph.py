@@ -22,7 +22,7 @@ def show_blochsphere(state, bit):
     ax = fig.add_subplot(111, projection="3d")
     ax.set_box_aspect((1, 1, 1))
     # sphere
-    u, v = np.mgrid[0: (2 * np.pi): 8j, 0: np.pi: 8j]
+    u, v = np.mgrid[0 : (2 * np.pi) : 8j, 0 : np.pi : 8j]
     x = np.cos(u) * np.sin(v)
     y = np.sin(u) * np.sin(v)
     z = np.cos(v)

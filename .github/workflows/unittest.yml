@@ -28,12 +28,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         make install
-    - name: Check if code is formatted
+    - name: Check format and lint
       run: |
-        make format_check
-    - name: Check linter error
-      run: |
-        make lint_check
+        make check
     - name: Test with pytest
       run: |
         make test
