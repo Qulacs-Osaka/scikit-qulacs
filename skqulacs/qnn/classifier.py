@@ -106,8 +106,8 @@ class QNNClassification(QNN):
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                #if iter % len(x_train) < 5:
-                    #self.cost_func(theta_now, x_train, y_train)
+                # if iter % len(x_train) < 5:
+                # self.cost_func(theta_now, x_train, y_train)
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
@@ -228,8 +228,7 @@ class QNNClassification(QNN):
                     bbb[h][i] = 1.0 / (1.0 - mto[h][i])
                 else:
                     bbb[h][i] = -1.0 / (mto[h][i])
-            grad+=self.circuit.backprop(x_scaled[h],bbb[h])
-
+            grad += self.circuit.backprop(x_scaled[h], bbb[h])
 
         """
         theta_plus = [
@@ -248,8 +247,6 @@ class QNNClassification(QNN):
             for j in range(len(x_train)):
                 grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
         """
-            
-
 
         self.circuit.update_parameters(theta)
         grad /= len(x_train)

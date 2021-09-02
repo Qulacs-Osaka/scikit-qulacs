@@ -131,7 +131,7 @@ class LearningCircuit:
                 self._circuit.set_parameter(parameter.pos, angle)
         self._circuit.update_quantum_state(state)
         return state
-    
+
     def run_x_no_change(self) -> QuantumState:
         """
         run. but x is not changed form prev run.
@@ -142,9 +142,10 @@ class LearningCircuit:
         self._circuit.update_quantum_state(state)
         return state
 
+    def backprop(
+        self, x: List[float], target_qubit_coef_list: List[float]
+    ) -> List[float]:
 
-    def backprop(self,x: List[float],target_qubit_coef_list:List[float])->List[float]:
-        
         for parameter in self._parameter_list:
             if parameter.is_input():
                 # Input parameter is updated here, not update_parameters(),
@@ -152,16 +153,19 @@ class LearningCircuit:
                 angle = parameter.calculate_angle(x)
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
-        
-        ret=self._circuit.backprop(self.target_qubit_index_list,self.target_qubit_pauli_list,target_qubit_coef_list)
-        ans = [0] * self._learning_gate_count 
+
+        ret = self._circuit.backprop(
+            self.target_qubit_index_list,
+            self.target_qubit_pauli_list,
+            target_qubit_coef_list,
+        )
+        ans = [0] * self._learning_gate_count
         for parameter in self._parameter_list:
             if parameter.is_learning_parameter():
                 if not parameter.is_input():
                     ans[parameter.theta_pos] = ret[parameter.pos]
-        
-        return ans
 
+        return ans
 
     def add_gate(self, gate):
         """Add arbitrary gate.

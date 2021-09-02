@@ -26,9 +26,7 @@ def generate_noisy_sine_two_vars(
     return x_train, y_train
 
 
-@pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)]
-)
+@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)])
 def test_noisy_sine_two_vars(solver: str, maxiter: int):
     x_min = -0.5
     x_max = 0.5
@@ -63,9 +61,7 @@ def generate_noisy_sine(
     return x_train, y_train
 
 
-@pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)]
-)
+@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)])
 def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
     x_max = 1.0

@@ -37,7 +37,7 @@ class QNNRegressor(QNN):
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
         self.observables = []
-        
+
         for i in range(self.n_qubit):
             observable = Observable(n_qubit)
             # Z0, Z1, Z2をオブザーバブルとして設定
@@ -197,17 +197,17 @@ class QNNRegressor(QNN):
         y_scaled = self._do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
         bbb = np.zeros((len(x_train), self.n_qubit))
-        grad=np.zeros(len(theta))
-        #gradA = np.zeros((len(x_train),len(theta)))
-        #gradB = np.zeros((len(x_train),len(theta)))
+        grad = np.zeros(len(theta))
+        # gradA = np.zeros((len(x_train),len(theta)))
+        # gradB = np.zeros((len(x_train),len(theta)))
         for h in range(len(x_train)):
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
                     bbb[h][i] = (-y_scaled[h][i] + mto[h][i]) / self.n_outputs
             else:
                 bbb[h][0] = (-y_scaled[h] + mto[h][0]) / self.n_outputs
-            grad+=self.circuit.backprop(x_scaled[h],bbb[h])
-            #gradA[h]+=self.circuit.backprop(x_scaled[h],bbb[h])
+            grad += self.circuit.backprop(x_scaled[h], bbb[h])
+            # gradA[h]+=self.circuit.backprop(x_scaled[h],bbb[h])
 
         """
         theta_plus = [
@@ -232,9 +232,6 @@ class QNNRegressor(QNN):
                 assert abs(gradA[i][j]-gradB[i][j])<1e-3
 
         """
-
-
-        
 
         self.circuit.update_parameters(theta)
         grad /= len(x_train)
