@@ -27,7 +27,7 @@ def generate_noisy_sine_two_vars(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 1000), ("Adam", 10)]
+    ("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)]
 )
 def test_noisy_sine_two_vars(solver: str, maxiter: int):
     x_min = -0.5
@@ -64,7 +64,7 @@ def generate_noisy_sine(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 300), ("Adam", 10)]
+    ("solver", "maxiter"), [("BFGS", 30), ("Adam", 30)]
 )
 def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
@@ -72,20 +72,20 @@ def test_noisy_sine(solver: str, maxiter: int):
     num_x = 50
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
 
-    n_qubit = 3
-    depth = 6
+    n_qubit = 4
+    depth = 11
     circuit = create_farhi_circuit(n_qubit, depth, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.2
+    assert loss < 0.03
     return x_test, y_test, y_pred
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine("Nelder-Mead", 1000)
+    x_test, y_test, y_pred = test_noisy_sine("BFGS", 50)
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()

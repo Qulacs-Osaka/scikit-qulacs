@@ -40,6 +40,8 @@ class QNNClassification(QNN):
         self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
         for i in range(n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
+            self.circuit.target_qubit_index_list.append(i)
+            self.circuit.target_qubit_pauli_list.append(3)
 
     def fit(self, x_train, y_train, maxiter: Optional[int] = None):
         """
@@ -82,8 +84,8 @@ class QNNClassification(QNN):
             theta_opt = result.x
         elif self.solver == "Adam":
             pr_A = 0.25
-            pr_Bi = 0.6
-            pr_Bt = 0.99
+            pr_Bi = 0.8
+            pr_Bt = 0.995
             pr_ips = 0.0000001
             # ここまでがハイパーパラメータ
             Bix = 0
@@ -104,8 +106,8 @@ class QNNClassification(QNN):
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if iter % len(x_train) < 5:
-                    self.cost_func(theta_now, x_train, y_train)
+                #if iter % len(x_train) < 5:
+                    #self.cost_func(theta_now, x_train, y_train)
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
@@ -212,6 +214,7 @@ class QNNClassification(QNN):
         y_scaled = self.do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
         bbb = np.zeros((len(x_train), self.n_qubit))
+        grad = np.zeros(len(theta))
         for h in range(len(x_train)):
             for j in range(len(self.scale_y_param[0])):
                 hid = self.scale_y_param[1][j]
@@ -225,7 +228,10 @@ class QNNClassification(QNN):
                     bbb[h][i] = 1.0 / (1.0 - mto[h][i])
                 else:
                     bbb[h][i] = -1.0 / (mto[h][i])
+            grad+=self.circuit.backprop(x_scaled[h],bbb[h])
 
+
+        """
         theta_plus = [
             theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
@@ -241,6 +247,9 @@ class QNNClassification(QNN):
             aaa_m = self._predict_inner(x_scaled)
             for j in range(len(x_train)):
                 grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
+        """
+            
+
 
         self.circuit.update_parameters(theta)
         grad /= len(x_train)

@@ -37,12 +37,14 @@ class QNNRegressor(QNN):
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
         self.observables = []
-        for _ in range(n_qubit):
+        
+        for i in range(self.n_qubit):
             observable = Observable(n_qubit)
-            for i in range(self.n_qubit):
-                # Z0, Z1, Z2をオブザーバブルとして設定
-                observable.add_operator(1.0, f"Z {i}")
+            # Z0, Z1, Z2をオブザーバブルとして設定
+            observable.add_operator(1.0, f"Z {i}")
             self.observables.append(observable)
+            self.circuit.target_qubit_index_list.append(i)
+            self.circuit.target_qubit_pauli_list.append(3)
 
     def fit(
         self,
@@ -195,28 +197,44 @@ class QNNRegressor(QNN):
         y_scaled = self._do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
         bbb = np.zeros((len(x_train), self.n_qubit))
+        grad=np.zeros(len(theta))
+        #gradA = np.zeros((len(x_train),len(theta)))
+        #gradB = np.zeros((len(x_train),len(theta)))
         for h in range(len(x_train)):
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
                     bbb[h][i] = (-y_scaled[h][i] + mto[h][i]) / self.n_outputs
             else:
                 bbb[h][0] = (-y_scaled[h] + mto[h][0]) / self.n_outputs
+            grad+=self.circuit.backprop(x_scaled[h],bbb[h])
+            #gradA[h]+=self.circuit.backprop(x_scaled[h],bbb[h])
 
+        """
         theta_plus = [
             theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
         theta_minus = [
             theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
-
-        grad = np.zeros(len(theta))
+        
         for i in range(len(theta)):
             self.circuit.update_parameters(theta_plus[i])
             aaa_f = self._predict_inner(x_scaled)
             self.circuit.update_parameters(theta_minus[i])
             aaa_m = self._predict_inner(x_scaled)
             for j in range(len(x_train)):
-                grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
+                gradB[j][i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
+
+        for i in range(len(x_train)):
+            for j in range(len(theta)):
+                
+                print(gradA[i][j],gradB[i][j])
+                assert abs(gradA[i][j]-gradB[i][j])<1e-3
+
+        """
+
+
+        
 
         self.circuit.update_parameters(theta)
         grad /= len(x_train)
