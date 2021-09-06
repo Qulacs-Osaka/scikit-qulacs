@@ -2,8 +2,10 @@ TARGET_DIR := skqulacs tests
 PIP_INSTALL := pip install
 PYTEST := python -m pytest -v
 FORMATTER := python -m black
-LINTER := python -m autopep8
-LINTER_OPTS := -r --exit-code
+FLAKE8 := python -m flake8
+FLAKE8_OPTS := 
+AUTOPEP8 := python -m autopep8
+AUTOPEP8_OPTS := -r --exit-code --verbose
 
 .PHONY: install
 install:
@@ -29,11 +31,11 @@ format_check:
 
 .PHONY: lint
 lint:
-	$(LINTER) $(LINTER_OPTS) --in-place $(TARGET_DIR)
+	$(AUTOPEP8) $(AUTOPEP8_OPTS) --in-place $(TARGET_DIR)
 
 .PHONY: lint_check
 lint_check:
-	$(LINTER) $(LINTER_OPTS) --diff $(TARGET_DIR)
+	$(FLAKE8) $(TARGET_DIR)
 
 .PHONY: fix
 fix: format lint
