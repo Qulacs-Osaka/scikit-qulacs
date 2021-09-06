@@ -28,11 +28,14 @@ git pull # Shorthand for `git pull origin main`
 git switch -c 99-wonderful-model
 ```
 
-1. コミットの前にフォーマットとリント，テストを実行します． `make fix` は `make format && make lint` と等価です．
+5. コミットの前にフォーマットとリント，テストを実行します． 
 ```bash
-make fix
+make check
 make test
 ```
+
+コードフォーマットといくつかのリントエラーは `make fix` で修正できます．
+それ以外のリントエラーはエラーメッセージに沿って手で直す必要があります．
 
 6. 編集したファイルをコミットしてプッシュします．
 ```bash
