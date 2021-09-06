@@ -3,7 +3,7 @@ PIP_INSTALL := pip install
 PYTEST := python -m pytest -v
 FORMATTER := python -m black
 FLAKE8 := python -m flake8
-FLAKE8_OPTS := 
+FLAKE8_OPTS :=
 AUTOPEP8 := python -m autopep8
 AUTOPEP8_OPTS := -r --exit-code --verbose
 
@@ -27,7 +27,8 @@ format:
 
 .PHONY: format_check
 format_check:
-	$(FORMATTER) --check --diff $(TARGET_DIR)
+	@echo "=== Format check ==="
+	@$(FORMATTER) --check --diff $(TARGET_DIR)
 
 .PHONY: lint
 lint:
@@ -35,7 +36,8 @@ lint:
 
 .PHONY: lint_check
 lint_check:
-	$(FLAKE8) $(TARGET_DIR)
+	@echo "=== Lint check ==="
+	@$(FLAKE8) $(TARGET_DIR)
 
 .PHONY: fix
 fix: format lint
