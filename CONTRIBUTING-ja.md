@@ -28,11 +28,14 @@ git pull # Shorthand for `git pull origin main`
 git switch -c 99-wonderful-model
 ```
 
-5. コミットの前にテストとフォーマットを実行します．
+5. コミットの前にフォーマットとリント，テストを実行します． 
 ```bash
-make format
+make check
 make test
 ```
+
+コードフォーマットといくつかのリントエラーは `make fix` で修正できます．
+それ以外のリントエラーはエラーメッセージに沿って手で直す必要があります．
 
 6. 編集したファイルをコミットしてプッシュします．
 ```bash
@@ -74,11 +77,11 @@ make tests/test_circuit.py tests/test_qnn_regressor.py
 
 ## CI
 GitHub Actions で CI を実行します． 基本的に CI に通らないとマージできません．
-CI ではテストとコードフォーマットの確認をします．
+CI ではテストとコードフォーマット，リンタのエラーがないことの確認をします．
 CI の目的には次のようなものがあります．
 * コードが正常に確認していることを全体で共有する
 * 手元では気づかなかったエラーを発見する
-* コードがフォーマットされていることを強制することで余計な diff が生まれないようにする
+* コードがフォーマットされておりリンタのエラーがないことを強制することで，余計な diff が生まれないようにする
 
 ## Installation
 `setup-tools` を使って　site-packages に skqulacs をインストールすることができます．
