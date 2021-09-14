@@ -220,13 +220,13 @@ class QNNClassification(QNN):
                     wa += np.exp(5 * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
                     mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
-            backobs=Observable(self.n_qubit)
-            
+            backobs = Observable(self.n_qubit)
+
             for i in range(len(y_scaled[0])):
                 if y_scaled[h][i] == 0:
-                    backobs.add_operator(1.0 / (1.0 - mto[h][i]),f"Z {i}")
+                    backobs.add_operator(1.0 / (1.0 - mto[h][i]), f"Z {i}")
                 else:
-                    backobs.add_operator(-1.0 / (mto[h][i]),f"Z {i}")
+                    backobs.add_operator(-1.0 / (mto[h][i]), f"Z {i}")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
         """

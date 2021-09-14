@@ -140,9 +140,7 @@ class LearningCircuit:
         self._circuit.update_quantum_state(state)
         return state
 
-    def backprop(
-        self, x: List[float], obs
-    ) -> List[float]:
+    def backprop(self, x: List[float], obs) -> List[float]:
 
         for parameter in self._parameter_list:
             if parameter.is_input():

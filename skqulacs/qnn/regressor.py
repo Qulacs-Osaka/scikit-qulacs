@@ -194,17 +194,19 @@ class QNNRegressor(QNN):
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self._do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
-        
+
         grad = np.zeros(len(theta))
         # gradA = np.zeros((len(x_train),len(theta)))
         # gradB = np.zeros((len(x_train),len(theta)))
         for h in range(len(x_train)):
-            backobs=Observable(self.n_qubit)
+            backobs = Observable(self.n_qubit)
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
-                   backobs.add_operator((-y_scaled[h][i] + mto[h][i]) / self.n_outputs,"Z {i}")
+                    backobs.add_operator(
+                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs, "Z {i}"
+                    )
             else:
-                backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs,"Z 0")
+                backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
         """
