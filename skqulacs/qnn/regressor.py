@@ -43,8 +43,6 @@ class QNNRegressor(QNN):
             # Z0, Z1, Z2をオブザーバブルとして設定
             observable.add_operator(1.0, f"Z {i}")
             self.observables.append(observable)
-            self.circuit.target_qubit_index_list.append(i)
-            self.circuit.target_qubit_pauli_list.append(3)
 
     def fit(
         self,
@@ -196,18 +194,18 @@ class QNNRegressor(QNN):
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self._do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
-        bbb = np.zeros((len(x_train), self.n_qubit))
+        
         grad = np.zeros(len(theta))
         # gradA = np.zeros((len(x_train),len(theta)))
         # gradB = np.zeros((len(x_train),len(theta)))
         for h in range(len(x_train)):
+            backobs=Observable(self.n_qubit)
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
-                    bbb[h][i] = (-y_scaled[h][i] + mto[h][i]) / self.n_outputs
+                   backobs.add_operator((-y_scaled[h][i] + mto[h][i]) / self.n_outputs,"Z {i}")
             else:
-                bbb[h][0] = (-y_scaled[h] + mto[h][0]) / self.n_outputs
-            grad += self.circuit.backprop(x_scaled[h], bbb[h])
-            # gradA[h]+=self.circuit.backprop(x_scaled[h],bbb[h])
+                backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs,"Z 0")
+            grad += self.circuit.backprop(x_scaled[h], backobs)
 
         """
         theta_plus = [

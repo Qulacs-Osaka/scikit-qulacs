@@ -40,8 +40,6 @@ class QNNClassification(QNN):
         self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
         for i in range(n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
-            self.circuit.target_qubit_index_list.append(i)
-            self.circuit.target_qubit_pauli_list.append(3)
 
     def fit(self, x_train, y_train, maxiter: Optional[int] = None):
         """
@@ -213,7 +211,6 @@ class QNNClassification(QNN):
         x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         y_scaled = self.do_y_scale(y_train)
         mto = self._predict_inner(x_scaled).copy()
-        bbb = np.zeros((len(x_train), self.n_qubit))
         grad = np.zeros(len(theta))
         for h in range(len(x_train)):
             for j in range(len(self.scale_y_param[0])):
@@ -223,12 +220,14 @@ class QNNClassification(QNN):
                     wa += np.exp(5 * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
                     mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
+            backobs=Observable(self.n_qubit)
+            
             for i in range(len(y_scaled[0])):
                 if y_scaled[h][i] == 0:
-                    bbb[h][i] = 1.0 / (1.0 - mto[h][i])
+                    backobs.add_operator(1.0 / (1.0 - mto[h][i]),f"Z {i}")
                 else:
-                    bbb[h][i] = -1.0 / (mto[h][i])
-            grad += self.circuit.backprop(x_scaled[h], bbb[h])
+                    backobs.add_operator(-1.0 / (mto[h][i]),f"Z {i}")
+            grad += self.circuit.backprop(x_scaled[h], backobs)
 
         """
         theta_plus = [

@@ -86,8 +86,6 @@ class LearningCircuit:
         self._circuit = ParametricQuantumCircuit(n_qubit)
         self._parameter_list: List[_Parameter] = []
         self._learning_gate_count = 0
-        self.target_qubit_index_list = []
-        self.target_qubit_pauli_list = []
 
     def update_parameters(self, theta: List[float]):
         """Update learning parameter of the circuit.
@@ -143,7 +141,7 @@ class LearningCircuit:
         return state
 
     def backprop(
-        self, x: List[float], target_qubit_coef_list: List[float]
+        self, x: List[float], obs
     ) -> List[float]:
 
         for parameter in self._parameter_list:
@@ -154,11 +152,7 @@ class LearningCircuit:
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
 
-        ret = self._circuit.backprop(
-            self.target_qubit_index_list,
-            self.target_qubit_pauli_list,
-            target_qubit_coef_list,
-        )
+        ret = self._circuit.backprop(obs)
         ans = [0] * self._learning_gate_count
         for parameter in self._parameter_list:
             if parameter.is_learning_parameter():
