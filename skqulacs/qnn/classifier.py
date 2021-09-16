@@ -56,13 +56,14 @@ class QNNClassification(QNN):
         # classはyにone-hot表現をする
         # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         # y_scaled = self.do_y_scale(y_train)
-
+        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        y_scaled = self.do_y_scale(y_train)
         theta_init = self.circuit.get_parameters()
         if self.solver == "Nelder-Mead":
             result = minimize(
                 self.cost_func,
                 theta_init,
-                args=(x_train, y_train),
+                args=(x_scaled, y_scaled),
                 method=self.solver,
                 # jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
@@ -73,7 +74,7 @@ class QNNClassification(QNN):
             result = minimize(
                 self.cost_func,
                 theta_init,
-                args=(x_train, y_train),
+                args=(x_scaled, y_scaled),
                 method=self.solver,
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
@@ -96,8 +97,8 @@ class QNNClassification(QNN):
             for iter in range(0, maxiter, 5):
                 grad = self._cost_func_grad(
                     theta_now,
-                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
-                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
+                    x_scaled[iter % len(x_train) : iter % len(x_train) + 5],
+                    y_scaled[iter % len(y_train) : iter % len(y_train) + 5],
                 )
                 moment = moment * pr_Bi + (1 - pr_Bi) * grad
                 vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
@@ -133,12 +134,10 @@ class QNNClassification(QNN):
             res.append(r)
         return np.array(res)
 
-    def cost_func(self, theta, x_train, y_train):
+    def cost_func(self, theta, x_scaled, y_scaled):
         # 生のデータを入れる
         if self.cost == "log_loss":
             # cross-entropy loss (default)
-            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-            y_scaled = self.do_y_scale(y_train)
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
             # predについて、softmaxをする
@@ -206,13 +205,12 @@ class QNNClassification(QNN):
                 res[i][j] = arg
         return res
 
-    def _cost_func_grad(self, theta, x_train, y_train):
+    def _cost_func_grad(self, theta, x_scaled, y_scaled):
         self.circuit.update_parameters(theta)
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        y_scaled = self.do_y_scale(y_train)
+
         mto = self._predict_inner(x_scaled).copy()
         grad = np.zeros(len(theta))
-        for h in range(len(x_train)):
+        for h in range(len(x_scaled)):
             for j in range(len(self.scale_y_param[0])):
                 hid = self.scale_y_param[1][j]
                 wa = 0
@@ -248,5 +246,5 @@ class QNNClassification(QNN):
         """
 
         self.circuit.update_parameters(theta)
-        grad /= len(x_train)
+        grad /= len(x_scaled)
         return grad
