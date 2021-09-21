@@ -20,20 +20,27 @@ class QNNClassification(QNN):
         n_qubit: int,
         circuit: LearningCircuit,
         num_class: int,
-        solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
+        solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
         cost: Literal["log_loss"] = "log_loss",
+        do_x_scale: bool = True,
+        y_exp_bai=5.0,
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
-        :param c_depth: circuitの深さ
+        :param circuit: 回路そのもの
         :param num_class: 分類の数（=測定するqubitの数）
+        :param solver: 何を使うか　Nelderは非推奨
+        :param cost: コスト関数　log_lossしかない。
+        :param do_x_scale xをscaleしますか?
+        :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
         """
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
         self.solver = solver
         self.cost = cost
-
+        self.do_x_scale = do_x_scale
+        self.y_exp_bai = y_exp_bai
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
@@ -49,15 +56,21 @@ class QNNClassification(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
+       
+
         # x_trainからscaleのparamを取得
         # classはyにone-hot表現をする
         # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         # y_scaled = self.do_y_scale(y_train)
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        else:
+            x_scaled = x_train
+
         y_scaled = self.do_y_scale(y_train)
+
         theta_init = self.circuit.get_parameters()
         if self.solver == "Nelder-Mead":
             result = minimize(
@@ -115,8 +128,20 @@ class QNNClassification(QNN):
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]):
+        """Predict outcome for each input data in `x_test`.
+
+        Arguments:
+            x_test: Input data whose shape is (n_samples, n_features).
+
+        Returns:
+            y_pred: Predicted outcome.
+        """
         # x_test = array-like of of shape (n_samples, n_features)
-        x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        else:
+            x_scaled = x_test
+
         y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
         return y_pred
 
@@ -147,9 +172,9 @@ class QNNClassification(QNN):
                     hid = self.scale_y_param[1][j]
                     wa = 0
                     for k in range(self.scale_y_param[0][j]):
-                        wa += np.exp(5 * y_pred[i][hid + k])
+                        wa += np.exp(self.y_exp_bai * y_pred[i][hid + k])
                     for k in range(self.scale_y_param[0][j]):
-                        ypf.append(np.exp(5 * y_pred[i][hid + k]) / wa)
+                        ypf.append(np.exp(self.y_exp_bai * y_pred[i][hid + k]) / wa)
             ysf = y_scaled.ravel()
             cost = 0
             for i in range(len(ysf)):
@@ -215,9 +240,9 @@ class QNNClassification(QNN):
                 hid = self.scale_y_param[1][j]
                 wa = 0
                 for k in range(self.scale_y_param[0][j]):
-                    wa += np.exp(5 * mto[h][hid + k])
+                    wa += np.exp(self.y_exp_bai * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
-                    mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
+                    mto[h][hid + k] = np.exp(self.y_exp_bai * mto[h][hid + k]) / wa
             backobs = Observable(self.n_qubit)
 
             for i in range(len(y_scaled[0])):

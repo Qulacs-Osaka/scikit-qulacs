@@ -67,9 +67,9 @@ def _get_x_scale_param(x):
     # minimum-=sa*0.4
     # maximum+=sa*0.4
     # sa*=1.4
-    print(minimum)
-    print(maximum)
-    print(sa)
+    #print(minimum)
+    #print(maximum)
+    #print(sa)
     return [minimum, maximum, sa]
 
 

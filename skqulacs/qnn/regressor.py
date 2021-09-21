@@ -22,16 +22,26 @@ class QNNRegressor(QNN):
         circuit: LearningCircuit,
         solver: Literal["Adam", "BFGS", "Nelder-Mead"] = "BFGS",
         cost: Literal["mse"] = "mse",
+        do_x_scale: bool = True,
+        do_y_scale: bool = True,
+        y_norm_range=0.7,
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
-        :param c_depth: circuitの深さ
-
+        :param circuit: 回路そのもの
+        :param solver: 何を使うか　Nelderは非推奨
+        :param cost: コスト関数　log_lossしかない。
+        :param do_x_scale xをscaleしますか?
+        :param do_x_scale yをscaleしますか?
+        :param y_margin  [-y_norm_range,y_norm_range]に正規化.
         """
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.solver = solver
         self.cost = cost
+        self.do_x_scale = do_x_scale
+        self.do_y_scale = do_y_scale
+        self.y_norm_range = y_norm_range
 
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
@@ -54,8 +64,16 @@ class QNNRegressor(QNN):
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self._get_y_scale_param(y_train)
 
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        y_scaled = self._do_y_scale(y_train)
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        else:
+            x_scaled = x_train
+
+        if self.do_y_scale:
+            y_scaled = self._do_y_scale(y_train)
+        else:
+            y_scaled = y_train
+
         # x_trainからscaleのparamを取得
         # regreはyもscaleさせる
         # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
@@ -132,16 +150,24 @@ class QNNRegressor(QNN):
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]) -> List[float]:
-        """Predict outcome for each input data in `x_scaled`.
+        """Predict outcome for each input data in `x_test`.
 
         Arguments:
-            x_scaled: Input data whose shape is (n_samples, n_features).
+            x_test: Input data whose shape is (n_samples, n_features).
 
         Returns:
             y_pred: Predicted outcome.
         """
-        x_scaled = _min_max_scaling(x_test, self.scale_x_param)
-        y_pred = self._rev_y_scale(self._predict_inner(x_scaled))
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        else:
+            x_scaled = x_test
+
+        if self.do_y_scale:
+            y_pred = self._rev_y_scale(self._predict_inner(x_scaled))
+        else:
+            y_pred = self._predict_inner(x_scaled)
+
         return y_pred
 
     def _predict_inner(self, x_scaled):
@@ -174,9 +200,9 @@ class QNNRegressor(QNN):
         minimum = np.min(y, axis=0)
         maximum = np.max(y, axis=0)
         sa = (maximum - minimum) / 2
-        minimum -= sa * 0.4
-        maximum += sa * 0.4
-        sa *= 1.4
+        minimum -= sa / self.y_norm_range - 1
+        maximum += sa / self.y_norm_range - 1
+        sa /= self.y_norm_range
         return [minimum, maximum, sa]
 
     def _do_y_scale(self, y):
