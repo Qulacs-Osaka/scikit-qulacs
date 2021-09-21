@@ -6,7 +6,7 @@ import numpy as np
 
 
 def create_ansatz(
-    n_qubit: int, c_depth: int, time_step: float, seed: Optional[int] = None
+    n_qubit: int, c_depth: int, time_step: float=0.5, seed: Optional[int] = None
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
@@ -78,6 +78,61 @@ def create_farhi_circuit(
             circuit.add_parametric_RX_gate(zyu[i], -angle_x)
     return circuit
 
+def create_farhi_watle(
+    n_qubit: int, c_depth: int, seed: Optional[int] = None
+) -> LearningCircuit:
+    def preprocess_x(x: List[float], index: int):
+        dex=index % len(x)
+        inkaz=((n_qubit-dex)-1)//len(x) +1 #そのbitに割り当てられる量子の数
+        xa = (min(1, max(-1, x[dex]))+1)/2
+        sban=index//len(x)
+
+        xb=0
+        if(inkaz==1 and sban==0):
+            xb=xa
+        if(inkaz==2 and sban==0):
+            xb=xa*xa
+        if(inkaz==2 and sban==1):
+            xb=xa*(2-xa)
+        if(inkaz==3 and sban==0):
+            xb=xa*xa*xa
+        if(inkaz==3 and sban==1):
+            xb=xa*xa*(3-2*xa)
+        if(inkaz==3 and sban==2):
+            xb=xa*(3+xa*(-3+xa))
+        if(inkaz>=4):
+            xb=xa #あきらめた
+        if(xb<0 or 1<xb):
+            print("bug")
+        
+        #print(sban,xa,xb)
+        return xb*2-1
+
+    circuit = LearningCircuit(n_qubit)
+    for i in range(n_qubit):
+        circuit.add_input_RY_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
+        circuit.add_input_RZ_gate(
+            i, lambda x, i=i: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
+        )
+
+    zyu = list(range(n_qubit))
+    rng = default_rng(seed)
+    for _ in range(c_depth):
+        rng.shuffle(zyu)
+        # 今回の回路はdepthを多めにとったほうがいいかも
+        # 最低でもn_qubitはほしいかも
+        for i in range(0, n_qubit - 1, 2):
+            angle_x = 2.0 * np.pi * rng.random()
+            angle_y = 2.0 * np.pi * rng.random()
+            circuit.add_CNOT_gate(zyu[i + 1], zyu[i])
+            circuit.add_parametric_RX_gate(zyu[i], angle_x)
+            circuit.add_parametric_RY_gate(zyu[i], angle_y)
+            circuit.add_CNOT_gate(zyu[i + 1], zyu[i])
+            angle_x = 2.0 * np.pi * rng.random()
+            angle_y = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RY_gate(zyu[i], -angle_y)
+            circuit.add_parametric_RX_gate(zyu[i], -angle_x)
+    return circuit
 
 def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     def preprocess_x(x: List[float], index: int) -> float:
