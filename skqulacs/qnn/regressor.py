@@ -30,7 +30,7 @@ class QNNRegressor(QNN):
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
         :param circuit: 回路そのもの
         :param solver: 何を使うか　Nelderは非推奨
-        :param cost: コスト関数　log_lossしかない。
+        :param cost: コスト関数　mseしかない。 mseは、正規化した後での二乗和をとる。
         :param do_x_scale xをscaleしますか?
         :param do_x_scale yをscaleしますか?
         :param y_margin  [-y_norm_range,y_norm_range]に正規化.
