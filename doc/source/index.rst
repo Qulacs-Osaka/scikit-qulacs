@@ -14,6 +14,8 @@ This library is based on `qulacs <https://github.com/qulacs/qulacs>`_ and named 
    :caption: Contents:
 
    modules
+   notebooks/0_example
+   notebooks/1.1_latex
 
 
 
