@@ -22,12 +22,12 @@
       
 
     
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     
   <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -53,6 +53,7 @@
     <a class="navbar-brand text-wrap" href="../../../index.html">
       
       
+      
       <h1 class="site-logo" id="site-title">scikit-qulacs  documentation</h1>
       
     </a>
@@ -61,7 +62,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption">
+        <p class="caption" role="heading">
  <span class="caption-text">
   Contents:
  </span>
@@ -242,14 +243,14 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="create_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_ansatz</span><span class="p">(</span>
+<div class="viewcode-block" id="create_qcl_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_qcl_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_qcl_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; n_qubit = 4</span>
-<span class="sd">        &gt;&gt;&gt; circuit = create_ansatz(n_qubit, 3, 0.5)</span>
+<span class="sd">        &gt;&gt;&gt; circuit = create_qcl_ansatz(n_qubit, 3, 0.5)</span>
 <span class="sd">        &gt;&gt;&gt; qnn = QNNRegressor(n_qubit, circuit)</span>
 <span class="sd">        &gt;&gt;&gt; qnn.fit(x_train, y_train)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -372,7 +373,7 @@
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         

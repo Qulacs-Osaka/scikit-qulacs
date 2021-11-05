@@ -22,12 +22,12 @@
       
 
     
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     
   <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -53,6 +53,7 @@
     <a class="navbar-brand text-wrap" href="../../../index.html">
       
       
+      
       <h1 class="site-logo" id="site-title">scikit-qulacs  documentation</h1>
       
     </a>
@@ -61,7 +62,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption">
+        <p class="caption" role="heading">
  <span class="caption-text">
   Contents:
  </span>
@@ -249,7 +250,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="QNNClassification"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification">[docs]</a><span class="k">class</span> <span class="nc">QNNClassification</span><span class="p">(</span><span class="n">QNN</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier">[docs]</a><span class="k">class</span> <span class="nc">QNNClassifier</span><span class="p">(</span><span class="n">QNN</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;quantum circuit learningを用いて分類問題を解く&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -278,7 +279,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QNNClassification.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param x_list: fitしたいデータのxのリスト</span>
 <span class="sd">        :param y_list: fitしたいデータのyのリスト</span>
@@ -350,7 +351,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">theta_opt</span></div>
 
-<div class="viewcode-block" id="QNNClassification.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]):</span>
+<div class="viewcode-block" id="QNNClassifier.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]):</span>
         <span class="c1"># x_test = array-like of of shape (n_samples, n_features)</span>
         <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">_min_max_scaling</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span><span class="p">)</span>
         <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">))</span>
@@ -370,7 +371,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QNNClassification.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
         <span class="c1"># 生のデータを入れる</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">==</span> <span class="s2">&quot;log_loss&quot;</span><span class="p">:</span>
             <span class="c1"># cross-entropy loss (default)</span>
@@ -402,7 +403,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="QNNClassification.get_y_scale_param"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.get_y_scale_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_y_scale_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier.get_y_scale_param"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.get_y_scale_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_y_scale_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="c1"># 複数入力がある場合に対応したい</span>
         <span class="c1"># yの最大値をもつ</span>
         <span class="n">syurui</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -415,7 +416,7 @@
         <span class="n">rui</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">syurui</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()))</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">syurui</span><span class="p">,</span> <span class="n">rui</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="QNNClassification.do_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.do_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">do_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier.do_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.do_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">do_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="c1"># yをone-hot表現にする 複数入力への対応もする</span>
         <span class="n">clsnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">clsnum</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -427,7 +428,7 @@
                     <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="QNNClassification.rev_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassification.rev_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_inr</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNClassifier.rev_y_scale"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.rev_y_scale">[docs]</a>    <span class="k">def</span> <span class="nf">rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_inr</span><span class="p">):</span>
         <span class="c1"># argmaxをとる</span>
         <span class="c1"># one-hot表現の受け取りをしたら、それを与えられた番号にして返す</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y_inr</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -498,7 +499,7 @@
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         
