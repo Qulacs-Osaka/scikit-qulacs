@@ -12,7 +12,7 @@ from typing import List, Optional
 import numpy as np
 
 
-class QNNClassification(QNN):
+class QNNClassifier(QNN):
     """quantum circuit learningを用いて分類問題を解く"""
 
     def __init__(
