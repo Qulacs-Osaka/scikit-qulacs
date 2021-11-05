@@ -1,2 +1,2 @@
-from .classifier import QNNClassification
+from .classifier import QNNClassifier
 from .regressor import QNNRegressor

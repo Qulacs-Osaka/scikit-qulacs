@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from typing import List, Tuple
 from numpy.random import default_rng
-from skqulacs.circuit import create_ansatz
+from skqulacs.circuit import create_qcl_ansatz
 from skqulacs.qnn import QNNRegressor
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
@@ -38,7 +38,7 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int):
     n_qubit = 4
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step, 0)
+    circuit = create_qcl_ansatz(n_qubit, depth, time_step, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
 
@@ -76,7 +76,7 @@ def test_noisy_sine(solver: str, maxiter: int):
     n_qubit = 3
     depth = 3
     time_step = 0.5
-    circuit = create_ansatz(n_qubit, depth, time_step, 0)
+    circuit = create_qcl_ansatz(n_qubit, depth, time_step, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
 

@@ -5,14 +5,14 @@ from numpy.random import default_rng
 import numpy as np
 
 
-def create_ansatz(
+def create_qcl_ansatz(
     n_qubit: int, c_depth: int, time_step: float, seed: Optional[int] = None
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
     Examples:
         >>> n_qubit = 4
-        >>> circuit = create_ansatz(n_qubit, 3, 0.5)
+        >>> circuit = create_qcl_ansatz(n_qubit, 3, 0.5)
         >>> qnn = QNNRegressor(n_qubit, circuit)
         >>> qnn.fit(x_train, y_train)
     """
