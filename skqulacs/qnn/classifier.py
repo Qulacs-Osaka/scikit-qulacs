@@ -58,7 +58,6 @@ class QNNClassifier(QNN):
         """
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
-       
 
         # x_trainからscaleのparamを取得
         # classはyにone-hot表現をする
