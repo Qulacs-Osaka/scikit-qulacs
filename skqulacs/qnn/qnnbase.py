@@ -60,11 +60,22 @@ def _get_x_scale_param(x):
     minimum = np.min(x, axis=0)
     maximum = np.max(x, axis=0)
     sa = (maximum - minimum) / 2
+
+    # print(minimum)
+    # print(maximum)
+    # print(sa)
+    # minimum-=sa*0.4
+    # maximum+=sa*0.4
+    # sa*=1.4
+    #print(minimum)
+    #print(maximum)
+    #print(sa)
     return [minimum, maximum, sa]
 
 
 def _min_max_scaling(x: List[List[float]], scale_x_param):
     """[-1, 1]の範囲に規格化"""
+    # print([((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x])
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
 
 

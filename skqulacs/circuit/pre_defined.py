@@ -3,10 +3,11 @@ from ..qnn.qnnbase import _create_time_evol_gate
 from typing import List, Optional
 from numpy.random import default_rng
 import numpy as np
+from math import factorial
 
 
 def create_qcl_ansatz(
-    n_qubit: int, c_depth: int, time_step: float, seed: Optional[int] = None
+    n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
@@ -51,6 +52,77 @@ def create_farhi_circuit(
     def preprocess_x(x: List[float], index: int):
         xa = x[index % len(x)]
         return min(1, max(-1, xa))
+
+    circuit = LearningCircuit(n_qubit)
+    for i in range(n_qubit):
+        circuit.add_input_RY_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
+        circuit.add_input_RZ_gate(
+            i, lambda x, i=i: np.arccos(preprocess_x(x, i) * preprocess_x(x, i))
+        )
+
+    zyu = list(range(n_qubit))
+    rng = default_rng(seed)
+    for _ in range(c_depth):
+        rng.shuffle(zyu)
+        # 今回の回路はdepthを多めにとったほうがいいかも
+        # 最低でもn_qubitはほしいかも
+        for i in range(0, n_qubit - 1, 2):
+            angle_x = 2.0 * np.pi * rng.random()
+            angle_y = 2.0 * np.pi * rng.random()
+            circuit.add_CNOT_gate(zyu[i + 1], zyu[i])
+            circuit.add_parametric_RX_gate(zyu[i], angle_x)
+            circuit.add_parametric_RY_gate(zyu[i], angle_y)
+            circuit.add_CNOT_gate(zyu[i + 1], zyu[i])
+            angle_x = 2.0 * np.pi * rng.random()
+            angle_y = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RY_gate(zyu[i], -angle_y)
+            circuit.add_parametric_RX_gate(zyu[i], -angle_x)
+    return circuit
+
+
+xkeisuu = np.zeros([15, 15, 15])
+nCr = np.zeros([15, 15])
+
+
+def create_farhi_watle(
+    n_qubit: int, c_depth: int, seed: Optional[int] = None
+) -> LearningCircuit:
+    for i in range(15):
+        for j in range(i + 1):
+            nCr[i][j] = factorial(i) / factorial(j) / factorial(i - j)
+    for i in range(15):
+        for j in range(i):
+            if j == 0:
+                xkeisuu[i][0][i] = 1
+            else:
+                for k in range(i - j, i + 1):
+                    xkeisuu[i][j][k] = xkeisuu[i][j - 1][k] + nCr[i][j] * nCr[j][
+                        i - k
+                    ] * ((-1) ** (i + j + k))
+
+    # for i in range(15):
+    # for j in range(i):
+    # print(xkeisuu[i][j])
+    # print()
+    def preprocess_x(x: List[float], index: int):
+        dex = index % len(x)
+        inkaz = ((n_qubit - dex) - 1) // len(x) + 1  # そのbitに割り当てられる量子の数
+        xa = (min(1, max(-1, x[dex])) + 1) / 2
+        sban = index // len(x)
+
+        xb = 0
+        if inkaz < 15:
+            for i in range(inkaz):
+                xb += xkeisuu[inkaz][sban][inkaz - i]
+                xb *= xa
+        else:
+            xb = xa  # あきらめた
+
+        if xb < 0 or 1 < xb:
+            print("bug")
+
+        # print(sban,xa,xb)
+        return xb * 2 - 1
 
     circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
