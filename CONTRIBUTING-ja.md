@@ -28,11 +28,14 @@ git pull # Shorthand for `git pull origin main`
 git switch -c 99-wonderful-model
 ```
 
-5. コミットの前にテストとフォーマットを実行します．
+5. コミットの前にフォーマットとリント，テストを実行します． 
 ```bash
-make format
+make check
 make test
 ```
+
+コードフォーマットといくつかのリントエラーは `make fix` で修正できます．
+それ以外のリントエラーはエラーメッセージに沿って手で直す必要があります．
 
 6. 編集したファイルをコミットしてプッシュします．
 ```bash
@@ -74,11 +77,11 @@ make tests/test_circuit.py tests/test_qnn_regressor.py
 
 ## CI
 GitHub Actions で CI を実行します． 基本的に CI に通らないとマージできません．
-CI ではテストとコードフォーマットの確認をします．
+CI ではテストとコードフォーマット，リンタのエラーがないことの確認をします．
 CI の目的には次のようなものがあります．
 * コードが正常に確認していることを全体で共有する
 * 手元では気づかなかったエラーを発見する
-* コードがフォーマットされていることを強制することで余計な diff が生まれないようにする
+* コードがフォーマットされておりリンタのエラーがないことを強制することで，余計な diff が生まれないようにする
 
 ## Installation
 `setup-tools` を使って　site-packages に skqulacs をインストールすることができます．
@@ -96,8 +99,9 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ```
 
 ## Documentation
-このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
+このリポジトリのドキュメントには API ドキュメントと Jupyter Notebook 形式のチュートリアルがあります．
 
+このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
 このドキュメントは `main` ブランチにプッシュ(PR からのマージ)したときにビルドされ，デプロイされます．
 
 ### Build document
@@ -118,3 +122,21 @@ make html
 ```
 
 `doc/build/html` に HTML ファイルなどのビルド成果物が入っています．
+
+### Create Page from jupyter notebook
+jupyter notebook からページを作ることができます．ライブラリの使用例などを書くのに便利です．
+1. `doc/source/notebooks` に ipynb ファイルを作って編集する(0_example.ipynb とする)
+2. `doc/source/notebooks/index.rst` にそのファイル名を拡張子なしで追記する(*)
+3. `make html -C doc` を実行すると HTML が生成されるのでブラウザなどで開く
+
+(*) `index.rst` の一部を抜粋します:
+```
+Notebooks
+---------
+
+.. toctree::
+
+   0_tutorial
+```
+
+LaTeX や画像なども表示できます．

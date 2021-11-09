@@ -28,11 +28,14 @@ git pull # Shorthand for `git pull origin main`
 git switch -c 99-wonderful-model
 ```
 
-5. Run test and format code before commit.
+5. Format, lint and test code before commit.
 ```bash
-make format
+make check
 make test
 ```
+
+Code format and some lint errors can be fixed by `make fix`.
+Rest of lint errors should be fixed by hand along error messages.
 
 6. Commit and push modified files.
 ```bash
@@ -74,11 +77,11 @@ We use `pytest` for testing. Detailed instructions are available in the [documen
 
 ## CI
 Run CI at GitHub Actions. You cannot merge a branch unless CI passes.
-In CI, we run tests and check code format.
+In CI, we run tests and check code format and linter error.
 The purpose of CI is
 * Share our code works properly in the team.
 * Find error you cannot notice at your local machine.
-* Avoid unnecessary diff by forcing code format.
+* Avoid unnecessary diff by forcing code format and linter error.
 
 ## Installation
 You can install skqulacs to your python's site-packages by `setup-tools`.
@@ -96,9 +99,10 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ```
 
 ## Documentation
-API document of this library is available here: https://qulacs-osaka.github.io/scikit-qulacs/index.html
+This repository's documentaion includes API document and Jupyter Notebook style tutorials.
 
-The documentation is built and deployed on pushing(merged from PR) to `main` branch.
+The documentation is available here: https://qulacs-osaka.github.io/scikit-qulacs/index.html
+It is built and deployed on pushing(merged from PR) to `main` branch.
 
 ### Build document
 First, move into `doc`.
@@ -117,3 +121,22 @@ make html
 ```
 
 In `doc/build/html`, you can find build artifacts including HTML files.
+
+
+### Create Page from jupyter notebook
+jupyter notebook からページを作ることができます．ライブラリの使用例などを書くのに便利です．
+1. `doc/source/notebooks` に ipynb ファイルを作って編集する(0_example.ipynb とする)
+2. `doc/source/notebook/index.rst` にそのファイル名を拡張子なしで追記する(*)
+3. `make html -C doc` を実行すると HTML が生成されるのでブラウザなどで開く
+
+(*) `doc/source/notebook/index.rst` の一部を抜粋します:
+```
+Notebooks
+---------
+
+.. toctree::
+
+   0_tutorial
+```
+
+LaTeX や画像なども表示できます．
