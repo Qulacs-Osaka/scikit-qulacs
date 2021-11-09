@@ -99,8 +99,9 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ```
 
 ## Documentation
-このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
+このリポジトリのドキュメントには API ドキュメントと Jupyter Notebook 形式のチュートリアルがあります．
 
+このライブラリの API ドキュメントはここから参照できます: https://qulacs-osaka.github.io/scikit-qulacs/index.html
 このドキュメントは `main` ブランチにプッシュ(PR からのマージ)したときにビルドされ，デプロイされます．
 
 ### Build document
@@ -125,17 +126,17 @@ make html
 ### Create Page from jupyter notebook
 jupyter notebook からページを作ることができます．ライブラリの使用例などを書くのに便利です．
 1. `doc/source/notebooks` に ipynb ファイルを作って編集する(0_example.ipynb とする)
-2. `doc/source/index.rst` にそのファイル名を拡張子なしで追記する(*)
-3. `cd doc` して `make html` を実行すると HTML が生成されるのでブラウザなどで開く
+2. `doc/source/notebooks/index.rst` にそのファイル名を拡張子なしで追記する(*)
+3. `make html -C doc` を実行すると HTML が生成されるのでブラウザなどで開く
 
 (*) `index.rst` の一部を抜粋します:
 ```
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Notebooks
+---------
 
-   modules
-   notebooks/0_example
+.. toctree::
+
+   0_tutorial
 ```
 
 LaTeX や画像なども表示できます．
