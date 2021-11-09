@@ -1,0 +1,1112 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scikit-qulacs チュートリアル &#8212; scikit-qulacs  documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Notebooks" href="index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">scikit-qulacs  documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p class="caption" role="heading">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../modules.html">
+   skqulacs
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../skqulacs.html">
+     skqulacs package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.circuit.html">
+       skqulacs.circuit package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.circuit.circuit.html">
+         skqulacs.circuit.circuit module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.circuit.graph.html">
+         skqulacs.circuit.graph module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.circuit.pre_defined.html">
+         skqulacs.circuit.pre_defined module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.qnn.html">
+       skqulacs.qnn package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.classifier.html">
+         skqulacs.qnn.classifier module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.qnnbase.html">
+         skqulacs.qnn.qnnbase module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.regressor.html">
+         skqulacs.qnn.regressor module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.qsvm.html">
+       skqulacs.qsvm package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qsvm.qsvc.html">
+         skqulacs.qsvm.qsvc module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qsvm.qsvmbase.html">
+         skqulacs.qsvm.qsvmbase module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qsvm.qsvr.html">
+         skqulacs.qsvm.qsvr module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../skqulacs.typing.html">
+       skqulacs.typing module
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="index.html">
+   Notebooks
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Scikit-qulacs チュートリアル
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/notebooks/0_tutorial.ipynb.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#scikit-qulacs-とは">
+   scikit-qulacs とは
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#インストール">
+   インストール
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Quantum-neural-network">
+   Quantum neural network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs.qnn.QNNClassifier-の使い方">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.QNNClassifier
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs.qnn.QNNRegressor-の使い方">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.QNNRegressor
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#量子カーネル法">
+   量子カーネル法
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs.qsvm.QSVC-の使い方">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qsvm.QSVC
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs.qsvm.QSVR-の使い方">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qsvm.QSVR
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#用意されている量子回路">
+   用意されている量子回路
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ユーザー定義の量子回路を学習に利用する">
+   ユーザー定義の量子回路を学習に利用する
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Scikit-qulacs-チュートリアル">
+<h1>Scikit-qulacs チュートリアル<a class="headerlink" href="#Scikit-qulacs-チュートリアル" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="scikit-qulacs-とは">
+<h2>scikit-qulacs とは<a class="headerlink" href="#scikit-qulacs-とは" title="Permalink to this headline">¶</a></h2>
+<p>量子回路シミュレータ <a class="reference external" href="https://github.com/Qulacs-Osaka/qulacs-osaka">Qulacs-Osaka</a> (<a class="reference external" href="https://github.com/qulacs/qulacs">Qulacs</a> の大阪大学バージョン) をバックエンドとしたバックエンドの量子機械学習アルゴリズムのシミュレータです。scikit-learn の名前をもじっています。</p>
+</div>
+<div class="section" id="インストール">
+<h2>インストール<a class="headerlink" href="#インストール" title="Permalink to this headline">¶</a></h2>
+<p>Pypi 経由でインストールできるように準備中です。現在はできないので、</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:Qulacs-Osaka/scikit-qulacs.git
+cd scikit-qulacs
+pip install .
+</pre></div>
+</div>
+<p>としてインストールします。</p>
+</div>
+<div class="section" id="Quantum-neural-network">
+<h2>Quantum neural network<a class="headerlink" href="#Quantum-neural-network" title="Permalink to this headline">¶</a></h2>
+<p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> に対して、学習パラメータ <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> を使って</p>
+<div class="math notranslate nohighlight">
+\[y_{{\boldsymbol \theta}}({\boldsymbol x}) = \langle 0|U^\dagger({\boldsymbol \theta}, {\boldsymbol x}) O U({\boldsymbol \theta}, {\boldsymbol x})|0\rangle\]</div>
+<p>の形でモデル <span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsymbol x})\)</span> を構築する手法を量子ニューラルネットワークと呼びます。scikit-qulacs では <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn</span></code> モジュールに実装されています。分類問題をとく <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.classifier</span></code> と回帰問題を解く <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.regressor</span></code> の２つがあります。</p>
+<div class="section" id="skqulacs.qnn.QNNClassifier-の使い方">
+<h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.QNNClassifier</span></code> の使い方<a class="headerlink" href="#skqulacs.qnn.QNNClassifier-の使い方" title="Permalink to this headline">¶</a></h3>
+<p>例として、有名な <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを分類する量子ニューラルネットワークを組んでみます。まず、以下のコードによって <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> から <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを取り出し、訓練データとテストデータに分けます。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import pandas as pd
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+
+iris = datasets.load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+x = df.loc[:, [&quot;petal length (cm)&quot;, &quot;petal width (cm)&quot;]]
+x_train, x_test, y_train, y_test = train_test_split(
+    x, iris.target, test_size=0.25, random_state=0
+)
+x_train = x_train.to_numpy()
+x_test = x_test.to_numpy()
+</pre></div>
+</div>
+</div>
+<p>変数はそれぞれ - <code class="docutils literal notranslate"><span class="pre">x_train</span></code>: 訓練データの入力 - <code class="docutils literal notranslate"><span class="pre">y_train</span></code>: 訓練データのラベル - <code class="docutils literal notranslate"><span class="pre">x_test</span></code>: テストデータの入力 - <code class="docutils literal notranslate"><span class="pre">y_test</span></code>: テストデータのラベル</p>
+<p>です。</p>
+<p>次に簡単な量子回路によってこれらの分類を行ってみます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from skqulacs.circuit.pre_defined import create_qcl_ansatz
+from skqulacs.qnn import QNNClassifier
+
+nqubit = 5                      # qubitの数。必要とする入力、出力の次元数以上が必要である。
+c_depth = 3                     # circuitの深さ。ニューラルネットワークでの隠れ層に対応する。
+time_step = 1.                  # qcl_ansatz に必要となるパラメータ。横磁場イジングモデルによって発展させる時間を決める。
+num_class = 3                   # 分類数（ここでは3つの品種に分類）
+solver=&quot;BFGS&quot;                   # アルゴリズム。ほかには、&quot;Adam&quot; が使える。
+maxiter = 20                    # ループの最大。これが多いほど、正確になるが、時間がかかる。
+circuit = create_qcl_ansatz(nqubit, c_depth, time_step)     # LearningCircuitを作る
+qcl = QNNClassifier(nqubit, circuit, num_class, solver)     # モデル構築を行う
+opt_loss, opt_params = qcl.fit(x_train, y_train, maxiter)                          # 学習
+print(&quot;trained parameters&quot;, opt_params)
+print(&quot;loss&quot;, opt_loss)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+trained parameters [ 5.68026165e+00  6.10209784e+00  4.50576651e+00  2.76464027e+00
+  5.84654943e+00  1.14944587e+00  1.16580821e+00  1.44672000e+00
+  5.17521414e+00  5.04376593e+00  2.51037598e+00  5.06083327e+00
+  1.96099326e+00  6.12387212e+00  1.64324028e+00 -1.47827549e-03
+  4.46601615e+00  6.34634341e+00  2.05038605e+00  5.78870060e+00
+ -8.57019085e-02  6.40992348e+00  4.56187247e+00  3.19459255e+00
+  5.55824069e+00  3.56066575e+00  5.02245985e+00  3.05213912e+00
+  5.83613092e+00  3.88356288e+00 -7.80407945e-02  1.23000111e+00
+  6.21132428e+00  2.75570683e+00  3.74230043e+00  6.14600014e+00
+  2.53905351e-01  2.26196231e+00  4.15179041e+00  4.27127491e+00
+  4.04065901e+00  3.98796123e-01  2.10163159e+00  1.38851246e+00
+  5.02115183e+00]
+loss 0.10037905500811795
+</pre></div></div>
+</div>
+<p>テストデータと比べて結果を出力します。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from sklearn.metrics import f1_score
+y_pred = qcl.predict(x_test)
+print(f1_score(y_test, y_pred, average=&quot;weighted&quot;))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.9739522830846216
+</pre></div></div>
+</div>
+<p>うまく分類できていることがわかります。</p>
+</div>
+<div class="section" id="skqulacs.qnn.QNNRegressor-の使い方">
+<h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.QNNRegressor</span></code> の使い方<a class="headerlink" href="#skqulacs.qnn.QNNRegressor-の使い方" title="Permalink to this headline">¶</a></h3>
+<p>回帰問題を解くには <code class="docutils literal notranslate"><span class="pre">QNNRegressor</span></code> を使います。ここでは <span class="math notranslate nohighlight">\(y=\sin(\pi x)\)</span> を学習させてみます。まずデータセットを作ります。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import numpy as np
+from numpy.random import default_rng
+
+def generate_noisy_sine(x_min, x_max, num_x):
+    rng = default_rng(0)
+    x_train = [[rng.uniform(x_min, x_max)] for _ in range(num_x)]
+    y_train = [np.sin(x[0]) for x in x_train]
+    mag_noise = 0.01
+    y_train += mag_noise * rng.random(num_x)
+    return x_train, y_train
+
+x_min = -1.0
+x_max = 1.0
+num_x = 50
+x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
+x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
+</pre></div>
+</div>
+</div>
+<p>作成したデータに対して学習を行います。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from skqulacs.qnn import QNNRegressor
+
+n_qubit = 3
+depth = 3
+time_step = 0.5
+solver=&quot;BFGS&quot;
+maxiter=30
+circuit = create_qcl_ansatz(n_qubit, depth, time_step, 0)
+qnn = QNNRegressor(n_qubit, circuit, solver)
+opt_loss, opt_params = qnn.fit(x_train, y_train, maxiter)
+print(&quot;trained parameters&quot;, opt_params)
+print(&quot;loss&quot;, opt_loss)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+trained parameters [ 3.93166403  1.74113587  0.3630937  -0.44173687  5.15937421  4.64547617
+  3.76834652  3.74289434  3.25187658  5.70564301  5.11132962  0.07167768
+  5.10139818  0.36990044  4.30785906  1.0497284   5.61443714  2.71529377
+  1.46078489  2.7214845   0.50767906  1.03870172  4.29908696  3.83989125
+  4.1144703   2.46881313  6.29411763]
+loss 0.00036939215487285566
+</pre></div></div>
+</div>
+<p>訓練したモデルとテストデータを並べてプロットしてみます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import matplotlib.pyplot as plt
+y_pred = qnn.predict(x_test)
+plt.plot(x_test, y_test, &quot;o&quot;, label=&quot;Test&quot;)
+plt.plot(np.sort(np.array(x_test).flatten()), np.array(y_pred)[np.argsort(np.array(x_test).flatten())], label=&quot;Prediction&quot;)
+plt.legend()
+plt.show()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_0_tutorial_16_0.png" src="../_images/notebooks_0_tutorial_16_0.png" />
+</div>
+</div>
+<p>よく学習できていることがわかります。</p>
+</div>
+</div>
+<div class="section" id="量子カーネル法">
+<h2>量子カーネル法<a class="headerlink" href="#量子カーネル法" title="Permalink to this headline">¶</a></h2>
+<p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> を量子状態 <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> にマップし、この量子状態間の内積で定義されるカーネル関数</p>
+<div class="math notranslate nohighlight">
+\[K({\boldsymbol x},{\boldsymbol x}')=|\langle \psi({\boldsymbol x})| \psi({\boldsymbol x}')\rangle|^2\]</div>
+<p>を使ったカーネル法を量子カーネル法と呼びます。scikit-qulacs には、support vector classifier <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> と support vector regressor <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の2つが実装されています。</p>
+<div class="section" id="skqulacs.qsvm.QSVC-の使い方">
+<h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> の使い方<a class="headerlink" href="#skqulacs.qsvm.QSVC-の使い方" title="Permalink to this headline">¶</a></h3>
+<p>ここでは IBM のグループが論文 <a class="reference external" href="https://www.nature.com/articles/s41586-019-0980-2">Supervised learning with quantum-enhanced feature spaces</a> で提案した <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> を使った分類を行います。この状態を作る量子回路は <code class="docutils literal notranslate"><span class="pre">skqulacs.circuit.create_defqsv</span></code> によって作り出せます。</p>
+<p>まずデータセットを準備します。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>iris = datasets.load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+x = df.loc[:, [&quot;petal length (cm)&quot;, &quot;petal width (cm)&quot;]]
+x_train, x_test, y_train, y_test = train_test_split(
+    x, iris.target, test_size=0.25, random_state=0
+)
+x_train = x_train.to_numpy()
+x_test = x_test.to_numpy()
+</pre></div>
+</div>
+</div>
+<p>回路を作成し、QSVC を訓練、予測値を出力させます。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from skqulacs.circuit import create_defqsv
+from skqulacs.qsvm import QSVC
+n_qubit = 4                         # x_train の次元数以上必要。あまり小さいと結果が悪くなる。
+circuit = create_defqsv(n_qubit)
+qsvm = QSVC(circuit)
+qsvm.fit(x_train, y_train)
+y_pred = qsvm.predict(x_test)
+</pre></div>
+</div>
+</div>
+<p>評価してみます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>print(f1_score(y_test, y_pred, average=&quot;weighted&quot;))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.8978070175438595
+</pre></div></div>
+</div>
+<p>qnn よりも悪い結果となりました。回路形がこのデータセットに適していないからだと考えられます。</p>
+</div>
+<div class="section" id="skqulacs.qsvm.QSVR-の使い方">
+<h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の使い方<a class="headerlink" href="#skqulacs.qsvm.QSVR-の使い方" title="Permalink to this headline">¶</a></h3>
+<p>同様の回路を使い、回帰を行ってみます。QNN の場合と同様に、<span class="math notranslate nohighlight">\(\sin(\pi x)\)</span> を学習します。まずデータセットを作ります。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>x_min = -1.0
+x_max = 1.0
+num_x = 1000
+x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
+x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
+</pre></div>
+</div>
+</div>
+<p>学習します。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from skqulacs.qsvm import QSVR
+n_qubit = 4                         # x_train の次元数以上必要。あまり小さいと結果が悪くなる。
+circuit = create_defqsv(n_qubit)
+qsvm = QSVR(circuit)
+qsvm.fit(x_train, y_train)
+y_pred = qsvm.predict(x_test)
+</pre></div>
+</div>
+</div>
+<p>学習結果をプロットしてみます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>plt.plot(x_test, y_test, &quot;o&quot;, label=&quot;Test&quot;)
+plt.plot(np.sort(np.array(x_test).flatten()), np.array(y_pred)[np.argsort(np.array(x_test).flatten())], label=&quot;Prediction&quot;)
+plt.legend()
+plt.show()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_0_tutorial_31_0.png" src="../_images/notebooks_0_tutorial_31_0.png" />
+</div>
+</div>
+<p>それっぽく学習はできていますが、うまくいっているとは言い難い結果となりました。これも QSVC の場合と同様で、使用している特徴量 <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> がデータにあっていないことが問題であると考えられます。</p>
+</div>
+</div>
+<div class="section" id="用意されている量子回路">
+<h2>用意されている量子回路<a class="headerlink" href="#用意されている量子回路" title="Permalink to this headline">¶</a></h2>
+<p>scikit-qulacs では代表的な論文で発表されている機械学習用量子回路を手軽に使えるようにするため、量子回路の実装に努めています。機械学習用量子回路は <code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスのインスタンスとして実装されていて、<code class="docutils literal notranslate"><span class="pre">skqulacs.circuit</span></code> モジュールにある <code class="docutils literal notranslate"><span class="pre">create_...()</span></code> という関数を呼ぶことにより作成可能です。</p>
+<p>現在、 - create_qcl_ansatz(n_qubits, c_depth, time_step, seed=None): <a class="reference external" href="https://arxiv.org/abs/1803.00745">arXiv:1803.00745</a> - create_defqsv(n_qubits, tlotstep): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a></p>
+<p>が用意されています。</p>
+<p>基本的には <code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code> などの引数として与えることを推奨しますが、自前で新たなアルゴリズムを作りたいときなど、これらの量子回路を直接扱いたいときもあると思います。以下に使用例を掲載します。</p>
+<p>以下のコードで QCL ansatz を作成します。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>n_qubits = 4
+c_depth = 4
+time_step = 1.
+ansatz = create_qcl_ansatz(n_qubits, c_depth, time_step)
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> にセットされている訓練パラメータは <code class="docutils literal notranslate"><span class="pre">get_parameters()</span></code> によって取り出せます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>parameters = ansatz.get_parameters()
+print(len(parameters), parameters)      # show parameters in the circuit. Parameters are chosen randomly within create_qcl_ansatz()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+48 [0.7238575654756965, 4.521772018945494, 5.300166829620294, 2.4396786706992875, 3.372497641445515, 0.0691143830945458, 2.4305919508432194, 0.897581496914585, 0.8153164989629146, 4.19580716083789, 4.614797622397918, 2.951713965321396, 2.449149087341643, 2.4619419636304105, 1.0029754525418129, 2.334478387370933, 2.5589036813723762, 4.50591651911791, 4.486222509952132, 1.559585289816079, 6.164351024607971, 1.47322926380012, 2.0729721326039914, 2.275646680431729, 2.9195023453638385, 2.7015553984398526, 5.814853292230643, 5.161654841481886, 0.7527848104233957, 1.728308187107492, 5.360006969176836, 5.201498343709625, 0.42675480228093243, 1.967788806417369, 1.7897854085117577, 5.321631318940725, 5.6122834079775785, 5.437876706508988, 2.4878547042811134, 3.796733572414534, 0.9677624343101473, 1.8208670050419042, 0.4657427370080585, 5.820313505901443, 1.2863802672251754, 2.4653914032427604, 0.3882421258541333, 1.4073421893586033]
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">update_parameters()</span></code> を使うと、パラメータを更新できます。以下では全てのパラメータをゼロにセットします。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>ansatz.update_parameters(np.zeros(len(parameters)))
+print(ansatz.get_parameters())
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">run(x)</span></code> を使うと、入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> に対して、初期状態 <span class="math notranslate nohighlight">\(|0\rangle\)</span> に量子回路を作用させたときの出力状態が <code class="docutils literal notranslate"><span class="pre">qulacs.QuantumState</span></code> として返されます。QCL ansatz は <code class="docutils literal notranslate"><span class="pre">n_qubits</span></code> 次元までの入力を扱うことのできる ansatz なので、今回は 2 次元入力を与えます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>state = ansatz.run([np.pi/2, np.pi/2])
+print(state.get_vector())
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[ 0.30869612+0.13283004j -0.0759879 -0.06176279j -0.21316566-0.1438611j
+  0.21877642+0.06614673j -0.33638863+0.12504632j  0.24610584+0.23178805j
+  0.05948781+0.05711437j  0.03556247-0.08914448j  0.03556247-0.08914448j
+  0.05948781+0.05711437j  0.24610584+0.23178805j -0.33638863+0.12504632j
+  0.21877642+0.06614673j -0.21316566-0.1438611j  -0.0759879 -0.06176279j
+  0.30869612+0.13283004j]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="ユーザー定義の量子回路を学習に利用する">
+<h2>ユーザー定義の量子回路を学習に利用する<a class="headerlink" href="#ユーザー定義の量子回路を学習に利用する" title="Permalink to this headline">¶</a></h2>
+<p>ここでは自分でオリジナルの量子回路を定義し、それを学習に利用する方法を説明します。scikit-qulacs では、<code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスによって量子回路を表現しています。これは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のラッパーとなっていて、入力データと訓練される回路パラメータを一元管理し、それらをすべて qulacs の parametric gate で扱えるようにしたものです。</p>
+<p><code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のほぼ全ての <code class="docutils literal notranslate"><span class="pre">add_.._gate()</span></code> 系のメソッドを機能そのままにラップしています。それに加えて、<code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> を拡張する機能として、以下のメソッドが追加されています。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add_input_RX_gate(index,</span> <span class="pre">input_func)</span></code>, <code class="docutils literal notranslate"><span class="pre">add_input_RY_gate(index,</span> <span class="pre">input_func)</span></code>, <code class="docutils literal notranslate"><span class="pre">add_input_RZ_gate(index,</span> <span class="pre">input_func)</span></code>: 入力データを入れるためのゲートを追加します。引数にはそれぞれ以下のものを与えます。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code>: そのゲートを作用させる量子ビット</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_func</span></code>: 入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> -&gt; 回転ゲートの回転角 <span class="math notranslate nohighlight">\(\phi = \phi({\boldsymbol x})\)</span> の変換を行う関数。回路実行時には <code class="docutils literal notranslate"><span class="pre">input_func(x)</span></code> が角度にセットされます。</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_parametric_input_RX_gate(index,</span> <span class="pre">parameter,</span> <span class="pre">input_func)</span></code> (RY, RZ も同様) :入力データと訓練パラメータが同時に含まれているようなゲートを追加します。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code>: そのゲートを作用させる量子ビット</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameter</span></code>: 実数の訓練パラメータ <span class="math notranslate nohighlight">\(\theta\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_func</span></code>: 入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span>, 訓練パラメータ <span class="math notranslate nohighlight">\(\theta\)</span> -&gt; 回転ゲートの回転角 <span class="math notranslate nohighlight">\(\phi = \phi(\theta, {\boldsymbol x})\)</span> の変換を行う関数。回路実行時には <code class="docutils literal notranslate"><span class="pre">input_func(theta,</span> <span class="pre">x)</span></code> が角度にセットされます。</p></li>
+</ul>
+</li>
+</ul>
+<p>例えば以下のコードは、各量子ビットに <span class="math notranslate nohighlight">\({\boldsymbol x} = \{x_i\}_{i=0}^3\)</span> の各成分を <span class="math notranslate nohighlight">\(R_y\)</span> ゲートで入力したあと、各量子ビットを訓練可能な <span class="math notranslate nohighlight">\(R_y\)</span> ゲートで変換し、最後に全ての量子ビットにアダマールゲートを一度だけ作用させる <code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> を構成するコードです。(例のためだけに書いていて、特に意味は無い回路です。)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from skqulacs.circuit import LearningCircuit
+n_qubit = 4
+circuit = LearningCircuit(n_qubit)
+for i in range(n_qubit):
+    circuit.add_input_RY_gate(i, lambda x: x[i%2])  # input 2 dimensional x into the circuit by RY rotation
+for i in range(n_qubit):
+    circuit.add_parametric_RY_gate(i, 0.)           # first argument is qubit index, second argument is parameter
+for i in range(n_qubit):
+    circuit.add_H_gate(i)
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">run()</span></code> メソッドによって初期状態 <span class="math notranslate nohighlight">\(|0\rangle\)</span> にこの回路を作用させたときの量子状態が返されます。このメソッドは入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> を引数として取ります。上の回路は 2 次元の <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> を取れるように設計したので、2次元の入力を与えます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>x = [np.pi/2,np.pi/2]
+state = circuit.run(x)
+print(state.get_vector())
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[-6.93889390e-18+0.j -1.96261557e-17+0.j -2.08166817e-17+0.j
+ -2.77555756e-17+0.j -2.08166817e-17+0.j  1.96261557e-17+0.j
+ -6.93889390e-18+0.j  0.00000000e+00+0.j -2.08166817e-17+0.j
+  1.96261557e-17+0.j -6.93889390e-18+0.j  2.77555756e-17+0.j
+ -6.93889390e-18+0.j  5.88784672e-17+0.j  9.02056208e-17+0.j
+  1.00000000e+00+0.j]
+</pre></div></div>
+</div>
+<p>予想どおりの出力が得られることが確認できます。</p>
+</div>
+</div>
+
+
+              </div>
+              
+        
+            
+
+
+
+<div class='prev-next-bottom'>
+    
+    <div id="prev">
+        <a class="left-prev" href="index.html" title="previous page">
+            <i class="prevnext-label fas fa-angle-left"></i>
+            <div class="prevnext-info">
+                <p class="prevnext-label">previous</p>
+                <p class="prevnext-title">Notebooks</p>
+            </div>
+        </a>
+    </div>
+
+</div>
+        
+        </div>
+    </div>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        
+          By Qulacs-Osaka<br/>
+        
+            &copy; Copyright 2021, Qulacs-Osaka.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
