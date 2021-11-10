@@ -7,7 +7,11 @@ from math import factorial
 
 
 def create_qcl_ansatz(
+<<<<<<< HEAD
     n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
+=======
+    n_qubit: int, c_depth: int, time_step: float, seed: Optional[int] = None
+>>>>>>> 40d2c0ed2268cdd69afcd593250e68367c55ed5a
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
