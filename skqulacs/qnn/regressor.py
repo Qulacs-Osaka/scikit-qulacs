@@ -243,7 +243,7 @@ class QNNRegressor(QNN):
         theta_minus = [
             theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
         ]
-        
+
         for i in range(len(theta)):
             self.circuit.update_parameters(theta_plus[i])
             aaa_f = self._predict_inner(x_scaled)
@@ -254,7 +254,7 @@ class QNNRegressor(QNN):
 
         for i in range(len(x_scaled)):
             for j in range(len(theta)):
-                
+
                 print(gradA[i][j],gradB[i][j])
                 assert abs(gradA[i][j]-gradB[i][j])<1e-3
 
