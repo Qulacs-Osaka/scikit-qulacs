@@ -80,14 +80,11 @@ def create_farhi_circuit(
     return circuit
 
 
-
-
-
 def create_farhi_watle(
     n_qubit: int, c_depth: int, seed: Optional[int] = None
 ) -> LearningCircuit:
-    xkeisuu = np.zeros([25,25,25])
-    nCr = np.zeros([25,25])
+    xkeisuu = np.zeros([25, 25, 25])
+    nCr = np.zeros([25, 25])
     for i in range(25):
         for j in range(i + 1):
             nCr[i][j] = factorial(i) / factorial(j) / factorial(i - j)
@@ -97,8 +94,9 @@ def create_farhi_watle(
                 xkeisuu[i][0][i] = 1
             else:
                 for k in range(i - j, i + 1):
-                    xkeisuu[i][j][k] = xkeisuu[i][j - 1][k] + 
-                    nCr[i][j] * nCr[j][i - k] * ((-1) ** (i + j + k))
+                    xkeisuu[i][j][k] = xkeisuu[i][j - 1][k] + nCr[i][j] * nCr[j][
+                        i - k
+                    ] * ((-1) ** (i + j + k))
 
     def preprocess_x(x: List[float], index: int):
         dex = index % len(x)
@@ -112,7 +110,7 @@ def create_farhi_watle(
                 xb += xkeisuu[qubits_p_bit][sban][qubits_p_bit - i]
                 xb *= xa
         else:
-            xb = xa  # あきらめた
+            xb = xa  # bitが多すぎで,nCrのdouble型の限界を超えてあきらめた 同じbitを25以上使うことは多分ないので.
 
         if xb < 0 or 1 < xb:
             raise RuntimeError("bug")
