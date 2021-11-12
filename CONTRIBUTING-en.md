@@ -99,7 +99,7 @@ pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
 ```
 
 ## Documentation
-This repository's documentaion includes API document and Jupyter Notebook style tutorials.
+This repository's documentation includes API document and Jupyter Notebook style tutorials.
 
 The documentation is available here: https://qulacs-osaka.github.io/scikit-qulacs/index.html
 It is built and deployed on pushing(merged from PR) to `main` branch.
