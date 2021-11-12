@@ -251,24 +251,6 @@ class QNNClassifier(QNN):
                     backobs.add_operator(-1.0 / (mto[h][i]), f"Z {i}")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
-        """
-        theta_plus = [
-            theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-        theta_minus = [
-            theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-
-        grad = np.zeros(len(theta))
-        for i in range(len(theta)):
-            self.circuit.update_parameters(theta_plus[i])
-            aaa_f = self._predict_inner(x_scaled)
-            self.circuit.update_parameters(theta_minus[i])
-            aaa_m = self._predict_inner(x_scaled)
-            for j in range(len(x_train)):
-                grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
-        """
-
         self.circuit.update_parameters(theta)
         grad /= len(x_scaled)
         return grad

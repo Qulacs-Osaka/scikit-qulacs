@@ -109,6 +109,15 @@ class LearningCircuit:
         ]
         return theta_list
 
+    def _set_input(self, x: List[float]):
+        for parameter in self._parameter_list:
+            if parameter.is_input():
+                # Input parameter is updated here, not update_parameters(),
+                # because input parameter is determined with input data x.
+                angle = parameter.calculate_angle(x)
+                parameter.value = angle
+                self._circuit.set_parameter(parameter.pos, angle)
+
     def run(self, x: List[float]) -> QuantumState:
         """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
 
@@ -120,19 +129,13 @@ class LearningCircuit:
         """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
-        for parameter in self._parameter_list:
-            if parameter.is_input():
-                # Input parameter is updated here, not update_parameters(),
-                # because input parameter is determined with input data x.
-                angle = parameter.calculate_angle(x)
-                parameter.value = angle
-                self._circuit.set_parameter(parameter.pos, angle)
+        self._set_input(x)
         self._circuit.update_quantum_state(state)
         return state
 
     def run_x_no_change(self) -> QuantumState:
         """
-        run. but x is not changed form prev run.
+        run. but x is not changed from prev run.
         (can change parameters)
         """
         state = QuantumState(self.n_qubit)
@@ -141,21 +144,27 @@ class LearningCircuit:
         return state
 
     def backprop(self, x: List[float], obs) -> List[float]:
+        """
+        backprop(self, x: List[float],y:Observbavle)->List[Float]
 
-        for parameter in self._parameter_list:
-            if parameter.is_input():
-                # Input parameter is updated here, not update_parameters(),
-                # because input parameter is determined with input data x.
-                angle = parameter.calculate_angle(x)
-                parameter.value = angle
-                self._circuit.set_parameter(parameter.pos, angle)
+        xは入力の状態で、yは出力値の微分値
+        帰ってくるのは、それぞれのパラメータに関する微分値
+        例えば、出力が[0,2]
+        だったらパラメータの1項目は期待する出力に関係しない、2項目をa上げると回路の出力は2a上がる?
 
+        ->
+        c++のParametricQuantumCircuitクラスを呼び出す
+        backprop(GeneralQuantumOperator* obs)
+
+        ->うまくやってbackpropする。
+        現実だと不可能な演算も含むが、気にしない
+        """
+        self._set_input(x)
         ret = self._circuit.backprop(obs)
         ans = [0] * self._learning_gate_count
         for parameter in self._parameter_list:
-            if parameter.is_learning_parameter():
-                if not parameter.is_input():
-                    ans[parameter.theta_pos] = ret[parameter.pos]
+            if parameter.is_learning_parameter() and not parameter.is_input():
+                ans[parameter.theta_pos] = ret[parameter.pos]
 
         return ans
 
