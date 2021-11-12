@@ -115,7 +115,7 @@ def create_farhi_watle(
             xb = xa  # あきらめた
 
         if xb < 0 or 1 < xb:
-            print("bug")
+            raise RuntimeError("bug")
 
         # print(sban,xa,xb)
         return xb * 2 - 1
