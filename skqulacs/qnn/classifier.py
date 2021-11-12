@@ -20,20 +20,27 @@ class QNNClassifier(QNN):
         n_qubit: int,
         circuit: LearningCircuit,
         num_class: int,
-        solver: Literal["BFGS", "Nelder-Mead"] = "Nelder-Mead",
+        solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
         cost: Literal["log_loss"] = "log_loss",
+        do_x_scale: bool = True,
+        y_exp_bai=5.0,
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
-        :param c_depth: circuitの深さ
+        :param circuit: 回路そのもの
         :param num_class: 分類の数（=測定するqubitの数）
+        :param solver: 何を使うか　Nelderは非推奨
+        :param cost: コスト関数　log_lossしかない。
+        :param do_x_scale xをscaleしますか?
+        :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
         """
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
         self.solver = solver
         self.cost = cost
-
+        self.do_x_scale = do_x_scale
+        self.y_exp_bai = y_exp_bai
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
@@ -49,20 +56,26 @@ class QNNClassifier(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
+
         # x_trainからscaleのparamを取得
         # classはyにone-hot表現をする
         # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         # y_scaled = self.do_y_scale(y_train)
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+        else:
+            x_scaled = x_train
+
+        y_scaled = self.do_y_scale(y_train)
 
         theta_init = self.circuit.get_parameters()
         if self.solver == "Nelder-Mead":
             result = minimize(
                 self.cost_func,
                 theta_init,
-                args=(x_train, y_train),
+                args=(x_scaled, y_scaled),
                 method=self.solver,
                 # jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
@@ -73,7 +86,7 @@ class QNNClassifier(QNN):
             result = minimize(
                 self.cost_func,
                 theta_init,
-                args=(x_train, y_train),
+                args=(x_scaled, y_scaled),
                 method=self.solver,
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
@@ -82,8 +95,8 @@ class QNNClassifier(QNN):
             theta_opt = result.x
         elif self.solver == "Adam":
             pr_A = 0.25
-            pr_Bi = 0.6
-            pr_Bt = 0.99
+            pr_Bi = 0.8
+            pr_Bt = 0.995
             pr_ips = 0.0000001
             # ここまでがハイパーパラメータ
             Bix = 0
@@ -96,16 +109,16 @@ class QNNClassifier(QNN):
             for iter in range(0, maxiter, 5):
                 grad = self._cost_func_grad(
                     theta_now,
-                    x_train[iter % len(x_train) : iter % len(x_train) + 5],
-                    y_train[iter % len(y_train) : iter % len(y_train) + 5],
+                    x_scaled[iter % len(x_train) : iter % len(x_train) + 5],
+                    y_scaled[iter % len(y_train) : iter % len(y_train) + 5],
                 )
                 moment = moment * pr_Bi + (1 - pr_Bi) * grad
                 vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if iter % len(x_train) < 5:
-                    self.cost_func(theta_now, x_train, y_train)
+                # if iter % len(x_train) < 5:
+                # self.cost_func(theta_now, x_train, y_train)
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
@@ -114,8 +127,20 @@ class QNNClassifier(QNN):
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]):
+        """Predict outcome for each input data in `x_test`.
+
+        Arguments:
+            x_test: Input data whose shape is (n_samples, n_features).
+
+        Returns:
+            y_pred: Predicted outcome.
+        """
         # x_test = array-like of of shape (n_samples, n_features)
-        x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        if self.do_x_scale:
+            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+        else:
+            x_scaled = x_test
+
         y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
         return y_pred
 
@@ -133,12 +158,10 @@ class QNNClassifier(QNN):
             res.append(r)
         return np.array(res)
 
-    def cost_func(self, theta, x_train, y_train):
+    def cost_func(self, theta, x_scaled, y_scaled):
         # 生のデータを入れる
         if self.cost == "log_loss":
             # cross-entropy loss (default)
-            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-            y_scaled = self.do_y_scale(y_train)
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
             # predについて、softmaxをする
@@ -148,9 +171,9 @@ class QNNClassifier(QNN):
                     hid = self.scale_y_param[1][j]
                     wa = 0
                     for k in range(self.scale_y_param[0][j]):
-                        wa += np.exp(5 * y_pred[i][hid + k])
+                        wa += np.exp(self.y_exp_bai * y_pred[i][hid + k])
                     for k in range(self.scale_y_param[0][j]):
-                        ypf.append(np.exp(5 * y_pred[i][hid + k]) / wa)
+                        ypf.append(np.exp(self.y_exp_bai * y_pred[i][hid + k]) / wa)
             ysf = y_scaled.ravel()
             cost = 0
             for i in range(len(ysf)):
@@ -206,42 +229,28 @@ class QNNClassifier(QNN):
                 res[i][j] = arg
         return res
 
-    def _cost_func_grad(self, theta, x_train, y_train):
+    def _cost_func_grad(self, theta, x_scaled, y_scaled):
         self.circuit.update_parameters(theta)
-        x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        y_scaled = self.do_y_scale(y_train)
+
         mto = self._predict_inner(x_scaled).copy()
-        bbb = np.zeros((len(x_train), self.n_qubit))
-        for h in range(len(x_train)):
+        grad = np.zeros(len(theta))
+        for h in range(len(x_scaled)):
             for j in range(len(self.scale_y_param[0])):
                 hid = self.scale_y_param[1][j]
                 wa = 0
                 for k in range(self.scale_y_param[0][j]):
-                    wa += np.exp(5 * mto[h][hid + k])
+                    wa += np.exp(self.y_exp_bai * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
-                    mto[h][hid + k] = np.exp(5 * mto[h][hid + k]) / wa
+                    mto[h][hid + k] = np.exp(self.y_exp_bai * mto[h][hid + k]) / wa
+            backobs = Observable(self.n_qubit)
+
             for i in range(len(y_scaled[0])):
                 if y_scaled[h][i] == 0:
-                    bbb[h][i] = 1.0 / (1.0 - mto[h][i])
+                    backobs.add_operator(1.0 / (1.0 - mto[h][i]), f"Z {i}")
                 else:
-                    bbb[h][i] = -1.0 / (mto[h][i])
-
-        theta_plus = [
-            theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-        theta_minus = [
-            theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-
-        grad = np.zeros(len(theta))
-        for i in range(len(theta)):
-            self.circuit.update_parameters(theta_plus[i])
-            aaa_f = self._predict_inner(x_scaled)
-            self.circuit.update_parameters(theta_minus[i])
-            aaa_m = self._predict_inner(x_scaled)
-            for j in range(len(x_train)):
-                grad[i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
+                    backobs.add_operator(-1.0 / (mto[h][i]), f"Z {i}")
+            grad += self.circuit.backprop(x_scaled[h], backobs)
 
         self.circuit.update_parameters(theta)
-        grad /= len(x_train)
+        grad /= len(x_scaled)
         return grad

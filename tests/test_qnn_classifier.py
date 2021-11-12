@@ -7,10 +7,10 @@ from sklearn.metrics import f1_score
 
 from skqulacs.qnn import QNNClassifier
 
+# ("Nelder-Mead", 500)
 
-@pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 500), ("Adam", 12)]
-)
+
+@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 20), ("Adam", 50)])
 def test_classify_iris(solver: str, maxiter: int):
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)

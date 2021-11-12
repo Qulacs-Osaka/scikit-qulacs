@@ -35,13 +35,11 @@ def test_noisy_sine():
     x_max = 0.5
     num_x = 300
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
-
-    n_qubit = 4
+    x_test, y_test = generate_noisy_sine(x_min, x_max, 100)
+    n_qubit = 6
     circuit = create_defqsv(n_qubit, 4)
     qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
-    loss = 0
-    x_test, y_test = generate_noisy_sine(x_min, x_max, 100)
     y_pred = qsvm.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.008

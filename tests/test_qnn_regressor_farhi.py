@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Tuple
-from skqulacs.circuit import create_farhi_circuit
+from skqulacs.circuit import create_farhi_circuit, create_farhi_watle
 import numpy as np
 from numpy.random import default_rng
 from skqulacs.qnn import QNNRegressor
@@ -19,7 +19,6 @@ def generate_noisy_sine_two_vars(
     x_train = [
         [rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)
     ]
-    # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
     y_train = [sine_two_vars(x) for x in x_train]
     mag_noise = 0.01
     y_train += mag_noise * rng.random(num_x)
@@ -27,9 +26,10 @@ def generate_noisy_sine_two_vars(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 1000), ("Adam", 10)]
+    ("solver", "maxiter", "farhitype"),
+    [("BFGS", 20, "normal"), ("Adam", 30, "normal"), ("BFGS", 20, "watle")],
 )
-def test_noisy_sine_two_vars(solver: str, maxiter: int):
+def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
     x_min = -0.5
     x_max = 0.5
     num_x = 70
@@ -37,7 +37,12 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int):
 
     n_qubit = 4
     depth = 6
-    circuit = create_farhi_circuit(n_qubit, depth, 0)
+
+    if farhitype == "watle":
+        circuit = create_farhi_watle(n_qubit, depth, 0)
+    else:
+        circuit = create_farhi_circuit(n_qubit, depth, 0)
+
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     # BFGSじゃないなら600
@@ -63,29 +68,27 @@ def generate_noisy_sine(
     return x_train, y_train
 
 
-@pytest.mark.parametrize(
-    ("solver", "maxiter"), [("BFGS", 10), ("Nelder-Mead", 300), ("Adam", 10)]
-)
+@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 20), ("Adam", 30)])
 def test_noisy_sine(solver: str, maxiter: int):
     x_min = -1.0
     x_max = 1.0
     num_x = 50
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
 
-    n_qubit = 3
-    depth = 6
+    n_qubit = 4
+    depth = 11
     circuit = create_farhi_circuit(n_qubit, depth, 0)
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.2
+    assert loss < 0.04
     return x_test, y_test, y_pred
 
 
 def main():
-    x_test, y_test, y_pred = test_noisy_sine("Nelder-Mead", 1000)
+    x_test, y_test, y_pred = test_noisy_sine("BFGS", 50)
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()
