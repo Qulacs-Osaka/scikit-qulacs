@@ -80,25 +80,25 @@ def create_farhi_circuit(
     return circuit
 
 
-xkeisuu = np.zeros([15, 15, 15])
-nCr = np.zeros([15, 15])
+
 
 
 def create_farhi_watle(
     n_qubit: int, c_depth: int, seed: Optional[int] = None
 ) -> LearningCircuit:
-    for i in range(15):
+    xkeisuu = np.zeros([25,25,25])
+    nCr = np.zeros([25,25])
+    for i in range(25):
         for j in range(i + 1):
             nCr[i][j] = factorial(i) / factorial(j) / factorial(i - j)
-    for i in range(15):
+    for i in range(25):
         for j in range(i):
             if j == 0:
                 xkeisuu[i][0][i] = 1
             else:
                 for k in range(i - j, i + 1):
-                    xkeisuu[i][j][k] = xkeisuu[i][j - 1][k] + nCr[i][j] * nCr[j][
-                        i - k
-                    ] * ((-1) ** (i + j + k))
+                    xkeisuu[i][j][k] = xkeisuu[i][j - 1][k] + 
+                    nCr[i][j] * nCr[j][i - k] * ((-1) ** (i + j + k))
 
     def preprocess_x(x: List[float], index: int):
         dex = index % len(x)
@@ -107,7 +107,7 @@ def create_farhi_watle(
         sban = index // len(x)
 
         xb = 0
-        if qubits_p_bit < 15:
+        if qubits_p_bit < 25:
             for i in range(qubits_p_bit):
                 xb += xkeisuu[qubits_p_bit][sban][qubits_p_bit - i]
                 xb *= xa

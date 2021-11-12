@@ -144,6 +144,21 @@ class LearningCircuit:
         return state
 
     def backprop(self, x: List[float], obs) -> List[float]:
+        """
+        backprop(self, x: List[float],y:Observbavle)->List[Float]
+
+        xは入力の状態で、yは出力値の微分値
+        帰ってくるのは、それぞれのパラメータに関する微分値
+        例えば、出力が[0,2]
+        だったらパラメータの1項目は期待する出力に関係しない、2項目をa上げると回路の出力は2a上がる?
+
+        ->
+        c++のParametricQuantumCircuitクラスを呼び出す
+        backprop(GeneralQuantumOperator* obs)
+
+        ->うまくやってbackpropする。
+        現実だと不可能な演算も含むが、気にしない
+        """
         self._set_input(x)
         ret = self._circuit.backprop(obs)
         ans = [0] * self._learning_gate_count
