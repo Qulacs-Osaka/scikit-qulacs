@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Tuple
-from skqulacs.circuit import create_farhi_circuit,create_farhi_watle
+from skqulacs.circuit import create_farhi_circuit, create_farhi_watle
 import numpy as np
 from numpy.random import default_rng
 from skqulacs.qnn import QNNRegressor
@@ -26,7 +26,8 @@ def generate_noisy_sine_two_vars(
 
 
 @pytest.mark.parametrize(
-    ("solver", "maxiter","farhitype"), [("BFGS", 20,"normal"), ("Adam", 30,"normal"),("BFGS", 20,"watle")]
+    ("solver", "maxiter", "farhitype"),
+    [("BFGS", 20, "normal"), ("Adam", 30, "normal"), ("BFGS", 20, "watle")],
 )
 def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
     x_min = -0.5
