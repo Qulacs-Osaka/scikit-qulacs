@@ -7,11 +7,7 @@ from math import factorial
 
 
 def create_qcl_ansatz(
-<<<<<<< HEAD
     n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
-=======
-    n_qubit: int, c_depth: int, time_step: float, seed: Optional[int] = None
->>>>>>> 40d2c0ed2268cdd69afcd593250e68367c55ed5a
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
 
@@ -104,20 +100,16 @@ def create_farhi_watle(
                         i - k
                     ] * ((-1) ** (i + j + k))
 
-    # for i in range(15):
-    # for j in range(i):
-    # print(xkeisuu[i][j])
-    # print()
     def preprocess_x(x: List[float], index: int):
         dex = index % len(x)
-        inkaz = ((n_qubit - dex) - 1) // len(x) + 1  # そのbitに割り当てられる量子の数
+        qubits_p_bit = ((n_qubit - dex) - 1) // len(x) + 1  # そのbitに割り当てられる量子の数
         xa = (min(1, max(-1, x[dex])) + 1) / 2
         sban = index // len(x)
 
         xb = 0
-        if inkaz < 15:
-            for i in range(inkaz):
-                xb += xkeisuu[inkaz][sban][inkaz - i]
+        if qubits_p_bit < 15:
+            for i in range(qubits_p_bit):
+                xb += xkeisuu[qubits_p_bit][sban][qubits_p_bit - i]
                 xb *= xa
         else:
             xb = xa  # あきらめた

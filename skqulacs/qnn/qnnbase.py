@@ -60,16 +60,6 @@ def _get_x_scale_param(x):
     minimum = np.min(x, axis=0)
     maximum = np.max(x, axis=0)
     sa = (maximum - minimum) / 2
-
-    # print(minimum)
-    # print(maximum)
-    # print(sa)
-    # minimum-=sa*0.4
-    # maximum+=sa*0.4
-    # sa*=1.4
-    # print(minimum)
-    # print(maximum)
-    # print(sa)
     return [minimum, maximum, sa]
 
 

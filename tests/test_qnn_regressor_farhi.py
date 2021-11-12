@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Tuple
-from skqulacs.circuit import create_farhi_circuit
+from skqulacs.circuit import create_farhi_circuit,create_farhi_watle
 import numpy as np
 from numpy.random import default_rng
 from skqulacs.qnn import QNNRegressor
@@ -25,8 +25,10 @@ def generate_noisy_sine_two_vars(
     return x_train, y_train
 
 
-@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 20), ("Adam", 30)])
-def test_noisy_sine_two_vars(solver: str, maxiter: int):
+@pytest.mark.parametrize(
+    ("solver", "maxiter","farhitype"), [("BFGS", 20,"normal"), ("Adam", 30,"normal"),("BFGS", 20,"watle")]
+)
+def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
     x_min = -0.5
     x_max = 0.5
     num_x = 70
@@ -34,7 +36,12 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int):
 
     n_qubit = 4
     depth = 6
-    circuit = create_farhi_circuit(n_qubit, depth, 0)
+
+    if farhitype == "watle":
+        circuit = create_farhi_watle(n_qubit, depth, 0)
+    else:
+        circuit = create_farhi_circuit(n_qubit, depth, 0)
+
     qnn = QNNRegressor(n_qubit, circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     # BFGSじゃないなら600

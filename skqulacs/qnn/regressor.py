@@ -236,30 +236,6 @@ class QNNRegressor(QNN):
                 backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
-        """
-        theta_plus = [
-            theta.copy() + (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-        theta_minus = [
-            theta.copy() - (np.eye(len(theta))[i] / 20.0) for i in range(len(theta))
-        ]
-
-        for i in range(len(theta)):
-            self.circuit.update_parameters(theta_plus[i])
-            aaa_f = self._predict_inner(x_scaled)
-            self.circuit.update_parameters(theta_minus[i])
-            aaa_m = self._predict_inner(x_scaled)
-            for j in range(len(x_scaled)):
-                gradB[j][i] += np.dot(aaa_f[j] - aaa_m[j], bbb[j]) * 10.0
-
-        for i in range(len(x_scaled)):
-            for j in range(len(theta)):
-
-                print(gradA[i][j],gradB[i][j])
-                assert abs(gradA[i][j]-gradB[i][j])<1e-3
-
-        """
-
         self.circuit.update_parameters(theta)
         grad /= len(x_scaled)
         return grad
