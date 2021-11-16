@@ -10,7 +10,7 @@ def get_qvec(x, n_qubit, tlotstep):
     data_state.set_zero_state()
     for a in range(n_qubit):
         H(a).update_quantum_state(data_state)
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for a in range(n_qubit):
             RZ(a, x[a] / tlotstep).update_quantum_state(data_state)
             # aとa+1のゲートの交互作用
@@ -22,7 +22,7 @@ def get_qvec(x, n_qubit, tlotstep):
             CNOT(a, b).update_quantum_state(data_state)
     for a in range(n_qubit):
         H(a).update_quantum_state(data_state)
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for a in range(n_qubit):
             RZ(a, x[a] / tlotstep).update_quantum_state(data_state)
             # aとa+1のゲートの交互作用

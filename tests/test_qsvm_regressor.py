@@ -18,7 +18,7 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
 
     x_train = []
     y_train = []
-    for i in range(num_x):
+    for _ in range(num_x):
         xa = x_min + (x_max - x_min) * random.random()
         xb = x_min + (x_max - x_min) * random.random()
         xc = 0
