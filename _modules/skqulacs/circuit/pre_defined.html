@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>skqulacs.circuit.pre_defined &#8212; scikit-qulacs  documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -25,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -36,7 +36,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -63,7 +66,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption" role="heading">
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Contents:
  </span>
@@ -259,10 +262,11 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">factorial</span>
 
 
 <div class="viewcode-block" id="create_qcl_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_qcl_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_qcl_ansatz</span><span class="p">(</span>
-    <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</span>
 
@@ -307,6 +311,71 @@
     <span class="k">def</span> <span class="nf">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">xa</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">xa</span><span class="p">))</span>
+
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">LearningCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RY_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)))</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RZ_gate</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">zyu</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">))</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c_depth</span><span class="p">):</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">zyu</span><span class="p">)</span>
+        <span class="c1"># 今回の回路はdepthを多めにとったほうがいいかも</span>
+        <span class="c1"># 最低でもn_qubitはほしいかも</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">angle_x</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">angle_y</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">angle_x</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RY_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">angle_y</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">angle_x</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">angle_y</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RY_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">angle_y</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">zyu</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">angle_x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circuit</span></div>
+
+
+<div class="viewcode-block" id="create_farhi_watle"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_farhi_watle">[docs]</a><span class="k">def</span> <span class="nf">create_farhi_watle</span><span class="p">(</span>
+    <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
+    <span class="n">xkeisuu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+    <span class="n">nCr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">25</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">nCr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">factorial</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">25</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">xkeisuu</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">xkeisuu</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">xkeisuu</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">nCr</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">nCr</span><span class="p">[</span><span class="n">j</span><span class="p">][</span>
+                        <span class="n">i</span> <span class="o">-</span> <span class="n">k</span>
+                    <span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">dex</span> <span class="o">=</span> <span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">qubits_p_bit</span> <span class="o">=</span> <span class="p">((</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="n">dex</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># そのbitに割り当てられる量子の数</span>
+        <span class="n">xa</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">dex</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">sban</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">xb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">qubits_p_bit</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qubits_p_bit</span><span class="p">):</span>
+                <span class="n">xb</span> <span class="o">+=</span> <span class="n">xkeisuu</span><span class="p">[</span><span class="n">qubits_p_bit</span><span class="p">][</span><span class="n">sban</span><span class="p">][</span><span class="n">qubits_p_bit</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
+                <span class="n">xb</span> <span class="o">*=</span> <span class="n">xa</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xb</span> <span class="o">=</span> <span class="n">xa</span>  <span class="c1"># bitが多すぎで,nCrのdouble型の限界を超えてあきらめた 同じbitを25以上使うことは多分ないので.</span>
+
+        <span class="k">if</span> <span class="n">xb</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">xb</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;bug&quot;</span><span class="p">)</span>
+
+        <span class="c1"># print(sban,xa,xb)</span>
+        <span class="k">return</span> <span class="n">xb</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="n">circuit</span> <span class="o">=</span> <span class="n">LearningCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
@@ -380,13 +449,8 @@
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'>
 </div>
         
         </div>
@@ -407,8 +471,7 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>

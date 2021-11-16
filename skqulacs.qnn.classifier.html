@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>skqulacs.qnn.classifier module &#8212; scikit-qulacs  documentation</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet" />
-  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -25,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     
-  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -38,7 +38,10 @@
     <link rel="next" title="skqulacs.qnn.qnnbase module" href="skqulacs.qnn.qnnbase.html" />
     <link rel="prev" title="skqulacs.qnn package" href="skqulacs.qnn.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -65,7 +68,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption" role="heading">
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Contents:
  </span>
@@ -276,12 +279,12 @@
 <span id="skqulacs-qnn-classifier-module"></span><h1>skqulacs.qnn.classifier module<a class="headerlink" href="#module-skqulacs.qnn.classifier" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">skqulacs.qnn.classifier.</span></span><span class="sig-name descname"><span class="pre">QNNClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">'BFGS'</span><span class="p"><span class="pre">,</span> </span><span class="pre">'Nelder-Mead'</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="pre">'log_loss'</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'log_loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.qnn.classifier.</span></span><span class="sig-name descname"><span class="pre">QNNClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'BFGS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Nelder-Mead'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Adam'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BFGS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'log_loss'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'log_loss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_x_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_exp_bai</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
 <p>quantum circuit learningを用いて分類問題を解く</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.cost_func">
-<span class="sig-name descname"><span class="pre">cost_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.cost_func" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cost_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_scaled</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.cost_func" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -291,7 +294,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.fit" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,17 +319,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_test</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predict outcome for given data.</p>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict outcome for each input data in <cite>x_test</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>theta</strong> – Parameter of model. For most cases, give <cite>theta_opt</cite> from <cite>QNN.fit</cite>.</p></li>
-<li><p><strong>x_list</strong> – Input data to predict outcome.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>x_test</strong> – Input data whose shape is (n_samples, n_features).</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of predicted data. <cite>y_pred[i]</cite> corresponds to <cite>x_list[i]</cite>.</p>
+<dd class="field-even"><p>Predicted outcome.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>y_pred</p>
@@ -347,31 +347,22 @@
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-    <div id="prev">
-        <a class="left-prev" href="skqulacs.qnn.html" title="previous page">
-            <i class="prevnext-label fas fa-angle-left"></i>
-            <div class="prevnext-info">
-                <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">skqulacs.qnn package</p>
-            </div>
-        </a>
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="skqulacs.qnn.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">skqulacs.qnn package</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="skqulacs.qnn.qnnbase.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">skqulacs.qnn.qnnbase module</p>
     </div>
-     <div id="next">
-        <a class="right-next" href="skqulacs.qnn.qnnbase.html" title="next page">
-            <div class="prevnext-info">
-                <p class="prevnext-label">next</p>
-                <p class="prevnext-title">skqulacs.qnn.qnnbase module</p>
-            </div>
-            <i class="prevnext-label fas fa-angle-right"></i>
-        </a>
-     </div>
-
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
         
         </div>
@@ -392,8 +383,7 @@
       </div>
     </div>
   
-  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>

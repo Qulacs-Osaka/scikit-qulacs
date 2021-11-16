@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>skqulacs.circuit.circuit &#8212; scikit-qulacs  documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -25,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -36,7 +36,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -63,7 +66,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption" role="heading">
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Contents:
  </span>
@@ -365,6 +368,15 @@
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">theta_list</span></div>
 
+    <span class="k">def</span> <span class="nf">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
+                <span class="c1"># Input parameter is updated here, not update_parameters(),</span>
+                <span class="c1"># because input parameter is determined with input data x.</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">calculate_angle</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">angle</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+
 <div class="viewcode-block" id="LearningCircuit.run"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Determine parameters for input gate based on `x` and apply the circuit to |0&gt; state.</span>
 
@@ -376,15 +388,44 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
         <span class="n">state</span><span class="o">.</span><span class="n">set_zero_state</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
-                <span class="c1"># Input parameter is updated here, not update_parameters(),</span>
-                <span class="c1"># because input parameter is determined with input data x.</span>
-                <span class="n">angle</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">calculate_angle</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">angle</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span></div>
+
+<div class="viewcode-block" id="LearningCircuit.run_x_no_change"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run_x_no_change">[docs]</a>    <span class="k">def</span> <span class="nf">run_x_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        run. but x is not changed from prev run.</span>
+<span class="sd">        (can change parameters)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">set_zero_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+<div class="viewcode-block" id="LearningCircuit.backprop"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop">[docs]</a>    <span class="k">def</span> <span class="nf">backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">obs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        backprop(self, x: List[float],y:Observbavle)-&gt;List[Float]</span>
+
+<span class="sd">        xは入力の状態で、yは出力値の微分値</span>
+<span class="sd">        帰ってくるのは、それぞれのパラメータに関する微分値</span>
+<span class="sd">        例えば、出力が[0,2]</span>
+<span class="sd">        だったらパラメータの1項目は期待する出力に関係しない、2項目をa上げると回路の出力は2a上がる?</span>
+
+<span class="sd">        -&gt;</span>
+<span class="sd">        c++のParametricQuantumCircuitクラスを呼び出す</span>
+<span class="sd">        backprop(GeneralQuantumOperator* obs)</span>
+
+<span class="sd">        -&gt;うまくやってbackpropする。</span>
+<span class="sd">        現実だと不可能な演算も含むが、気にしない</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_learning_parameter</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
+                <span class="n">ans</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ans</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add arbitrary gate.</span>
@@ -646,13 +687,8 @@
               </div>
               
         
-            
-
-
-
-<div class='prev-next-bottom'>
-    
-
+            <!-- Previous / next buttons -->
+<div class='prev-next-area'>
 </div>
         
         </div>
@@ -673,8 +709,7 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>
