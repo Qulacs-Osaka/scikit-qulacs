@@ -1,11 +1,12 @@
-import pytest
-import numpy as np
 from typing import List, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
 from numpy.random import default_rng
+from sklearn.metrics import mean_squared_error
 from skqulacs.circuit import create_qcl_ansatz
 from skqulacs.qnn import QNNRegressor
-from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
 
 
 def sine_two_vars(x: List[float]) -> float:
