@@ -192,8 +192,8 @@ def create_deepqsv(
 ) -> LearningCircuit:
     # http://arxiv.org/abs/2111.02951
     # RXとかRYとかが反対向きの可能性がありますが、気にしません
-    #　UをSU(4)から取る部分が、これでできるかどうか確証がありません　間違っていたらごめんなさい
-    #従来のqsvに比べて、スコアの向上は確認しました
+    # 　UをSU(4)から取る部分が、これでできるかどうか確証がありません　間違っていたらごめんなさい
+    # 従来のqsvに比べて、スコアの向上は確認しました
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
