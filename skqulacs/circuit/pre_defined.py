@@ -185,3 +185,69 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
             )
             circuit.add_CNOT_gate(i, j)
     return circuit
+
+def create_deepqsv(n_qubit: int,c_depth:int = 5, tlotstep: int = 3,seed:int = 9) -> LearningCircuit:
+    #まだ開発中です、てすとが　まだ
+    #ランダムな行列が作れなくて申し訳ない
+    #RXとかRYとかが反対向きの可能性がありますが、気にしません
+    def preprocess_x(x: List[float], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+    
+    rng = default_rng(seed)
+    circuit = LearningCircuit(n_qubit)
+    for c_kai in range(c_depth):
+
+        for tlotkai in range(tlotstep):
+            for i in range(n_qubit):
+                circuit.add_input_RZ_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)) / tlotstep)
+                circuit.add_parametric_RZ_gate(i,np.pi/2)
+                for j in range(i):
+
+                    circuit.add_CNOT_gate(j, i)
+                    circuit.add_input_RY_gate(i,lambda x, i=i: -np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))/ tlotstep/2)
+                    circuit.add_CNOT_gate(j, i)
+                    circuit.add_input_RY_gate(i,lambda x, i=i: np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))/ tlotstep/2)
+                circuit.add_parametric_RZ_gate(i,-np.pi/2)
+                    
+        for i in range(0, n_qubit):
+            j = (i + 1) % n_qubit
+
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+
+            circuit.add_CNOT_gate(i,j)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(j, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(j, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(j, angle)
+            circuit.add_CNOT_gate(i,j)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(j, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(j, angle)
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(j, angle)
+
+
+    return circuit
+
+
