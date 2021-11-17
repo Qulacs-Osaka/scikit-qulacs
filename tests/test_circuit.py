@@ -30,7 +30,7 @@ def test_parametric_gates_mixed():
     circuit.run([1.0])
     assert [0.2, 2.0] == circuit.get_parameters()
 
+
 def test_no_arg_run():
     circuit = LearningCircuit(2)
-    state = circuit.run()
-    print(state.get_vector())
+    circuit.run()
