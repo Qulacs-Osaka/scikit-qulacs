@@ -29,3 +29,8 @@ def test_parametric_gates_mixed():
     circuit.update_parameters([0.2, 1.0])
     circuit.run([1.0])
     assert [0.2, 2.0] == circuit.get_parameters()
+
+
+def test_no_arg_run():
+    circuit = LearningCircuit(2)
+    circuit.run()
