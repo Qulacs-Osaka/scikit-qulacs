@@ -10,7 +10,7 @@ python = ">=3.8,<3.11"
 numpy = "^1.21.4"
 scipy = "^1.7.2"
 scikit-learn = "^1.0.1"
-qulacs = { git = "https://github.com/Qulacs-Osaka/qulacs-osaka.git" }
+qulacs = { git = "https://github.com/Qulacs-Osaka/qulacs-osaka.git", branch = "dev" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
