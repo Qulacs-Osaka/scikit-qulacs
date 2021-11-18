@@ -1,7 +1,10 @@
-PYSEN := poetry run pysen
 PYTEST := poetry run pytest
+FORMATTER := poetry run black
+LINTER := poetry run flake8
+IMPORT_SORTER := poetry run isort
+TYPE_CHECKER := poetry run mypy
+TARGET_DIR := skqulacs tests
 SPHINX_APIDOC := poetry run sphinx-apidoc
-PROJECT_DIR := project_name
 PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
@@ -14,16 +17,20 @@ test:
 tests/%.py: FORCE
 	$(PYTEST) $@
 
-.PHONY: lint
-lint:
-	$(PYSEN) run lint
-
-.PHONY: format
-format:
-	$(PYSEN) run format
-
 .PHONY: check
-check: format lint
+check:
+	$(FORMATTER) $(TARGET_DIR) --check --diff
+	$(LINTER) $(TARGET_DIR)
+	$(IMPORT_SORTER) $(TARGET_DIR) --check --diff
+
+.PHONY: fix
+fix:
+	$(FORMATTER) $(TARGET_DIR)
+	$(IMPORT_SORTER) $(TARGET_DIR)
+
+.PHONY: type
+type:
+	$(TYPE_CHECKER) skqulacs
 
 .PHONY: api
 api:

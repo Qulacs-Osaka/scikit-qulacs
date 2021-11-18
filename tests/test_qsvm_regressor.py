@@ -3,6 +3,7 @@ import random
 import numpy as np
 from numpy.random import RandomState
 from sklearn.metrics import mean_squared_error
+
 from skqulacs.circuit import create_defqsv
 from skqulacs.qsvm import QSVR
 

@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
+
 from skqulacs.circuit import create_defqsv
 from skqulacs.qsvm import QSVC
 

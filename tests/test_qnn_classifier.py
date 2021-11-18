@@ -3,6 +3,7 @@ import pytest
 from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
+
 from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNClassifier
 
