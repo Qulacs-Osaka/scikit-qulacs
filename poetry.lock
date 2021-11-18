@@ -1239,6 +1239,21 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 py = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
+name = "Qulacs"
+version = "0.1.10.1"
+description = "Quantum circuit simulator for research"
+category = "main"
+optional = false
+python-versions = "*"
+develop = false
+
+[package.source]
+type = "git"
+url = "https://github.com/Qulacs-Osaka/qulacs-osaka.git"
+reference = "master"
+resolved_reference = "ed593b832c512cd8aec4b1b6f9dba7e3126e4895"
+
+[[package]]
 name = "regex"
 version = "2021.11.10"
 description = "Alternative regular expression module, to replace re."
@@ -1679,7 +1694,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "f99af71e3ac7078a734cd80165b45c8ecb702d15e6f3c0d105933f8a2ab5cab5"
+content-hash = "ad006886c89b1c06450562f099b5626c057c9f66831525911a603b09f082d927"
 
 [metadata.files]
 alabaster = [
@@ -2500,6 +2515,7 @@ pyzmq = [
     {file = "pyzmq-22.3.0-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:d6157793719de168b199194f6b6173f0ccd3bf3499e6870fac17086072e39115"},
     {file = "pyzmq-22.3.0.tar.gz", hash = "sha256:8eddc033e716f8c91c6a2112f0a8ebc5e00532b4a6ae1eb0ccc48e027f9c671c"},
 ]
+Qulacs = []
 regex = [
     {file = "regex-2021.11.10-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9345b6f7ee578bad8e475129ed40123d265464c4cfead6c261fd60fc9de00bcf"},
     {file = "regex-2021.11.10-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:416c5f1a188c91e3eb41e9c8787288e707f7d2ebe66e0a6563af280d9b68478f"},

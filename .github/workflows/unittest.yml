@@ -38,6 +38,9 @@ jobs:
       if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
 
+    - name: Install library
+      run: poetry install --no-interaction
+
     - name: Check format and lint
       run: |
         make check
