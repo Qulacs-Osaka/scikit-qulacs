@@ -33,7 +33,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "nbsphinx",
+    "myst_nb",
 ]
 
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
@@ -60,6 +60,14 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = "sphinx_book_theme"
+
+html_theme_options = {
+    "repository_url": f"https://github.com/{author}/scikit-qulacs",
+    "repository_branch": "main",
+    "use_repository_button": True,
+    "path_to_docs": "doc/source",
+    "launch_buttons": {"colab_url": "https://colab.research.google.com"},
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
