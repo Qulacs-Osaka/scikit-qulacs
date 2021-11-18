@@ -20,6 +20,10 @@ black = "^21.11b1"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
 mypy = "^0.910"
+Sphinx = "^4.3.0"
+sphinx-book-theme = "^0.1.7"
+ipykernel = "^6.5.0"
+myst-nb = "^0.13.1"
 
 [tool.pysen]
 version = "0.9"
