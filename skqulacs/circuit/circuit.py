@@ -118,7 +118,7 @@ class LearningCircuit:
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
 
-    def run(self, x: List[float]) -> QuantumState:
+    def run(self, x: List[float] = list()) -> QuantumState:
         """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
 
         Arguments:
