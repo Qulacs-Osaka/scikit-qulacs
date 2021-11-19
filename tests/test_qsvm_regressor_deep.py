@@ -3,7 +3,7 @@ import random
 from numpy.random import RandomState
 from skqulacs.qsvm import QSVR
 from sklearn.metrics import mean_squared_error
-from skqulacs.circuit import create_deepqsv, create_defqsv
+from skqulacs.circuit import create_deepqsv
 
 
 def func_to_learn(x):
