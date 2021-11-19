@@ -34,8 +34,9 @@ def test_noisy_sine():
     x_min = -0.5
     x_max = 0.5
     num_x = 300
+    num_test = 100
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
-    x_test, y_test = generate_noisy_sine(x_min, x_max, 100)
+    x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 6
     circuit = create_defqsv(n_qubit, 4)
     qsvm = QSVR(circuit)
@@ -46,7 +47,7 @@ def test_noisy_sine():
 
 
 # 2要素のSVMを試してみる
-# sin(x1*x2)をフィッティングさせる
+# sin(x1*x2*2)をフィッティングさせる
 def main():
     test_noisy_sine()
 
