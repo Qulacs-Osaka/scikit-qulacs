@@ -162,11 +162,6 @@
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../skqulacs.qsvm.qsvmbase.html">
-         skqulacs.qsvm.qsvmbase module
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="../../../skqulacs.qsvm.qsvr.html">
          skqulacs.qsvm.qsvr module
         </a>
@@ -443,6 +438,89 @@
                 <span class="o">/</span> <span class="n">tlotstep</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circuit</span></div>
+
+
+<div class="viewcode-block" id="create_deepqsv"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_deepqsv">[docs]</a><span class="k">def</span> <span class="nf">create_deepqsv</span><span class="p">(</span>
+    <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">tlotstep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
+    <span class="c1"># http://arxiv.org/abs/2111.02951</span>
+    <span class="c1"># RXとかRYとかが反対向きの可能性がありますが、気にしません</span>
+    <span class="c1"># 　UをSU(4)から取る部分が、これでできるかどうか確証がありません　間違っていたらごめんなさい</span>
+    <span class="c1"># 従来のqsvに比べて、スコアの向上は確認しました</span>
+    <span class="k">def</span> <span class="nf">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">xa</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">xa</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">circuit</span> <span class="o">=</span> <span class="n">LearningCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c_kai</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c_depth</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">tlotkai</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tlotstep</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RZ_gate</span><span class="p">(</span>
+                    <span class="n">i</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">/</span> <span class="n">tlotstep</span>
+                <span class="p">)</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+
+                    <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                    <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RY_gate</span><span class="p">(</span>
+                        <span class="n">i</span><span class="p">,</span>
+                        <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+                            <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="o">/</span> <span class="n">tlotstep</span>
+                        <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                    <span class="n">circuit</span><span class="o">.</span><span class="n">add_input_RY_gate</span><span class="p">(</span>
+                        <span class="n">i</span><span class="p">,</span>
+                        <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+                            <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="o">/</span> <span class="n">tlotstep</span>
+                        <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubit</span><span class="p">):</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n_qubit</span>
+
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">circuit</span></div>
 </pre></div>
 

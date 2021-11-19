@@ -162,11 +162,6 @@
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../skqulacs.qsvm.qsvmbase.html">
-         skqulacs.qsvm.qsvmbase module
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="../../../skqulacs.qsvm.qsvr.html">
          skqulacs.qsvm.qsvr module
         </a>
@@ -375,9 +370,9 @@
             <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
             <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;Adam&quot;</span><span class="p">:</span>
-            <span class="n">pr_A</span> <span class="o">=</span> <span class="mf">0.25</span>
-            <span class="n">pr_Bi</span> <span class="o">=</span> <span class="mf">0.6</span>
-            <span class="n">pr_Bt</span> <span class="o">=</span> <span class="mf">0.99</span>
+            <span class="n">pr_A</span> <span class="o">=</span> <span class="mf">0.02</span>
+            <span class="n">pr_Bi</span> <span class="o">=</span> <span class="mf">0.8</span>
+            <span class="n">pr_Bt</span> <span class="o">=</span> <span class="mf">0.995</span>
             <span class="n">pr_ips</span> <span class="o">=</span> <span class="mf">0.0000001</span>
             <span class="c1"># ここまでがハイパーパラメータ</span>
             <span class="n">Bix</span> <span class="o">=</span> <span class="mi">0</span>
