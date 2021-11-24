@@ -333,3 +333,26 @@ def create_deepqsv(
             circuit.add_parametric_RX_gate(j, angle)
 
     return circuit
+
+
+def create_largeqsv(n_qubit: int, c_depth: int = 4, seed: int = 9) -> LearningCircuit:
+    # http://arxiv.org/abs/2108.01039
+    # 性能が悪いので、　消す可能性がある
+    def preprocess_x(x: List[float], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+
+    rng = default_rng(seed)
+    circuit = LearningCircuit(n_qubit)
+
+    for c_kai in range(c_depth):
+        for i in range(n_qubit):
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RZ_gate(i, angle)
+            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) * 0.1)
+        for i in range(0, n_qubit - 1, 2):
+            circuit.add_CNOT_gate(i, i + 1)
+        for i in range(1, n_qubit - 1, 2):
+            circuit.add_CNOT_gate(i, i + 1)
+
+    return circuit

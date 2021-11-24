@@ -36,7 +36,7 @@ def _softmax(x):
 class QNN(ABC):
     @abstractmethod
     def fit(
-        self, x_train: List[float], y_train: List[float], maxiter: Optional[int]
+        self, x_train: List[List[float]], y_train, maxiter: Optional[int]
     ) -> Tuple[float, np.ndarray]:
         """Fit the model to given train data.
 
@@ -52,7 +52,7 @@ class QNN(ABC):
         pass
 
     @abstractmethod
-    def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
+    def predict(self, x_test: List[List[float]]) -> List[float]:
         """Predict outcome for given data.
 
         Args:
