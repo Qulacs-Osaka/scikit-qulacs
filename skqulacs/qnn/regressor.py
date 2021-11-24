@@ -25,6 +25,7 @@ class QNNRegressor(QNN):
         do_x_scale: bool = True,
         do_y_scale: bool = True,
         y_norm_range=0.7,
+        callback = None
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
@@ -33,7 +34,8 @@ class QNNRegressor(QNN):
         :param cost: コスト関数　mseしかない。 mseは、正規化した後での二乗和をとる。
         :param do_x_scale xをscaleしますか?
         :param do_x_scale yをscaleしますか?
-        :param y_margin  [-y_norm_range,y_norm_range]に正規化.
+        :param y_norm_range  [+-y_norm_range]に正規化.
+        :param callback:コールバック関数。Adamにのみ対応
         """
         self.n_qubit = n_qubit
         self.circuit = circuit
@@ -42,7 +44,7 @@ class QNNRegressor(QNN):
         self.do_x_scale = do_x_scale
         self.do_y_scale = do_y_scale
         self.y_norm_range = y_norm_range
-
+        self.callback=callback
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
@@ -146,6 +148,8 @@ class QNNRegressor(QNN):
 
             loss = self.cost_func(theta_now, x_scaled, y_scaled)
             theta_opt = theta_now
+            if self.callback is not None:
+                self.callback(theta_now)
         else:
             raise NotImplementedError
 

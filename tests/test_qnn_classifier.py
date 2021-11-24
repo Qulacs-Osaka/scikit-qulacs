@@ -10,8 +10,8 @@ from skqulacs.qnn import QNNClassifier
 # ("Nelder-Mead", 500)
 
 
+
 @pytest.mark.parametrize(("solver", "maxiter"), [("Adam", 7), ("BFGS", 8)])
-# BFGS 20
 def test_classify_iris(solver: str, maxiter: int):
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
