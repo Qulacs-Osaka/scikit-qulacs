@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 import numpy as np
-from qulacs import Observable
+from qulacs_osaka import Observable
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
 

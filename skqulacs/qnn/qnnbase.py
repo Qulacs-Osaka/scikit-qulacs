@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 from numpy.random import Generator, default_rng
-from qulacs.gate import DenseMatrix, X, Z
+from qulacs_osaka.gate import DenseMatrix, X, Z
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
