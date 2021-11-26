@@ -115,9 +115,9 @@ class QNNRegressor(QNN):
             loss = result.fun
             theta_opt = result.x
         elif self.solver == "Adam":
-            pr_A = 0.25
-            pr_Bi = 0.6
-            pr_Bt = 0.99
+            pr_A = 0.02
+            pr_Bi = 0.8
+            pr_Bt = 0.995
             pr_ips = 0.0000001
             # ここまでがハイパーパラメータ
             Bix = 0

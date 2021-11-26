@@ -10,7 +10,8 @@ from skqulacs.qnn import QNNClassifier
 # ("Nelder-Mead", 500)
 
 
-@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 20), ("Adam", 50)])
+@pytest.mark.parametrize(("solver", "maxiter"), [("Adam", 7), ("BFGS", 8)])
+# BFGS 20
 def test_classify_iris(solver: str, maxiter: int):
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
@@ -27,7 +28,9 @@ def test_classify_iris(solver: str, maxiter: int):
     num_class = 3  # 分類数（ここでは3つの品種に分類）
     circuit = create_qcl_ansatz(nqubit, c_depth, time_step, 0)
     qcl = QNNClassifier(nqubit, circuit, num_class, solver)
-    qcl.fit(x_train, y_train, maxiter)
 
-    y_pred = qcl.predict(x_test)
-    assert f1_score(y_test, y_pred, average="weighted") > 0.85
+    for kai in range(maxiter):
+        qcl.fit(x_train, y_train, 1)
+        y_pred = qcl.predict(x_test)
+        print(f1_score(y_test, y_pred, average="weighted"))
+    assert f1_score(y_test, y_pred, average="weighted") > 0.92

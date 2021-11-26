@@ -93,7 +93,7 @@ class QNNClassifier(QNN):
             loss = result.fun
             theta_opt = result.x
         elif self.solver == "Adam":
-            pr_A = 0.25
+            pr_A = 0.02
             pr_Bi = 0.8
             pr_Bt = 0.995
             pr_ips = 0.0000001
