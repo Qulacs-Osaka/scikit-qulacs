@@ -1,6 +1,6 @@
 # 回路のグラフ化をできます。量子状態の棒グラフ、縮約した後の玉表示
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from qulacs import Observable
 
 

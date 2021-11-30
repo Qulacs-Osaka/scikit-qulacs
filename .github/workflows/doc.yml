@@ -7,6 +7,10 @@ on:
     paths-ignore:
       - "tests/**"
       - "**/*.md"
+  pull_request:
+    paths-ignore:
+      - "tests/**"
+      - "**/*.md"
   workflow_dispatch:
 
 jobs:
@@ -20,27 +24,38 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      # This cache is shared with 'build' in unittest.yml.
+      # https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
+      - name: Load cached venv
+        id: cached-poetry-deps
+        uses: actions/cache@v2
+        with:
+          path: ./.venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install Boost
         run: sudo apt install libboost-dev
 
-      - name: Install dependencies and packages
-        # Dependencies for skqulacs are necessary to build documentation.
-        run: |
-          python -m pip install --upgrade pip
-          make install
-          python -m pip install -r doc/requirements-doc.txt
+      - name: Install dependencies
+        if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
 
       # nbsphinx needs pandoc.
-      - name: Install pandoc
-        run: sudo apt install -y pandoc
+      # - name: Install pandoc
+      #   run: sudo apt install -y pandoc
 
       - name: Build documentation
         run: |
           make html
-        working-directory: ./doc
 
       - name: Deploy to GitHub Pages
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

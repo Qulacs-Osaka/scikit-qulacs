@@ -1,15 +1,14 @@
 from __future__ import annotations
-from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import (
-    QNN,
-    _get_x_scale_param,
-    _min_max_scaling,
-)
+
+from typing import List, Optional
+
+import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
+
+from skqulacs.circuit import LearningCircuit
+from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 from skqulacs.typing import Literal
-from typing import List, Optional
-import numpy as np
 
 
 class QNNClassifier(QNN):
