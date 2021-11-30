@@ -1,12 +1,11 @@
 import random
-import numpy as np
 
+import numpy as np
 from numpy.random import RandomState
 from sklearn.metrics import mean_squared_error
 
 from skqulacs.circuit import create_deepqsv
 from skqulacs.qsvm import QSVR
-
 
 
 def func_to_learn(x):
