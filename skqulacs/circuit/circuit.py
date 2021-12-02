@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Callable, List, Optional, Union
 
-from qulacs_osaka import ParametricQuantumCircuit, QuantumState
+from qulacs import ParametricQuantumCircuit, QuantumState
 
 
 class _Axis(Enum):

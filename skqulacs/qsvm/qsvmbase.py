@@ -1,6 +1,6 @@
 import numpy as np
-from qulacs_osaka import QuantumState
-from qulacs_osaka.gate import CNOT, RZ, H
+from qulacs import QuantumState
+from qulacs.gate import CNOT, RZ, H
 
 
 def get_qvec(x, n_qubit, tlotstep):

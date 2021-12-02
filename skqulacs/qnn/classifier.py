@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 import numpy as np
-from qulacs_osaka import Observable
+from qulacs import Observable
 from scipy.optimize import minimize
 
 from skqulacs.circuit import LearningCircuit

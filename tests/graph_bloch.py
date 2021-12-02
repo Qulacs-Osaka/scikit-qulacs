@@ -1,5 +1,5 @@
-from qulacs_osaka import QuantumState
-from qulacs_osaka.gate import CNOT, RY, H
+from qulacs import QuantumState
+from qulacs.gate import CNOT, RY, H
 
 from skqulacs.circuit import show_blochsphere
 
