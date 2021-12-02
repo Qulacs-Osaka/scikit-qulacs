@@ -46,10 +46,6 @@ jobs:
         if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
-      # nbsphinx needs pandoc.
-      # - name: Install pandoc
-      #   run: sudo apt install -y pandoc
-
       - name: Build documentation
         run: |
           make html
