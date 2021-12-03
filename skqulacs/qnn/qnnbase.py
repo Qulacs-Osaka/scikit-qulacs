@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
-from functools import reduce
 from typing import List, Optional, Tuple
-from qulacs.gate import X, Z, DenseMatrix
-from numpy.random import Generator, default_rng
-import numpy as np
 
+import numpy as np
+from qulacs.gate import X, Z
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)

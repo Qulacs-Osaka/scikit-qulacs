@@ -1,16 +1,15 @@
 from __future__ import annotations
-from skqulacs.qnn.qnnbase import (
-    QNN,
-    _get_x_scale_param,
-    _min_max_scaling,
-)
+
+from typing import List, Optional, Tuple
+
+import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
+
 from skqulacs.circuit import LearningCircuit
+from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 from skqulacs.typing import Literal
-from typing import List, Optional, Tuple
-import numpy as np
 
 
 class QNNRegressor(QNN):
@@ -25,7 +24,7 @@ class QNNRegressor(QNN):
         do_x_scale: bool = True,
         do_y_scale: bool = True,
         y_norm_range=0.7,
-        callback = None
+        callback=None,
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
@@ -44,7 +43,7 @@ class QNNRegressor(QNN):
         self.do_x_scale = do_x_scale
         self.do_y_scale = do_y_scale
         self.y_norm_range = y_norm_range
-        self.callback=callback
+        self.callback = callback
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 

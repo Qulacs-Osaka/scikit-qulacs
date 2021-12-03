@@ -1,17 +1,18 @@
-from .circuit import LearningCircuit
-from typing import List, Optional
-from numpy.random import default_rng
-import numpy as np
-from math import factorial
-from numpy.random import Generator, default_rng
-from qulacs.gate import X, Z, DenseMatrix
 from functools import reduce
+from math import factorial
+from typing import List, Optional
 
+import numpy as np
+from numpy.random import Generator, default_rng
+from qulacs.gate import DenseMatrix, X, Z
+
+from .circuit import LearningCircuit
 
 # 基本ゲート
 I_mat = np.eye(2, dtype=complex)
 X_mat = X(0).get_matrix()
 Z_mat = Z(0).get_matrix()
+
 
 # fullsizeのgateをつくる関数.
 def _make_fullgate(list_SiteAndOperator, nqubit):
@@ -219,7 +220,7 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for i in range(n_qubit):
             j = (i + 1) % n_qubit
             circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
@@ -236,7 +237,7 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for i in range(n_qubit):
             j = (i + 1) % n_qubit
             circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
@@ -338,6 +339,8 @@ def create_deepqsv(
 def create_largeqsv(n_qubit: int, c_depth: int = 4, seed: int = 9) -> LearningCircuit:
     # http://arxiv.org/abs/2108.01039
     # 性能が悪いので、　消す可能性がある
+
+    # 　非推奨　don't use.
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -349,7 +352,7 @@ def create_largeqsv(n_qubit: int, c_depth: int = 4, seed: int = 9) -> LearningCi
         for i in range(n_qubit):
             angle = 2.0 * np.pi * rng.random()
             circuit.add_parametric_RZ_gate(i, angle)
-            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) * 0.1)
+            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) * 0.2)
         for i in range(0, n_qubit - 1, 2):
             circuit.add_CNOT_gate(i, i + 1)
         for i in range(1, n_qubit - 1, 2):

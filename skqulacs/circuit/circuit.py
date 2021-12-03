@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Callable, List, Optional, Union
-from qulacs import QuantumState, ParametricQuantumCircuit
+
+from qulacs import ParametricQuantumCircuit, QuantumState
 
 
 class _Axis(Enum):
@@ -13,7 +14,8 @@ class _Axis(Enum):
 
 
 InputFunc = Callable[[List[float]], float]  # Depends on x
-InputFuncWithParam = Callable[[float, List[float]], float]  # Depends on theta, x
+# Depends on theta, x
+InputFuncWithParam = Callable[[float, List[float]], float]
 
 
 @dataclass

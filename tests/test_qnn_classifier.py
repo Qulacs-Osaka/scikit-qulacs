@@ -1,14 +1,13 @@
-import pytest
-from skqulacs.circuit.pre_defined import create_qcl_ansatz
 import pandas as pd
+import pytest
 from sklearn import datasets
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
 
+from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNClassifier
 
 # ("Nelder-Mead", 500)
-
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [("Adam", 7), ("BFGS", 8)])

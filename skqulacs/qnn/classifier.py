@@ -1,15 +1,14 @@
 from __future__ import annotations
-from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import (
-    QNN,
-    _get_x_scale_param,
-    _min_max_scaling,
-)
+
+from typing import List, Optional
+
+import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
+
+from skqulacs.circuit import LearningCircuit
+from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 from skqulacs.typing import Literal
-from typing import List, Optional
-import numpy as np
 
 
 class QNNClassifier(QNN):
@@ -24,7 +23,7 @@ class QNNClassifier(QNN):
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
         y_exp_bai=5.0,
-        callback = None
+        callback=None,
     ) -> None:
         """
         :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
@@ -36,7 +35,7 @@ class QNNClassifier(QNN):
         :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
         :param callback:コールバック関数。Adamにのみ対応
         """
-        
+
         self.n_qubit = n_qubit
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
@@ -44,7 +43,7 @@ class QNNClassifier(QNN):
         self.cost = cost
         self.do_x_scale = do_x_scale
         self.y_exp_bai = y_exp_bai
-        self.callback=callback
+        self.callback = callback
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
