@@ -12,12 +12,13 @@ def test_classify_iris():
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
     x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
     x_train, x_test, y_train, y_test = train_test_split(
-        x, iris.target, test_size=0.25, random_state=0
+        x, iris.target, test_size=0.25, random_state=1
     )
+
     x_train = x_train.to_numpy()
     x_test = x_test.to_numpy()
-    n_qubit = 2  # qubitの数
-    circuit = create_defqsv(n_qubit, 4)
+    n_qubit = 4  # 内部が持つqubitの数
+    circuit = create_defqsv(n_qubit, 5)
     qsvm = QSVC(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
