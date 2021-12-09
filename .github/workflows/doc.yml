@@ -39,16 +39,9 @@ jobs:
           path: ./.venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Install Boost
-        run: sudo apt install libboost-dev
-
       - name: Install dependencies
         if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
-
-      # nbsphinx needs pandoc.
-      # - name: Install pandoc
-      #   run: sudo apt install -y pandoc
 
       - name: Build documentation
         run: |
