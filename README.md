@@ -1,3 +1,5 @@
+# scikit-qulacs
+
 scikit-qulacsは、量子機械学習を行うためのライブラリです。
 
 バックエンドとして、qulacs-osakaを使用しています。
