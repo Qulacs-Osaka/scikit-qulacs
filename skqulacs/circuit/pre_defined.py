@@ -3,6 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator, default_rng
+from qulacs.gate import DenseMatrix
 
 from .circuit import LearningCircuit
 

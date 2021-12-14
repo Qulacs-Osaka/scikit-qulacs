@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
-from functools import reduce
 from typing import List, Optional, Tuple
 
 import numpy as np
-from numpy.random import Generator, default_rng
-from qulacs.gate import DenseMatrix, X, Z
 
 
 class QNN(ABC):
