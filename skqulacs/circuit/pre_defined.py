@@ -1,3 +1,4 @@
+from functools import reduce
 from math import factorial
 from typing import List, Optional
 
@@ -114,6 +115,7 @@ def _make_fullgate(list_SiteAndOperator, nqubit):
             cnt += 1
         else:  # 何もないsiteはidentity
             list_SingleGates.append(I_mat)
+    return reduce(np.kron, list_SingleGates)
 
 
 def create_farhi_neven_ansatz(
