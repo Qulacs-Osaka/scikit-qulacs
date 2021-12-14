@@ -17,7 +17,7 @@ def test_classify_iris():
     x_train = x_train.to_numpy()
     x_test = x_test.to_numpy()
     n_qubit = 2  # qubitの数
-    circuit = create_ibm_embedding_circuit(n_qubit, 4)
+    circuit = create_ibm_embedding_circuit(n_qubit)
     qsvm = QSVC(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
