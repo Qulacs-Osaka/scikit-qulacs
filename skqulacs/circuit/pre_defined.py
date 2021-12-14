@@ -2,9 +2,10 @@ from math import factorial
 from typing import List, Optional
 
 import numpy as np
-from numpy.random import default_rng, Generator
+from numpy.random import Generator, default_rng
 
 from .circuit import LearningCircuit
+
 
 def create_qcl_ansatz(
     n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
@@ -49,6 +50,7 @@ def create_qcl_ansatz(
             circuit.add_parametric_RX_gate(i, angle)
     return circuit
 
+
 def _create_time_evol_gate(
     n_qubit, time_step=0.77, rng: Generator = None, seed: int = 0
 ):
@@ -75,12 +77,13 @@ def _create_time_evol_gate(
 
     return time_evol_gate
 
+
 def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
     if rng is None:
         rng = default_rng(seed)
     # 基本ゲート
-    X_mat = np.array([[0,1],[1,0]])
-    Z_mat = np.array([[1,0],[0,-1]])
+    X_mat = np.array([[0, 1], [1, 0]])
+    Z_mat = np.array([[1, 0], [0, -1]])
     ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
     for i in range(n_qubit):
         Jx = rng.uniform(-1.0, 1.0)
@@ -91,6 +94,8 @@ def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
     return ham
 
     # fullsizeのgateをつくる関数.
+
+
 def _make_fullgate(list_SiteAndOperator, nqubit):
     """
     list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
@@ -109,6 +114,7 @@ def _make_fullgate(list_SiteAndOperator, nqubit):
         else:  # 何もないsiteはidentity
             list_SingleGates.append(I_mat)
 
+
 def create_farhi_neven_ansatz(
     n_qubit: int, c_depth: int, seed: Optional[int] = None
 ) -> LearningCircuit:
@@ -118,6 +124,7 @@ def create_farhi_neven_ansatz(
         c_depth: depth of the circuit
         seed: random seed determining the shuffling of the qubits between layers
     """
+
     def preprocess_x(x: List[float], index: int):
         xa = x[index % len(x)]
         return min(1, max(-1, xa))
@@ -133,7 +140,7 @@ def create_farhi_neven_ansatz(
     rng = default_rng(seed)
     for _ in range(c_depth):
         rng.shuffle(zyu)
-        
+
         for i in range(0, n_qubit - 1, 2):
             angle_x = 2.0 * np.pi * rng.random()
             angle_y = 2.0 * np.pi * rng.random()
@@ -222,6 +229,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
     Args:
         n_qubits: number of qubits
     """
+
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -238,7 +246,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
             j,
             lambda x, i=i: (
                 (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
-            )
+            ),
         )
         circuit.add_CNOT_gate(i, j)
 
@@ -253,7 +261,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
             j,
             lambda x, i=i: (
                 (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
-            )
+            ),
         )
         circuit.add_CNOT_gate(i, j)
     return circuit
@@ -277,24 +285,20 @@ def create_shirai_ansatz(
     for c_kai in range(c_depth):
         # input embedding layer
         for i in range(n_qubit):
-            circuit.add_input_RZ_gate(
-                i, lambda x, i=i: np.arcsin(preprocess_x(x, i))
-            )
+            circuit.add_input_RZ_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
             for j in range(i):
 
                 circuit.add_CNOT_gate(j, i)
                 circuit.add_input_RZ_gate(
                     i,
-                    lambda x, i=i: -np.arcsin(
-                        preprocess_x(x, i) * preprocess_x(x, j)
-                    )/ 2,
+                    lambda x, i=i: -np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))
+                    / 2,
                 )
                 circuit.add_CNOT_gate(j, i)
                 circuit.add_input_RZ_gate(
                     i,
-                    lambda x, i=i: np.arcsin(
-                        preprocess_x(x, i) * preprocess_x(x, j)
-                    )/ 2,
+                    lambda x, i=i: np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))
+                    / 2,
                 )
         # trainable layer
         for i in range(0, n_qubit):

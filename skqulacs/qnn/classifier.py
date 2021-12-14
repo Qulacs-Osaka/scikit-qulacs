@@ -10,6 +10,7 @@ from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
 from skqulacs.typing import Literal
 
+
 def _get_x_scale_param(x):
     minimum = np.min(x, axis=0)
     maximum = np.max(x, axis=0)

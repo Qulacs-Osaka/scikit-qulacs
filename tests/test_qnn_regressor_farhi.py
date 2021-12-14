@@ -6,7 +6,10 @@ import pytest
 from numpy.random import default_rng
 from sklearn.metrics import mean_squared_error
 
-from skqulacs.circuit import create_farhi_neven_ansatz, create_farhi_neven_watle_ansatz
+from skqulacs.circuit import (
+    create_farhi_neven_ansatz,
+    create_farhi_neven_watle_ansatz,
+)
 from skqulacs.qnn import QNNRegressor
 
 
