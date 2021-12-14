@@ -1,46 +1,47 @@
-TARGET_DIR := skqulacs tests
-PIP_INSTALL := pip install
-PYTEST := python -m pytest -v
-FORMATTER := python -m black
-FLAKE8 := python -m flake8
-FLAKE8_OPTS :=
-AUTOPEP8 := python -m autopep8
-AUTOPEP8_OPTS := -r --exit-code --verbose
+PYTEST := poetry run pytest
+FORMATTER := poetry run black
+LINTER := poetry run flake8
+IMPORT_SORTER := poetry run isort
+TYPE_CHECKER := poetry run mypy
+SPHINX_APIDOC := poetry run sphinx-apidoc
 
-.PHONY: install
-install:
-	$(PIP_INSTALL) -e .
-
-.PHONY: test
-test:
-	$(PYTEST)
-
-tests/%.py: FORCE
-	$(PYTEST) $@
+PROJECT_DIR := skqulacs
+CHECK_DIR := $(PROJECT_DIR) tests
+PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
 FORCE:
 
-.PHONY: format
-format:
-	$(FORMATTER) $(TARGET_DIR)
+.PHONY: test
+test:
+	$(PYTEST) -v
 
-.PHONY: format_check
-format_check:
-	@echo "=== Format check ==="
-	@$(FORMATTER) --check --diff $(TARGET_DIR)
-
-.PHONY: lint
-lint:
-	$(AUTOPEP8) $(AUTOPEP8_OPTS) --in-place $(TARGET_DIR)
-
-.PHONY: lint_check
-lint_check:
-	@echo "=== Lint check ==="
-	@$(FLAKE8) $(TARGET_DIR)
-
-.PHONY: fix
-fix: format lint
+tests/%.py: FORCE
+	$(PYTEST) $@
 
 .PHONY: check
-check: format_check lint_check
+check:
+	$(FORMATTER) $(CHECK_DIR) --check --diff
+	$(LINTER) $(CHECK_DIR)
+	$(IMPORT_SORTER) $(CHECK_DIR) --check --diff
+
+.PHONY: fix
+fix:
+	$(FORMATTER) $(CHECK_DIR)
+	$(IMPORT_SORTER) $(CHECK_DIR)
+
+.PHONY: type
+type:
+	$(TYPE_CHECKER) $(PROJECT_DIR)
+
+.PHONY: api
+api:
+	$(SPHINX_APIDOC) -f -e -o doc/source $(PROJECT_DIR)
+
+.PHONY: doc
+html: api
+	poetry run $(MAKE) -C doc html
+
+.PHONY: serve
+serve: html
+	poetry run python -m http.server --directory doc/build/html $(PORT)

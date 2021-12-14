@@ -1,9 +1,11 @@
-from .circuit import LearningCircuit
-from ..qnn.qnnbase import _create_time_evol_gate
-from typing import List, Optional
-from numpy.random import default_rng
-import numpy as np
 from math import factorial
+from typing import List, Optional
+
+import numpy as np
+from numpy.random import default_rng
+
+from ..qnn.qnnbase import _create_time_evol_gate
+from .circuit import LearningCircuit
 
 
 def create_qcl_ansatz(
@@ -154,7 +156,7 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for i in range(n_qubit):
             j = (i + 1) % n_qubit
             circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
@@ -171,7 +173,7 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for tlotkai in range(tlotstep):
+    for _ in range(tlotstep):
         for i in range(n_qubit):
             j = (i + 1) % n_qubit
             circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
