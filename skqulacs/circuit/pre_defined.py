@@ -95,8 +95,6 @@ def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
             ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
     return ham
 
-    # fullsizeのgateをつくる関数.
-
 
 def _make_fullgate(list_SiteAndOperator, nqubit):
     """
