@@ -389,7 +389,7 @@
 <h1>Scikit-qulacs チュートリアル<a class="headerlink" href="#scikit-qulacs" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>scikit-qulacs とは<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>量子回路シミュレータ <a class="reference external" href="https://github.com/Qulacs-Osaka/qulacs-osaka">Qulacs-Osaka</a> (<a class="reference external" href="https://github.com/qulacs/qulacs">Qulacs</a> の大阪大学バージョン) をバックエンドとしたバックエンドの量子機械学習アルゴリズムのシミュレータです。scikit-learn の名前をもじっています。</p>
+<p>量子回路シミュレータ <a class="reference external" href="https://github.com/Qulacs-Osaka/qulacs-osaka">Qulacs-Osaka</a> (<a class="reference external" href="https://github.com/qulacs/qulacs">Qulacs</a> の大阪大学バージョン) をバックエンドとした量子機械学習アルゴリズムのシミュレータです。scikit-learn の名前をもじっています。</p>
 </div>
 <div class="section" id="id2">
 <h2>インストール<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -400,6 +400,7 @@
 </pre></div>
 </div>
 <p>としてインストールします。</p>
+<p>もうすぐPypi経由でのインストールができると思います。</p>
 </div>
 <div class="section" id="quantum-neural-network">
 <h2>Quantum neural network<a class="headerlink" href="#quantum-neural-network" title="Permalink to this headline">¶</a></h2>
@@ -456,15 +457,15 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [-0.28026134  2.33211081  5.29047046  5.65517678  0.72991724  5.27028904
-  2.74652996  3.28308753  3.75504722  1.03797736  3.23576809  0.75579598
-  6.02172185  0.3259274   0.60720079  2.7606959   3.09757019  5.70380102
-  1.47350616  0.66268902  2.97685151  2.12378661  1.1052083   3.15631648
-  1.65064927  3.81749124  3.23417947  6.76413593  4.04516921  0.56209726
-  2.43654068  5.13245625  3.11624193  2.42984174  1.28063933  1.40434702
-  2.55592857  2.3897248   1.08684625  4.49061681  4.06141373  4.00699347
-  5.11569268  6.0709363   4.30242882]
-loss 0.09084766529605941
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 5.43275004  2.48240237  5.6573935   4.5877417   5.00245409  1.91038182
+  1.71331511  5.14311445  0.39102198  0.65931597  4.3810594   1.74054074
+  3.6705706   3.50245152  4.31725349  3.89687823  4.09770337  6.3110944
+  6.19139581  2.47062568  0.44847304  2.126162    0.85176341  4.89895285
+  4.66771152  5.87643051  3.19080058  3.14351733  0.97423183  6.87624748
+  3.6131912   0.55697356  3.42251965  3.67239685  5.92956079  3.05354735
+  4.88433562  3.5739901  -1.08672487  4.36561682  5.62662144  5.68580272
+  1.91910398  4.73108347  5.94419149]
+loss 0.09765401283099069
 </pre></div>
 </div>
 </div>
@@ -479,7 +480,7 @@ loss 0.09084766529605941
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
 </pre></div>
 </div>
 </div>
@@ -497,14 +498,14 @@ loss 0.09084766529605941
 <span class="k">def</span> <span class="nf">generate_noisy_sine</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">num_x</span><span class="p">):</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">x_train</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_x</span><span class="p">)]</span>
-    <span class="n">y_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_train</span><span class="p">]</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_train</span><span class="p">]</span>
     <span class="n">mag_noise</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">y_train</span> <span class="o">+=</span> <span class="n">mag_noise</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">num_x</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span>
   
 <span class="n">x_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 <span class="n">x_max</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">num_x</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">num_x</span> <span class="o">=</span> <span class="mi">80</span>
 <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">generate_noisy_sine</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">num_x</span><span class="p">)</span>
 <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">generate_noisy_sine</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">num_x</span><span class="p">)</span>
 </pre></div>
@@ -516,11 +517,11 @@ loss 0.09084766529605941
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNRegressor</span>
 
-<span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">depth</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span>
-<span class="n">maxiter</span><span class="o">=</span><span class="mi">30</span>
+<span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
 <span class="n">opt_loss</span><span class="p">,</span> <span class="n">opt_params</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span>
@@ -530,19 +531,27 @@ loss 0.09084766529605941
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.30823969e-03  1.69497720e-04  6.59118862e-04  5.09217345e-04
- -4.32268385e-04  4.92713929e-05  1.36538668e-04  1.53775103e-04
-  1.41207582e-04  9.31110293e-04  4.70914013e-04  7.86917099e-04
-  6.19946582e-05 -2.64012646e-04  1.07408026e-04  5.35370468e-04
-  2.30889200e-06  4.57010072e-04  4.64792538e-04 -3.82488334e-04
- -3.08492937e-04  1.85225641e-18  1.66387471e-18  1.59685167e-18
-  1.81429488e-18  1.72023535e-18  1.63834722e-18]
-trained parameters [ 3.84467489  1.88085801 -0.04580765  0.14649501  5.17928421  5.5227385
-  3.16051172  4.26939641  3.30238308  5.73715976  4.92200324  0.36887489
-  5.40003768  0.2844169   4.57671905  1.33062601  5.37791139  3.36737159
-  1.40522589  2.98519196  0.3563228   0.78089486  4.21365747  4.06641163
-  3.86657869  2.41071717  6.26565482]
-loss 0.00021158056860248942
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-2.52118172e-03  1.19277020e-03  3.10128326e-04 -6.42683364e-04
+  8.35436474e-04 -5.24981892e-04 -7.52008036e-04 -4.07462371e-04
+ -5.74044155e-04  1.50774930e-03  6.30109294e-05 -8.19459615e-04
+  1.42078707e-03  2.09110696e-03 -3.36846534e-04  4.88690753e-04
+  7.46908451e-05 -2.22482857e-04 -9.25977438e-04 -9.12545452e-05
+  1.04324965e-03 -5.63038944e-04 -4.62934646e-04 -3.62787336e-04
+ -8.51174859e-04  2.90978510e-03  1.96177705e-03  6.80510436e-05
+  1.69540322e-04  3.45813053e-04  3.20652348e-04 -2.24440888e-04
+ -5.65850928e-05 -7.10191967e-04  5.10276819e-04  7.51022395e-04
+  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.65360101e-17
+  3.64051278e-17  3.49922499e-17  3.57671351e-17  3.57690200e-17
+  3.64157750e-17  3.58017513e-17  3.60230733e-17  3.56749295e-17]
+trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963  6.46225974
+  3.40609952  5.00474857  3.37636039  6.31050608  5.49376378  0.139052
+  5.47590209  0.64912218  4.67870237  1.41841969  5.53849844  3.7883166
+  1.84668854  2.68946397  0.04043366  0.96776472  4.49352776  3.60008095
+  3.88877639  2.58504726  6.23553393  6.16278554  4.24511007  3.92287119
+  4.33309344  2.56906654  0.6973149   4.8681623   3.38829756  1.61272237
+  3.30808541  5.46822145  5.94478902  2.24809352  3.59102784  2.02236503
+  3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
+loss 0.008518100629964238
 </pre></div>
 </div>
 </div>
@@ -659,7 +668,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <img alt="../_images/0_tutorial_31_0.png" src="../_images/0_tutorial_31_0.png" />
 </div>
 </div>
-<p>それっぽく学習はできていますが、うまくいっているとは言い難い結果となりました。これも QSVC の場合と同様で、使用している特徴量 <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> がデータにあっていないことが問題であると考えられます。</p>
+<p>うまく学習できています。</p>
 </div>
 </div>
 <div class="section" id="id4">
@@ -668,9 +677,14 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <p>現在、</p>
 <ul class="simple">
 <li><p>create_qcl_ansatz(n_qubits, c_depth, time_step, seed=None): <a class="reference external" href="https://arxiv.org/abs/1803.00745">arXiv:1803.00745</a></p></li>
+<li><p>create_farhi_circuit(n_qubit: int, c_depth: int, seed: Optional[int] = None): <a class="reference external" href="https://arxiv.org/pdf/1802.06002">arXiv:1802.06002</a></p></li>
+<li><p>create_farhi_watle(n_qubit: int, c_depth: int, seed: Optional[int] = None): 論文無し (farhiの入力を微妙に改良したもの)</p></li>
 <li><p>create_defqsv(n_qubits, tlotstep): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a></p></li>
+<li><p>create_deepqsv(n_qubit: int, c_depth: int = 5, tlotstep: int = 3, seed: int = 9): <a class="reference external" href="http://arxiv.org/abs/2111.02951">aeXiv:2111.02951</a>
+注:微妙に細部が異なる可能性あり</p></li>
 </ul>
 <p>が用意されています。</p>
+<p>「qsv」と名前にあるものは、QSVMに使うことを推奨します。</p>
 <p>基本的には <code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code> などの引数として与えることを推奨しますが、自前で新たなアルゴリズムを作りたいときなど、これらの量子回路を直接扱いたいときもあると思います。以下に使用例を掲載します。</p>
 <p>以下のコードで QCL ansatz を作成します。</p>
 <div class="cell docutils container">
@@ -692,7 +706,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [5.029901881594645, 5.93014214983372, 6.189500552510509, 3.278936133022245, 0.6543875866476202, 4.331112703708888, 5.072204254374846, 0.44390262581767276, 1.9795551919235876, 5.605105423506771, 2.665052621583578, 1.1603469557842683, 1.5458262198231, 3.3867454975655686, 5.146741536875799, 5.853389797558937, 1.6245061982592752, 5.350920788225828, 5.628403202936605, 0.12411559265109877, 2.958261354369508, 1.7809683555858258, 5.228010989220123, 1.322089128351532, 5.546280404628124, 3.9521622041328914, 5.469035798827315, 2.05070728429926, 0.29247960862691563, 5.059352177642911, 2.1641846601356196, 2.4502087658822216, 5.537439672029766, 1.377291774663158, 4.825550501922751, 5.524891203152325, 0.4010365001106289, 5.157611202661472, 3.3776857597876915, 5.335191841249085, 0.1382058604974741, 1.1934048313666452, 6.228587219278495, 0.41367892427452807, 5.5080252460844985, 5.395507018856077, 2.8505139304734888, 0.5233789136208244]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.9449413536233515, 0.22121893996162978, 3.1666856973757502, 6.019794533981315, 4.3526377488035, 2.4414706610545625, 4.896868641254415, 1.1063555451756222, 5.165111120376486, 1.0334444968192642, 0.5461301519949231, 3.6516923130702974, 0.5161574344157371, 5.980255039473558, 1.4890683099819413, 3.909812087473952, 0.5507897090518945, 3.1548270894372914, 6.132257972682515, 5.036645771434631, 1.1868664591765588, 2.8534051327447902, 4.840309307750285, 1.6966529171666331, 5.850480906503873, 4.146621037709535, 2.187100568395788, 5.762093599361692, 0.3874009691936656, 0.8841507445583391, 2.6421026457565207, 3.5318067345717403, 1.7875093461988005, 3.3657644816637724, 5.54255844990258, 1.6470096798268339, 3.5478486749443623, 3.0431672586803398, 1.373446337574491, 3.4260397289405615, 3.074759337083277, 4.15946605954629, 0.7098810077848904, 4.3813797975442785, 2.0204786933186685, 2.617673574783071, 5.085336822070756, 5.50934554702247]
 </pre></div>
 </div>
 </div>
@@ -712,6 +726,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">run(x)</span></code> を使うと、入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> に対して、初期状態 <span class="math notranslate nohighlight">\(|0\rangle\)</span> に量子回路を作用させたときの出力状態が <code class="docutils literal notranslate"><span class="pre">qulacs.QuantumState</span></code> として返されます。QCL ansatz は <code class="docutils literal notranslate"><span class="pre">n_qubits</span></code> 次元までの入力を扱うことのできる ansatz なので、今回は 2 次元入力を与えます。</p>
+<p>多くの回路では、データ次元数をaとして、それが<code class="docutils literal notranslate"><span class="pre">n_qubits</span></code>以下の場合、回路のx番目には、n_qubits % a 番目の入力が入ります。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">ansatz</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">])</span>
@@ -734,7 +749,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <div class="section" id="id5">
 <h2>ユーザー定義の量子回路を学習に利用する<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>ここでは自分でオリジナルの量子回路を定義し、それを学習に利用する方法を説明します。scikit-qulacs では、<code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスによって量子回路を表現しています。これは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のラッパーとなっていて、入力データと訓練される回路パラメータを一元管理し、それらをすべて qulacs の parametric gate で扱えるようにしたものです。</p>
-<p><code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のほぼ全ての <code class="docutils literal notranslate"><span class="pre">add_.._gate()</span></code> 系のメソッドを機能そのままにラップしています。それに加えて、<code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> を拡張する機能として、以下のメソッドが追加されています。</p>
+<p><code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のうちの主要な <code class="docutils literal notranslate"><span class="pre">add_.._gate()</span></code> 系のメソッドを機能そのままにラップしています。それに加えて、<code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> を拡張する機能として、以下のメソッドが追加されています。</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">add_input_RX_gate(index,</span> <span class="pre">input_func)</span></code>, <code class="docutils literal notranslate"><span class="pre">add_input_RY_gate(index,</span> <span class="pre">input_func)</span></code>, <code class="docutils literal notranslate"><span class="pre">add_input_RZ_gate(index,</span> <span class="pre">input_func)</span></code>: 入力データを入れるためのゲートを追加します。引数にはそれぞれ以下のものを与えます。</p>
 <ul>
