@@ -456,16 +456,15 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_5835</span><span class="o">/</span><span class="mf">653900495.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">skqulacs.circuit.pre_defined</span> <span class="kn">import</span> <span class="n">create_qcl_ansatz</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNClassifier</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> 
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">nqubit</span> <span class="o">=</span> <span class="mi">5</span>                      <span class="c1"># qubitの数。必要とする入力、出力の次元数以上が必要である。</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">c_depth</span> <span class="o">=</span> <span class="mi">3</span>                     <span class="c1"># circuitの深さ。ニューラルネットワークでの隠れ層に対応する。</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;skqulacs&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [-0.28026134  2.33211081  5.29047046  5.65517678  0.72991724  5.27028904
+  2.74652996  3.28308753  3.75504722  1.03797736  3.23576809  0.75579598
+  6.02172185  0.3259274   0.60720079  2.7606959   3.09757019  5.70380102
+  1.47350616  0.66268902  2.97685151  2.12378661  1.1052083   3.15631648
+  1.65064927  3.81749124  3.23417947  6.76413593  4.04516921  0.56209726
+  2.43654068  5.13245625  3.11624193  2.42984174  1.28063933  1.40434702
+  2.55592857  2.3897248   1.08684625  4.49061681  4.06141373  4.00699347
+  5.11569268  6.0709363   4.30242882]
+loss 0.09084766529605941
 </pre></div>
 </div>
 </div>
@@ -480,7 +479,7 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
 </pre></div>
 </div>
 </div>
@@ -531,12 +530,19 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 3.93166403  1.74113587  0.3630937  -0.44173687  5.15937421  4.64547617
-  3.76834652  3.74289434  3.25187658  5.70564301  5.11132962  0.07167768
-  5.10139818  0.36990044  4.30785906  1.0497284   5.61443714  2.71529377
-  1.46078489  2.7214845   0.50767906  1.03870172  4.29908696  3.83989125
-  4.1144703   2.46881313  6.29411763]
-loss 0.00036939215487285566
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.30823969e-03  1.69497720e-04  6.59118862e-04  5.09217345e-04
+ -4.32268385e-04  4.92713929e-05  1.36538668e-04  1.53775103e-04
+  1.41207582e-04  9.31110293e-04  4.70914013e-04  7.86917099e-04
+  6.19946582e-05 -2.64012646e-04  1.07408026e-04  5.35370468e-04
+  2.30889200e-06  4.57010072e-04  4.64792538e-04 -3.82488334e-04
+ -3.08492937e-04  1.85225641e-18  1.66387471e-18  1.59685167e-18
+  1.81429488e-18  1.72023535e-18  1.63834722e-18]
+trained parameters [ 3.84467489  1.88085801 -0.04580765  0.14649501  5.17928421  5.5227385
+  3.16051172  4.26939641  3.30238308  5.73715976  4.92200324  0.36887489
+  5.40003768  0.2844169   4.57671905  1.33062601  5.37791139  3.36737159
+  1.40522589  2.98519196  0.3563228   0.78089486  4.21365747  4.06641163
+  3.86657869  2.41071717  6.26565482]
+loss 0.00021158056860248942
 </pre></div>
 </div>
 </div>
@@ -686,7 +692,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [0.7238575654756965, 4.521772018945494, 5.300166829620294, 2.4396786706992875, 3.372497641445515, 0.0691143830945458, 2.4305919508432194, 0.897581496914585, 0.8153164989629146, 4.19580716083789, 4.614797622397918, 2.951713965321396, 2.449149087341643, 2.4619419636304105, 1.0029754525418129, 2.334478387370933, 2.5589036813723762, 4.50591651911791, 4.486222509952132, 1.559585289816079, 6.164351024607971, 1.47322926380012, 2.0729721326039914, 2.275646680431729, 2.9195023453638385, 2.7015553984398526, 5.814853292230643, 5.161654841481886, 0.7527848104233957, 1.728308187107492, 5.360006969176836, 5.201498343709625, 0.42675480228093243, 1.967788806417369, 1.7897854085117577, 5.321631318940725, 5.6122834079775785, 5.437876706508988, 2.4878547042811134, 3.796733572414534, 0.9677624343101473, 1.8208670050419042, 0.4657427370080585, 5.820313505901443, 1.2863802672251754, 2.4653914032427604, 0.3882421258541333, 1.4073421893586033]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [5.029901881594645, 5.93014214983372, 6.189500552510509, 3.278936133022245, 0.6543875866476202, 4.331112703708888, 5.072204254374846, 0.44390262581767276, 1.9795551919235876, 5.605105423506771, 2.665052621583578, 1.1603469557842683, 1.5458262198231, 3.3867454975655686, 5.146741536875799, 5.853389797558937, 1.6245061982592752, 5.350920788225828, 5.628403202936605, 0.12411559265109877, 2.958261354369508, 1.7809683555858258, 5.228010989220123, 1.322089128351532, 5.546280404628124, 3.9521622041328914, 5.469035798827315, 2.05070728429926, 0.29247960862691563, 5.059352177642911, 2.1641846601356196, 2.4502087658822216, 5.537439672029766, 1.377291774663158, 4.825550501922751, 5.524891203152325, 0.4010365001106289, 5.157611202661472, 3.3776857597876915, 5.335191841249085, 0.1382058604974741, 1.1934048313666452, 6.228587219278495, 0.41367892427452807, 5.5080252460844985, 5.395507018856077, 2.8505139304734888, 0.5233789136208244]
 </pre></div>
 </div>
 </div>
