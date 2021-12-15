@@ -85,7 +85,7 @@ def test_noisy_sine(solver: str, maxiter: int):
 
     circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
     qnn = QNNRegressor(circuit, solver)
-    
+
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
