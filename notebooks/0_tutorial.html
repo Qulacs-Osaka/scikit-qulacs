@@ -449,7 +449,7 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span>                   <span class="c1"># アルゴリズム。ほかには、&quot;Adam&quot; が使える。</span>
 <span class="n">maxiter</span> <span class="o">=</span> <span class="mi">20</span>                    <span class="c1"># ループの最大。これが多いほど、正確になるが、時間がかかる。</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">nqubit</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>     <span class="c1"># LearningCircuitを作る</span>
-<span class="n">qcl</span> <span class="o">=</span> <span class="n">QNNClassifier</span><span class="p">(</span><span class="n">nqubit</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">num_class</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>     <span class="c1"># モデル構築を行う</span>
+<span class="n">qcl</span> <span class="o">=</span> <span class="n">QNNClassifier</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">num_class</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>     <span class="c1"># モデル構築を行う</span>
 <span class="n">opt_loss</span><span class="p">,</span> <span class="n">opt_params</span> <span class="o">=</span> <span class="n">qcl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span>                          <span class="c1"># 学習</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trained parameters&quot;</span><span class="p">,</span> <span class="n">opt_params</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">opt_loss</span><span class="p">)</span>
@@ -457,15 +457,19 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 5.43275004  2.48240237  5.6573935   4.5877417   5.00245409  1.91038182
-  1.71331511  5.14311445  0.39102198  0.65931597  4.3810594   1.74054074
-  3.6705706   3.50245152  4.31725349  3.89687823  4.09770337  6.3110944
-  6.19139581  2.47062568  0.44847304  2.126162    0.85176341  4.89895285
-  4.66771152  5.87643051  3.19080058  3.14351733  0.97423183  6.87624748
-  3.6131912   0.55697356  3.42251965  3.67239685  5.92956079  3.05354735
-  4.88433562  3.5739901  -1.08672487  4.36561682  5.62662144  5.68580272
-  1.91910398  4.73108347  5.94419149]
-loss 0.09765401283099069
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 1.95368524e+00  3.00967759e-01  1.84004223e+00  6.68657475e+00
+  1.49435760e+00  6.27348001e+00  1.53488733e+00  2.41887485e+00
+  1.87959106e-01  4.88403928e+00  5.56827976e+00  3.62478030e+00
+  8.83099705e-01  5.30372919e+00  4.18913287e+00  6.48511430e+00
+  1.26356743e+00 -3.36990068e-01  3.30313533e-01  2.96636908e+00
+ -4.38334988e-03  2.25793563e+00  3.09773977e+00  4.42312614e+00
+  4.28093399e+00  1.21678812e+00  3.53986317e+00  5.59409507e+00
+  2.10663715e+00  2.27265689e+00  9.75775880e-01 -4.35986681e-01
+  6.02584789e+00  4.84626909e+00  3.55607994e+00  6.31185843e+00
+  2.93038815e+00  4.72882021e+00  9.69884734e-01  3.01444548e+00
+  4.40000902e+00  1.07739981e+00  1.77300851e+00  2.99234029e+00
+  5.42896878e+00]
+loss 0.1035605626347845
 </pre></div>
 </div>
 </div>
@@ -523,7 +527,7 @@ loss 0.09765401283099069
 <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span>
 <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+<span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
 <span class="n">opt_loss</span><span class="p">,</span> <span class="n">opt_params</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trained parameters&quot;</span><span class="p">,</span> <span class="n">opt_params</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">opt_loss</span><span class="p">)</span>
@@ -540,9 +544,9 @@ loss 0.09765401283099069
  -8.51174859e-04  2.90978510e-03  1.96177705e-03  6.80510436e-05
   1.69540322e-04  3.45813053e-04  3.20652348e-04 -2.24440888e-04
  -5.65850928e-05 -7.10191967e-04  5.10276819e-04  7.51022395e-04
-  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.65360101e-17
-  3.64051278e-17  3.49922499e-17  3.57671351e-17  3.57690200e-17
-  3.64157750e-17  3.58017513e-17  3.60230733e-17  3.56749295e-17]
+  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.67414828e-17
+  3.64993093e-17  3.58591760e-17  3.56614316e-17  3.64061535e-17
+  3.57214014e-17  3.62213635e-17  3.60955846e-17  3.61377725e-17]
 trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963  6.46225974
   3.40609952  5.00474857  3.37636039  6.31050608  5.49376378  0.139052
   5.47590209  0.64912218  4.67870237  1.41841969  5.53849844  3.7883166
@@ -551,7 +555,7 @@ trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963 
   4.33309344  2.56906654  0.6973149   4.8681623   3.38829756  1.61272237
   3.30808541  5.46822145  5.94478902  2.24809352  3.59102784  2.02236503
   3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
-loss 0.008518100629964238
+loss 0.008518100629962718
 </pre></div>
 </div>
 </div>
@@ -706,7 +710,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.9449413536233515, 0.22121893996162978, 3.1666856973757502, 6.019794533981315, 4.3526377488035, 2.4414706610545625, 4.896868641254415, 1.1063555451756222, 5.165111120376486, 1.0334444968192642, 0.5461301519949231, 3.6516923130702974, 0.5161574344157371, 5.980255039473558, 1.4890683099819413, 3.909812087473952, 0.5507897090518945, 3.1548270894372914, 6.132257972682515, 5.036645771434631, 1.1868664591765588, 2.8534051327447902, 4.840309307750285, 1.6966529171666331, 5.850480906503873, 4.146621037709535, 2.187100568395788, 5.762093599361692, 0.3874009691936656, 0.8841507445583391, 2.6421026457565207, 3.5318067345717403, 1.7875093461988005, 3.3657644816637724, 5.54255844990258, 1.6470096798268339, 3.5478486749443623, 3.0431672586803398, 1.373446337574491, 3.4260397289405615, 3.074759337083277, 4.15946605954629, 0.7098810077848904, 4.3813797975442785, 2.0204786933186685, 2.617673574783071, 5.085336822070756, 5.50934554702247]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.5810221481856646, 0.5960602373519733, 1.0805389586027148, 1.7756938447434534, 4.801933136374367, 0.27540658997246265, 1.387591704737476, 3.4397182574778298, 2.7494453861573556, 2.3232021653407964, 0.008771807523724157, 0.17622665662026865, 2.8789293686320288, 3.0848050090662333, 0.6174067491574566, 1.0519339208371328, 5.056022088955828, 2.338195840969593, 0.004796109570231613, 5.753375364418578, 3.4768520921147896, 0.9755364453774169, 4.676708740311635, 0.5642879916416469, 3.12393924125401, 5.31309805750788, 1.9094615840432736, 5.80543040937805, 1.4245616569851105, 5.352090836171847, 4.3830496590555885, 3.840118669717173, 5.756264817319158, 3.270206214604914, 3.7836951276449313, 2.437181598193384, 3.5570588307910658, 0.7691287193809554, 1.9366817463961898, 1.9352777105038466, 2.3882818960314145, 5.365923650606399, 5.082026902668138, 0.32127652178055, 1.2642965694580997, 0.8473177478364444, 5.636442208651546, 3.3798362194226605]
 </pre></div>
 </div>
 </div>

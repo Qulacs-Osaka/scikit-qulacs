@@ -287,7 +287,6 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span><span class="p">,</span>
         <span class="n">solver</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Adam&quot;</span><span class="p">,</span> <span class="s2">&quot;BFGS&quot;</span><span class="p">,</span> <span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;BFGS&quot;</span><span class="p">,</span>
         <span class="n">cost</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mse&quot;</span><span class="p">,</span>
@@ -296,15 +295,14 @@
         <span class="n">y_norm_range</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある</span>
 <span class="sd">        :param circuit: 回路そのもの</span>
-<span class="sd">        :param solver: 何を使うか　Nelderは非推奨</span>
-<span class="sd">        :param cost: コスト関数　mseしかない。 mseは、正規化した後での二乗和をとる。</span>
+<span class="sd">        :param solver: 何を使うか Nelderは非推奨</span>
+<span class="sd">        :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。</span>
 <span class="sd">        :param do_x_scale xをscaleしますか?</span>
 <span class="sd">        :param do_x_scale yをscaleしますか?</span>
 <span class="sd">        :param y_margin  [-y_norm_range,y_norm_range]に正規化.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">n_qubit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span>
