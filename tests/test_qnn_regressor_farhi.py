@@ -48,7 +48,7 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
     else:
         circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
 
-    qnn = QNNRegressor(n_qubit, circuit, solver)
+    qnn = QNNRegressor(circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     # BFGSじゃないなら600
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
@@ -82,8 +82,10 @@ def test_noisy_sine(solver: str, maxiter: int):
 
     n_qubit = 4
     depth = 11
+
     circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
-    qnn = QNNRegressor(n_qubit, circuit, solver)
+    qnn = QNNRegressor(circuit, solver)
+    
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)

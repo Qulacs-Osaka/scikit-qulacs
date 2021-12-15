@@ -16,7 +16,6 @@ class QNNClassifier(QNN):
 
     def __init__(
         self,
-        n_qubit: int,
         circuit: LearningCircuit,
         num_class: int,
         solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
@@ -25,15 +24,14 @@ class QNNClassifier(QNN):
         y_exp_bai=5.0,
     ) -> None:
         """
-        :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
         :param circuit: 回路そのもの
         :param num_class: 分類の数（=測定するqubitの数）
-        :param solver: 何を使うか　Nelderは非推奨
-        :param cost: コスト関数　log_lossしかない。
+        :param solver: 何を使うか Nelderは非推奨
+        :param cost: コスト関数 log_lossしかない。
         :param do_x_scale xをscaleしますか?
-        :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
+        :param y_exp_bai 内部出力のyが0と1では、 e^y_exp_bai 倍の確率の倍率がある。
         """
-        self.n_qubit = n_qubit
+        self.n_qubit = circuit.n_qubit
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
         self.solver = solver
@@ -43,8 +41,8 @@ class QNNClassifier(QNN):
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
-        self.observables = [Observable(n_qubit) for _ in range(n_qubit)]
-        for i in range(n_qubit):
+        self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
+        for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
     def fit(self, x_train, y_train, maxiter: Optional[int] = None):
