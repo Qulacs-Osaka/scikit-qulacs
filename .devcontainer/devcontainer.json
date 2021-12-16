@@ -32,6 +32,11 @@
 		"ms-python.vscode-pylance"
 	],
 
+	// A location of gpg might differ from host machine's git config.
+	// This config accepts string or array. If you use array form destructure command like following; not a list of commands.
+	// ["echo", "hello"]
+	"postStartCommand": "/usr/bin/git config --global gpg.program /usr/bin/gpg",
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
