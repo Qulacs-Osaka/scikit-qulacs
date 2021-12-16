@@ -62,7 +62,8 @@ def _create_time_evol_gate(
         time_step: evolution time
         rng: random number generator
         seed: seed for random number
-    :return  qulacsのゲートオブジェクト
+    Return:
+        qulacs' gate object
     """
     if rng is None:
         rng = default_rng(seed)
@@ -269,12 +270,13 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
 
 
 def create_shirai_ansatz(
-    n_qubit: int, c_depth: int = 5, seed: int = 9
+    n_qubit: int, c_depth: int = 5, seed: int = 0
 ) -> LearningCircuit:
     """create circuit proposed in http://arxiv.org/abs/2111.02951.
-    n_qubit: number of qubits
-    c_depth: circuit depth as defined in http://arxiv.org/abs/2111.02951
-    seed: random seed for initial parameter values
+    Args:
+        n_qubit: number of qubits
+        c_depth: circuit depth as defined in http://arxiv.org/abs/2111.02951
+        seed: random seed for initial parameter values
     """
 
     def preprocess_x(x: List[float], index: int) -> float:

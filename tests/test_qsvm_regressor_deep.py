@@ -40,7 +40,7 @@ def test_noisy_sine():
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 6
-    circuit = create_shirai_ansatz(n_qubit, 4)
+    circuit = create_shirai_ansatz(n_qubit, 4, 9)
     qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
