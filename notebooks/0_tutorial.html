@@ -457,19 +457,15 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 1.95368524e+00  3.00967759e-01  1.84004223e+00  6.68657475e+00
-  1.49435760e+00  6.27348001e+00  1.53488733e+00  2.41887485e+00
-  1.87959106e-01  4.88403928e+00  5.56827976e+00  3.62478030e+00
-  8.83099705e-01  5.30372919e+00  4.18913287e+00  6.48511430e+00
-  1.26356743e+00 -3.36990068e-01  3.30313533e-01  2.96636908e+00
- -4.38334988e-03  2.25793563e+00  3.09773977e+00  4.42312614e+00
-  4.28093399e+00  1.21678812e+00  3.53986317e+00  5.59409507e+00
-  2.10663715e+00  2.27265689e+00  9.75775880e-01 -4.35986681e-01
-  6.02584789e+00  4.84626909e+00  3.55607994e+00  6.31185843e+00
-  2.93038815e+00  4.72882021e+00  9.69884734e-01  3.01444548e+00
-  4.40000902e+00  1.07739981e+00  1.77300851e+00  2.99234029e+00
-  5.42896878e+00]
-loss 0.1035605626347845
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 0.06719619  2.90390036  6.20531501  2.89981011  2.2749007   2.32582428
+  0.83799505  3.99775871  3.02873566  3.6395552  -0.69774764  0.55714353
+  0.86518334  3.06407163  6.56927473 -0.6001838   0.8203331   0.96019234
+  1.311122    3.1529209   1.93071048  0.93240417  4.56828771  3.05089664
+ -1.05981408  4.23950101  4.72190694  3.90161065  0.28454364  1.08835877
+  1.89768635  0.36612604  2.08588783  4.36736371  5.66818465  5.51578218
+  3.96684932  4.14705186 -0.53805655  6.13830069  3.26242026  2.34697917
+  3.74032194  1.93601701  4.18055898]
+loss 0.08538199772364342
 </pre></div>
 </div>
 </div>
@@ -484,7 +480,7 @@ loss 0.1035605626347845
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0
 </pre></div>
 </div>
 </div>
@@ -544,9 +540,9 @@ loss 0.1035605626347845
  -8.51174859e-04  2.90978510e-03  1.96177705e-03  6.80510436e-05
   1.69540322e-04  3.45813053e-04  3.20652348e-04 -2.24440888e-04
  -5.65850928e-05 -7.10191967e-04  5.10276819e-04  7.51022395e-04
-  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.67414828e-17
-  3.64993093e-17  3.58591760e-17  3.56614316e-17  3.64061535e-17
-  3.57214014e-17  3.62213635e-17  3.60955846e-17  3.61377725e-17]
+  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.65360101e-17
+  3.64051278e-17  3.49922499e-17  3.57671351e-17  3.57690200e-17
+  3.64157750e-17  3.58017513e-17  3.60230733e-17  3.56749295e-17]
 trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963  6.46225974
   3.40609952  5.00474857  3.37636039  6.31050608  5.49376378  0.139052
   5.47590209  0.64912218  4.67870237  1.41841969  5.53849844  3.7883166
@@ -555,7 +551,7 @@ trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963 
   4.33309344  2.56906654  0.6973149   4.8681623   3.38829756  1.61272237
   3.30808541  5.46822145  5.94478902  2.24809352  3.59102784  2.02236503
   3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
-loss 0.008518100629962718
+loss 0.008518100629964238
 </pre></div>
 </div>
 </div>
@@ -586,7 +582,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 を使ったカーネル法を量子カーネル法と呼びます。scikit-qulacs には、support vector classifier <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> と support vector regressor <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の2つが実装されています。</p>
 <div class="section" id="skqulacs-qsvm-qsvc">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> の使い方<a class="headerlink" href="#skqulacs-qsvm-qsvc" title="Permalink to this headline">¶</a></h3>
-<p>ここでは IBM のグループが論文 <a class="reference external" href="https://www.nature.com/articles/s41586-019-0980-2">Supervised learning with quantum-enhanced feature spaces</a> で提案した <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> を使った分類を行います。この状態を作る量子回路は <code class="docutils literal notranslate"><span class="pre">skqulacs.circuit.create_defqsv</span></code> によって作り出せます。</p>
+<p>ここでは IBM のグループが論文 <a class="reference external" href="https://www.nature.com/articles/s41586-019-0980-2">Supervised learning with quantum-enhanced feature spaces</a> で提案した <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> を使った分類を行います。この状態を作る量子回路は <code class="docutils literal notranslate"><span class="pre">skqulacs.circuit.create_ibm_embedding_circuit</span></code> によって作り出せます。</p>
 <p>まずデータセットを準備します。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -605,10 +601,10 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <p>回路を作成し、QSVC を訓練、予測値を出力させます。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">create_defqsv</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">create_ibm_embedding_circuit</span>
 <span class="kn">from</span> <span class="nn">skqulacs.qsvm</span> <span class="kn">import</span> <span class="n">QSVC</span>
 <span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>                         <span class="c1"># x_train の次元数以上必要。あまり小さいと結果が悪くなる。</span>
-<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_defqsv</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_ibm_embedding_circuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
 <span class="n">qsvm</span> <span class="o">=</span> <span class="n">QSVC</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
 <span class="n">qsvm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">qsvm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
@@ -650,7 +646,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.qsvm</span> <span class="kn">import</span> <span class="n">QSVR</span>
 <span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>                         <span class="c1"># x_train の次元数以上必要。あまり小さいと結果が悪くなる。</span>
-<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_defqsv</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_ibm_embedding_circuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
 <span class="n">qsvm</span> <span class="o">=</span> <span class="n">QSVR</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
 <span class="n">qsvm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">qsvm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
@@ -680,15 +676,14 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 <p>scikit-qulacs では代表的な論文で発表されている機械学習用量子回路を手軽に使えるようにするため、量子回路の実装に努めています。機械学習用量子回路は <code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスのインスタンスとして実装されていて、<code class="docutils literal notranslate"><span class="pre">skqulacs.circuit</span></code> モジュールにある <code class="docutils literal notranslate"><span class="pre">create_...()</span></code> という関数を呼ぶことにより作成可能です。</p>
 <p>現在、</p>
 <ul class="simple">
-<li><p>create_qcl_ansatz(n_qubits, c_depth, time_step, seed=None): <a class="reference external" href="https://arxiv.org/abs/1803.00745">arXiv:1803.00745</a></p></li>
-<li><p>create_farhi_circuit(n_qubit: int, c_depth: int, seed: Optional[int] = None): <a class="reference external" href="https://arxiv.org/pdf/1802.06002">arXiv:1802.06002</a></p></li>
-<li><p>create_farhi_watle(n_qubit: int, c_depth: int, seed: Optional[int] = None): 論文無し (farhiの入力を微妙に改良したもの)</p></li>
-<li><p>create_defqsv(n_qubits, tlotstep): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a></p></li>
-<li><p>create_deepqsv(n_qubit: int, c_depth: int = 5, tlotstep: int = 3, seed: int = 9): <a class="reference external" href="http://arxiv.org/abs/2111.02951">aeXiv:2111.02951</a>
+<li><p>create_qcl_ansatz(n_qubit: int, c_depth: int, time_step: float, seed=None): <a class="reference external" href="https://arxiv.org/abs/1803.00745">arXiv:1803.00745</a></p></li>
+<li><p>create_farhi_neven_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): <a class="reference external" href="https://arxiv.org/pdf/1802.06002">arXiv:1802.06002</a></p></li>
+<li><p>create_farhi_neven_watle_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): 上記回路を &#64;WA_TLE さんが改良したもの。</p></li>
+<li><p>create_ibm_embedding_circuit(n_qubit: int): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a></p></li>
+<li><p>create_shirai_ansatz(n_qubit: int, c_depth: int = 5, seed: int = 9): <a class="reference external" href="http://arxiv.org/abs/2111.02951">aeXiv:2111.02951</a>
 注:微妙に細部が異なる可能性あり</p></li>
 </ul>
 <p>が用意されています。</p>
-<p>「qsv」と名前にあるものは、QSVMに使うことを推奨します。</p>
 <p>基本的には <code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code> などの引数として与えることを推奨しますが、自前で新たなアルゴリズムを作りたいときなど、これらの量子回路を直接扱いたいときもあると思います。以下に使用例を掲載します。</p>
 <p>以下のコードで QCL ansatz を作成します。</p>
 <div class="cell docutils container">
@@ -710,7 +705,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.5810221481856646, 0.5960602373519733, 1.0805389586027148, 1.7756938447434534, 4.801933136374367, 0.27540658997246265, 1.387591704737476, 3.4397182574778298, 2.7494453861573556, 2.3232021653407964, 0.008771807523724157, 0.17622665662026865, 2.8789293686320288, 3.0848050090662333, 0.6174067491574566, 1.0519339208371328, 5.056022088955828, 2.338195840969593, 0.004796109570231613, 5.753375364418578, 3.4768520921147896, 0.9755364453774169, 4.676708740311635, 0.5642879916416469, 3.12393924125401, 5.31309805750788, 1.9094615840432736, 5.80543040937805, 1.4245616569851105, 5.352090836171847, 4.3830496590555885, 3.840118669717173, 5.756264817319158, 3.270206214604914, 3.7836951276449313, 2.437181598193384, 3.5570588307910658, 0.7691287193809554, 1.9366817463961898, 1.9352777105038466, 2.3882818960314145, 5.365923650606399, 5.082026902668138, 0.32127652178055, 1.2642965694580997, 0.8473177478364444, 5.636442208651546, 3.3798362194226605]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [1.6343142634133068, 0.9944360451589898, 0.4604114040448631, 3.814195645742086, 5.753279041278851, 0.14661408686733995, 4.836327552520293, 3.6437911737463153, 5.221472951653453, 1.5345897167849796, 3.06882765046881, 3.588656967939691, 3.160413559345231, 2.8234656533011564, 0.43439128165708824, 0.024580573790479055, 1.2680701006082489, 1.1742022439019981, 3.8025546754848816, 6.083163152929429, 1.3965456239857683, 1.794886228292152, 1.6318968702513763, 1.9410366022271073, 5.0366004267160065, 2.8329515499553404, 3.397803031836238, 1.5551481226021096, 2.2027422534522834, 0.8088937358075553, 0.44328917449205185, 5.000745192883167, 1.788712616832191, 2.2041413677334267, 1.571787114245085, 1.9646176157639954, 3.467422414834036, 4.736342341737448, 5.743141759812075, 4.495092621358048, 2.7197338863926994, 4.170890311791104, 5.539919972806196, 3.6211990636183433, 5.8451363458241605, 0.4824060325488729, 3.1055583229077475, 3.048688526987811]
 </pre></div>
 </div>
 </div>

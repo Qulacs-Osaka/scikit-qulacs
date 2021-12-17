@@ -269,61 +269,9 @@
                 
   <h1>Source code for skqulacs.qnn.qnnbase</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">default_rng</span>
-<span class="kn">from</span> <span class="nn">qulacs.gate</span> <span class="kn">import</span> <span class="n">DenseMatrix</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Z</span>
-
-<span class="c1"># 基本ゲート</span>
-<span class="n">I_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-<span class="n">X_mat</span> <span class="o">=</span> <span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">()</span>
-<span class="n">Z_mat</span> <span class="o">=</span> <span class="n">Z</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">()</span>
-
-
-<span class="c1"># fullsizeのgateをつくる関数.</span>
-<span class="k">def</span> <span class="nf">_make_fullgate</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">,</span> <span class="n">nqubit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,</span>
-<span class="sd">    関係ないqubitにIdentityを挿入して</span>
-<span class="sd">    I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...</span>
-<span class="sd">    という(2**nqubit, 2**nqubit)行列をつくる.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">list_Site</span> <span class="o">=</span> <span class="p">[</span><span class="n">SiteAndOperator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">SiteAndOperator</span> <span class="ow">in</span> <span class="n">list_SiteAndOperator</span><span class="p">]</span>
-    <span class="n">list_SingleGates</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 1-qubit gateを並べてnp.kronでreduceする</span>
-    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nqubit</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_Site</span><span class="p">:</span>
-            <span class="n">list_SingleGates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">[</span><span class="n">cnt</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 何もないsiteはidentity</span>
-            <span class="n">list_SingleGates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I_mat</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">,</span> <span class="n">list_SingleGates</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_create_time_evol_gate</span><span class="p">(</span>
-    <span class="n">n_qubit</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mf">0.77</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;ランダム磁場・ランダム結合イジングハミルトニアンをつくって時間発展演算子をつくる</span>
-<span class="sd">    :param time_step: ランダムハミルトニアンによる時間発展の経過時間</span>
-<span class="sd">    :return  qulacsのゲートオブジェクト</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-
-    <span class="n">ham</span> <span class="o">=</span> <span class="n">make_hamiltonian</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span>
-    <span class="c1"># 対角化して時間発展演算子をつくる. H*P = P*D &lt;-&gt; H = P*D*P^dagger</span>
-    <span class="n">diag</span><span class="p">,</span> <span class="n">eigen_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">ham</span><span class="p">)</span>
-    <span class="n">time_evol_op</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eigen_vecs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">diag</span><span class="p">))),</span> <span class="n">eigen_vecs</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
-    <span class="p">)</span>  <span class="c1"># e^-iHT</span>
-
-    <span class="c1"># qulacsのゲートに変換</span>
-    <span class="n">time_evol_gate</span> <span class="o">=</span> <span class="n">DenseMatrix</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)],</span> <span class="n">time_evol_op</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">time_evol_gate</span>
 
 
 <span class="k">def</span> <span class="nf">_get_x_scale_param</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -337,28 +285,6 @@
     <span class="sd">&quot;&quot;&quot;[-1, 1]の範囲に規格化&quot;&quot;&quot;</span>
     <span class="c1"># print([((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x])</span>
     <span class="k">return</span> <span class="p">[((</span><span class="n">xa</span> <span class="o">-</span> <span class="n">scale_x_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">scale_x_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">xa</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;softmax function</span>
-<span class="sd">    :param x: ndarray</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">y</span>
-
-
-<div class="viewcode-block" id="make_hamiltonian"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.make_hamiltonian">[docs]</a><span class="k">def</span> <span class="nf">make_hamiltonian</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-
-    <span class="n">ham</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
-        <span class="n">Jx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">ham</span> <span class="o">+=</span> <span class="n">Jx</span> <span class="o">*</span> <span class="n">_make_fullgate</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span> <span class="n">X_mat</span><span class="p">]],</span> <span class="n">n_qubit</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_qubit</span><span class="p">):</span>
-            <span class="n">J_ij</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-            <span class="n">ham</span> <span class="o">+=</span> <span class="n">J_ij</span> <span class="o">*</span> <span class="n">_make_fullgate</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span> <span class="n">Z_mat</span><span class="p">],</span> <span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">Z_mat</span><span class="p">]],</span> <span class="n">n_qubit</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ham</span></div>
 
 
 <div class="viewcode-block" id="QNN"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN">[docs]</a><span class="k">class</span> <span class="nc">QNN</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>

@@ -299,7 +299,7 @@
    "metadata": {},
    "source": [
     "### `skqulacs.qsvm.QSVC` の使い方\n",
-    "ここでは IBM のグループが論文 [Supervised learning with quantum-enhanced feature spaces](https://www.nature.com/articles/s41586-019-0980-2) で提案した $|\\psi({\\boldsymbol x})\\rangle$ を使った分類を行います。この状態を作る量子回路は `skqulacs.circuit.create_defqsv` によって作り出せます。\n",
+    "ここでは IBM のグループが論文 [Supervised learning with quantum-enhanced feature spaces](https://www.nature.com/articles/s41586-019-0980-2) で提案した $|\\psi({\\boldsymbol x})\\rangle$ を使った分類を行います。この状態を作る量子回路は `skqulacs.circuit.create_ibm_embedding_circuit` によって作り出せます。\n",
     "\n",
     "まずデータセットを準備します。"
    ]
@@ -333,10 +333,10 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from skqulacs.circuit import create_defqsv\n",
+    "from skqulacs.circuit import create_ibm_embedding_circuit\n",
     "from skqulacs.qsvm import QSVC\n",
     "n_qubit = 4                         # x_train の次元数以上必要。あまり小さいと結果が悪くなる。\n",
-    "circuit = create_defqsv(n_qubit)\n",
+    "circuit = create_ibm_embedding_circuit(n_qubit)\n",
     "qsvm = QSVC(circuit)\n",
     "qsvm.fit(x_train, y_train)\n",
     "y_pred = qsvm.predict(x_test)"
@@ -409,7 +409,7 @@
    "source": [
     "from skqulacs.qsvm import QSVR\n",
     "n_qubit = 4                         # x_train の次元数以上必要。あまり小さいと結果が悪くなる。\n",
-    "circuit = create_defqsv(n_qubit)\n",
+    "circuit = create_ibm_embedding_circuit(n_qubit)\n",
     "qsvm = QSVR(circuit)\n",
     "qsvm.fit(x_train, y_train)\n",
     "y_pred = qsvm.predict(x_test)"
@@ -463,17 +463,14 @@
     "scikit-qulacs では代表的な論文で発表されている機械学習用量子回路を手軽に使えるようにするため、量子回路の実装に努めています。機械学習用量子回路は `LearningCircuit` クラスのインスタンスとして実装されていて、`skqulacs.circuit` モジュールにある `create_...()` という関数を呼ぶことにより作成可能です。\n",
     "\n",
     "現在、\n",
-    "- create_qcl_ansatz(n_qubits, c_depth, time_step, seed=None): [arXiv:1803.00745](https://arxiv.org/abs/1803.00745)\n",
-    "- create_farhi_circuit(n_qubit: int, c_depth: int, seed: Optional[int] = None): [arXiv:1802.06002](https://arxiv.org/pdf/1802.06002)\n",
-    "- create_farhi_watle(n_qubit: int, c_depth: int, seed: Optional[int] = None): 論文無し (farhiの入力を微妙に改良したもの)\n",
-    "\n",
-    "- create_defqsv(n_qubits, tlotstep): [arXiv:1804.11326](https://arxiv.org/abs/1804.11326) \n",
-    "- create_deepqsv(n_qubit: int, c_depth: int = 5, tlotstep: int = 3, seed: int = 9): [aeXiv:2111.02951](http://arxiv.org/abs/2111.02951)\n",
+    "- create_qcl_ansatz(n_qubit: int, c_depth: int, time_step: float, seed=None): [arXiv:1803.00745](https://arxiv.org/abs/1803.00745)\n",
+    "- create_farhi_neven_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): [arXiv:1802.06002](https://arxiv.org/pdf/1802.06002)\n",
+    "- create_farhi_neven_watle_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): 上記回路を @WA_TLE さんが改良したもの。\n",
+    "- create_ibm_embedding_circuit(n_qubit: int): [arXiv:1804.11326](https://arxiv.org/abs/1804.11326) \n",
+    "- create_shirai_ansatz(n_qubit: int, c_depth: int = 5, seed: int = 9): [aeXiv:2111.02951](http://arxiv.org/abs/2111.02951)\n",
     "  注:微妙に細部が異なる可能性あり\n",
     "\n",
     "が用意されています。\n",
-    "\n",
-    "「qsv」と名前にあるものは、QSVMに使うことを推奨します。\n",
     "\n",
     "基本的には `QNNClassifier` などの引数として与えることを推奨しますが、自前で新たなアルゴリズムを作りたいときなど、これらの量子回路を直接扱いたいときもあると思います。以下に使用例を掲載します。\n",
     "\n",
@@ -669,7 +666,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.9.5"
+   "version": "3.8.12"
   }
  },
  "nbformat": 4,
