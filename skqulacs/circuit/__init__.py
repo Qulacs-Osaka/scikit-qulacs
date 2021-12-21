@@ -5,5 +5,5 @@ from .pre_defined import (
     create_ibm_embedding_circuit,
     create_largeqsv,
     create_qcl_ansatz,
-    create_shirai_ansatz
+    create_shirai_ansatz,
 )
