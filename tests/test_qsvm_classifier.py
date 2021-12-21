@@ -3,7 +3,7 @@ from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
-from skqulacs.circuit import create_defqsv
+from skqulacs.circuit import create_ibm_embedding_circuit
 from skqulacs.qsvm import QSVC
 
 
@@ -17,8 +17,8 @@ def test_classify_iris():
 
     x_train = x_train.to_numpy()
     x_test = x_test.to_numpy()
-    n_qubit = 4  # 内部が持つqubitの数
-    circuit = create_defqsv(n_qubit, 5)
+    n_qubit = 4  # qubitの数 2だと少なすぎて複雑さがでない
+    circuit = create_ibm_embedding_circuit(n_qubit)
     qsvm = QSVC(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)

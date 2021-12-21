@@ -6,7 +6,10 @@ import pytest
 from numpy.random import default_rng
 from sklearn.metrics import mean_squared_error
 
-from skqulacs.circuit import create_farhi_circuit, create_farhi_watle
+from skqulacs.circuit import (
+    create_farhi_neven_ansatz,
+    create_farhi_neven_watle_ansatz,
+)
 from skqulacs.qnn import QNNRegressor
 
 
@@ -41,11 +44,11 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
     depth = 6
 
     if farhitype == "watle":
-        circuit = create_farhi_watle(n_qubit, depth, 0)
+        circuit = create_farhi_neven_watle_ansatz(n_qubit, depth, 0)
     else:
-        circuit = create_farhi_circuit(n_qubit, depth, 0)
+        circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
 
-    qnn = QNNRegressor(n_qubit, circuit, solver)
+    qnn = QNNRegressor(circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
     # BFGSじゃないなら600
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
@@ -79,8 +82,10 @@ def test_noisy_sine(solver: str, maxiter: int):
 
     n_qubit = 4
     depth = 11
-    circuit = create_farhi_circuit(n_qubit, depth, 0)
-    qnn = QNNRegressor(n_qubit, circuit, solver)
+
+    circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
+    qnn = QNNRegressor(circuit, solver)
+
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)

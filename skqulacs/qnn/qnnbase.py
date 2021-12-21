@@ -2,12 +2,6 @@ from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 
 import numpy as np
-from qulacs.gate import X, Z
-
-# 基本ゲート
-I_mat = np.eye(2, dtype=complex)
-X_mat = X(0).get_matrix()
-Z_mat = Z(0).get_matrix()
 
 
 def _get_x_scale_param(x):
@@ -21,14 +15,6 @@ def _min_max_scaling(x: List[List[float]], scale_x_param):
     """[-1, 1]の範囲に規格化"""
     # print([((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x])
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
-
-
-def _softmax(x):
-    """softmax function
-    :param x: ndarray
-    """
-    y = np.exp(x) / np.sum(np.exp(x))
-    return y
 
 
 class QNN(ABC):

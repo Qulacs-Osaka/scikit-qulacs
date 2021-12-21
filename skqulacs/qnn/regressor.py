@@ -17,7 +17,6 @@ class QNNRegressor(QNN):
 
     def __init__(
         self,
-        n_qubit: int,
         circuit: LearningCircuit,
         solver: Literal["Adam", "BFGS", "Nelder-Mead"] = "BFGS",
         cost: Literal["mse"] = "mse",
@@ -27,16 +26,15 @@ class QNNRegressor(QNN):
         callback=None,
     ) -> None:
         """
-        :param nqubit: qubitの数。必要とする出力の次元数よりも多い必要がある
         :param circuit: 回路そのもの
-        :param solver: 何を使うか　Nelderは非推奨
-        :param cost: コスト関数　mseしかない。 mseは、正規化した後での二乗和をとる。
+        :param solver: 何を使うか Nelderは非推奨
+        :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。
         :param do_x_scale xをscaleしますか?
         :param do_x_scale yをscaleしますか?
         :param y_norm_range  [+-y_norm_range]に正規化.
         :param callback:コールバック関数。Adamにのみ対応
         """
-        self.n_qubit = n_qubit
+        self.n_qubit = circuit.n_qubit
         self.circuit = circuit
         self.solver = solver
         self.cost = cost

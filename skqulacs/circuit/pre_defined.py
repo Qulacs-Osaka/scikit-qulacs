@@ -76,7 +76,11 @@ def create_qcl_ansatz(
     n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
-
+    Args:
+        n_qubit: number of qubits
+        c_depth: circuit depth
+        time_step: the evolution time used for the hamiltonian dynamics
+        seed: seed for random numbers. used for determining the interaction strength of the hamiltonian simulation
     Examples:
         >>> n_qubit = 4
         >>> circuit = create_qcl_ansatz(n_qubit, 3, 0.5)
@@ -112,9 +116,80 @@ def create_qcl_ansatz(
     return circuit
 
 
-def create_farhi_circuit(
+def _create_time_evol_gate(
+    n_qubit, time_step=0.77, rng: Generator = None, seed: int = 0
+):
+    """create a hamiltonian dynamics with transverse field ising model with random interaction and random magnetic field
+    Args:
+        n_qubit: number of qubits
+        time_step: evolution time
+        rng: random number generator
+        seed: seed for random number
+    Return:
+        qulacs' gate object
+    """
+    if rng is None:
+        rng = default_rng(seed)
+
+    ham = _make_hamiltonian(n_qubit, rng)
+    # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
+    diag, eigen_vecs = np.linalg.eigh(ham)
+    time_evol_op = np.dot(
+        np.dot(eigen_vecs, np.diag(np.exp(-1j * time_step * diag))), eigen_vecs.T.conj()
+    )  # e^-iHT
+
+    # qulacsのゲートに変換
+    time_evol_gate = DenseMatrix([i for i in range(n_qubit)], time_evol_op)
+
+    return time_evol_gate
+
+
+def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
+    if rng is None:
+        rng = default_rng(seed)
+    # 基本ゲート
+    X_mat = np.array([[0, 1], [1, 0]])
+    Z_mat = np.array([[1, 0], [0, -1]])
+    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+    for i in range(n_qubit):
+        Jx = rng.uniform(-1.0, 1.0)
+        ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
+        for j in range(i + 1, n_qubit):
+            J_ij = rng.uniform(-1.0, 1.0)
+            ham += J_ij * _make_fullgate([[i, Z_mat], [j, Z_mat]], n_qubit)
+    return ham
+
+
+def _make_fullgate(list_SiteAndOperator, nqubit):
+    """
+    list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
+    関係ないqubitにIdentityを挿入して
+    I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...
+    という(2**nqubit, 2**nqubit)行列をつくる.
+    """
+    I_mat = np.eye(2, dtype=complex)
+    list_Site = [SiteAndOperator[0] for SiteAndOperator in list_SiteAndOperator]
+    list_SingleGates = []  # 1-qubit gateを並べてnp.kronでreduceする
+    cnt = 0
+    for i in range(nqubit):
+        if i in list_Site:
+            list_SingleGates.append(list_SiteAndOperator[cnt][1])
+            cnt += 1
+        else:  # 何もないsiteはidentity
+            list_SingleGates.append(I_mat)
+    return reduce(np.kron, list_SingleGates)
+
+
+def create_farhi_neven_ansatz(
     n_qubit: int, c_depth: int, seed: Optional[int] = None
 ) -> LearningCircuit:
+    """create circuit proposed in https://arxiv.org/abs/1802.06002.
+    Args:
+        n_qubits: number of qubits
+        c_depth: depth of the circuit
+        seed: random seed determining the shuffling of the qubits between layers
+    """
+
     def preprocess_x(x: List[float], index: int):
         xa = x[index % len(x)]
         return min(1, max(-1, xa))
@@ -130,8 +205,7 @@ def create_farhi_circuit(
     rng = default_rng(seed)
     for _ in range(c_depth):
         rng.shuffle(zyu)
-        # 今回の回路はdepthを多めにとったほうがいいかも
-        # 最低でもn_qubitはほしいかも
+
         for i in range(0, n_qubit - 1, 2):
             angle_x = 2.0 * np.pi * rng.random()
             angle_y = 2.0 * np.pi * rng.random()
@@ -146,9 +220,16 @@ def create_farhi_circuit(
     return circuit
 
 
-def create_farhi_watle(
+def create_farhi_neven_watle_ansatz(
     n_qubit: int, c_depth: int, seed: Optional[int] = None
 ) -> LearningCircuit:
+    """create modified version of circuit proposed in https://arxiv.org/abs/1802.06002.
+    made by WA_TLE.
+    Args:
+        n_qubits: number of qubits
+        c_depth: depth of the circuit
+        seed: random seed determining the shuffling of the qubits between layers
+    """
     xkeisuu = np.zeros([25, 25, 25])
     nCr = np.zeros([25, 25])
     for i in range(25):
@@ -181,7 +262,6 @@ def create_farhi_watle(
         if xb < 0 or 1 < xb:
             raise RuntimeError("bug")
 
-        # print(sban,xa,xb)
         return xb * 2 - 1
 
     circuit = LearningCircuit(n_qubit)
@@ -195,8 +275,6 @@ def create_farhi_watle(
     rng = default_rng(seed)
     for _ in range(c_depth):
         rng.shuffle(zyu)
-        # 今回の回路はdepthを多めにとったほうがいいかも
-        # 最低でもn_qubitはほしいかも
         for i in range(0, n_qubit - 1, 2):
             angle_x = 2.0 * np.pi * rng.random()
             angle_y = 2.0 * np.pi * rng.random()
@@ -211,7 +289,12 @@ def create_farhi_watle(
     return circuit
 
 
-def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
+def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
+    """create circuit proposed in https://arxiv.org/abs/1802.06002.
+    Args:
+        n_qubits: number of qubits
+    """
+
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -220,46 +303,45 @@ def create_defqsv(n_qubit: int, tlotstep: int = 4) -> LearningCircuit:
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for _ in range(tlotstep):
-        for i in range(n_qubit):
-            j = (i + 1) % n_qubit
-            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
-            circuit.add_CNOT_gate(i, j)
-            circuit.add_input_RZ_gate(
-                j,
-                lambda x, i=i: (
-                    (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
-                )
-                / tlotstep,
-            )
-            circuit.add_CNOT_gate(i, j)
+    for i in range(n_qubit):
+        j = (i + 1) % n_qubit
+        circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i))
+        circuit.add_CNOT_gate(i, j)
+        circuit.add_input_RZ_gate(
+            j,
+            lambda x, i=i: (
+                (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
+            ),
+        )
+        circuit.add_CNOT_gate(i, j)
 
     for i in range(n_qubit):
         circuit.add_H_gate(i)
 
-    for _ in range(tlotstep):
-        for i in range(n_qubit):
-            j = (i + 1) % n_qubit
-            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) / tlotstep)
-            circuit.add_CNOT_gate(i, j)
-            circuit.add_input_RZ_gate(
-                j,
-                lambda x, i=i: (
-                    (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
-                )
-                / tlotstep,
-            )
-            circuit.add_CNOT_gate(i, j)
+    for i in range(n_qubit):
+        j = (i + 1) % n_qubit
+        circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i))
+        circuit.add_CNOT_gate(i, j)
+        circuit.add_input_RZ_gate(
+            j,
+            lambda x, i=i: (
+                (np.pi - preprocess_x(x, i)) * (np.pi - preprocess_x(x, j))
+            ),
+        )
+        circuit.add_CNOT_gate(i, j)
     return circuit
 
 
-def create_deepqsv(
-    n_qubit: int, c_depth: int = 5, tlotstep: int = 3, seed: int = 9
+def create_shirai_ansatz(
+    n_qubit: int, c_depth: int = 5, seed: int = 0
 ) -> LearningCircuit:
-    # http://arxiv.org/abs/2111.02951
-    # RXとかRYとかが反対向きの可能性がありますが、気にしません
-    # 　UをSU(4)から取る部分が、これでできるかどうか確証がありません　間違っていたらごめんなさい
-    # 従来のqsvに比べて、スコアの向上は確認しました
+    """create circuit proposed in http://arxiv.org/abs/2111.02951.
+    Args:
+        n_qubit: number of qubits
+        c_depth: circuit depth as defined in http://arxiv.org/abs/2111.02951
+        seed: random seed for initial parameter values
+    """
+
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -267,35 +349,24 @@ def create_deepqsv(
     rng = default_rng(seed)
     circuit = LearningCircuit(n_qubit)
     for c_kai in range(c_depth):
+        # input embedding layer
+        for i in range(n_qubit):
+            circuit.add_input_RZ_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
+            for j in range(i):
 
-        for tlotkai in range(tlotstep):
-            for i in range(n_qubit):
+                circuit.add_CNOT_gate(j, i)
                 circuit.add_input_RZ_gate(
-                    i, lambda x, i=i: np.arcsin(preprocess_x(x, i)) / tlotstep
+                    i,
+                    lambda x, i=i: -np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))
+                    / 2,
                 )
-                circuit.add_parametric_RZ_gate(i, np.pi / 2)
-                for j in range(i):
-
-                    circuit.add_CNOT_gate(j, i)
-                    circuit.add_input_RY_gate(
-                        i,
-                        lambda x, i=i: -np.arcsin(
-                            preprocess_x(x, i) * preprocess_x(x, j)
-                        )
-                        / tlotstep
-                        / 2,
-                    )
-                    circuit.add_CNOT_gate(j, i)
-                    circuit.add_input_RY_gate(
-                        i,
-                        lambda x, i=i: np.arcsin(
-                            preprocess_x(x, i) * preprocess_x(x, j)
-                        )
-                        / tlotstep
-                        / 2,
-                    )
-                circuit.add_parametric_RZ_gate(i, -np.pi / 2)
-
+                circuit.add_CNOT_gate(j, i)
+                circuit.add_input_RZ_gate(
+                    i,
+                    lambda x, i=i: np.arcsin(preprocess_x(x, i) * preprocess_x(x, j))
+                    / 2,
+                )
+        # trainable layer
         for i in range(0, n_qubit):
             j = (i + 1) % n_qubit
 
