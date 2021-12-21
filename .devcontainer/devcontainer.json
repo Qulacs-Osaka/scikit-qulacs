@@ -15,15 +15,16 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
-		"python.defaultInterpreterPath": "/usr/local/bin/python",
+		"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
 		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.formatting.provider": "black",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": true
+		},
+		"python.linting.mypyEnabled": true,
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
