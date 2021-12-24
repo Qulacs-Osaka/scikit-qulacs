@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator, default_rng
-from qulacs.gate import DenseMatrix, X, Z
+from qulacs.gate import CZ, DenseMatrix, X, Z
 
 from .circuit import LearningCircuit
 
@@ -349,26 +349,80 @@ def create_shirai_ansatz(
     return circuit
 
 
-def create_largeqsv(n_qubit: int, c_depth: int = 4, seed: int = 9) -> LearningCircuit:
+def create_largeqsv(
+    n_qubit: int, c_depth: int = 4, x_mult: float = 0.1
+) -> LearningCircuit:
     # http://arxiv.org/abs/2108.01039
-    # 性能が悪いので、　消す可能性がある
+    # 僕が盛大な勘違いをしていた。なるほど。そういうことか。
+    # 確かにこれは「large」なqsvだ。
 
-    # 　非推奨　don't use.
+    # x_multは論文にあるcの倍率
+    assert n_qubit % 2 == 0
+
+    def preprocess_x(x: List[float], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+
+    circuit = LearningCircuit(n_qubit)
+    ban = 0
+    for i in range(n_qubit):
+        circuit.add_input_RY_gate(
+            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+        )
+        ban = ban + 1
+        circuit.add_input_RZ_gate(
+            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+        )
+        ban = ban + 1
+
+    for c_kai in range(c_depth):
+        for i in range(0, n_qubit - 1, 2):
+            circuit.add_RY_gate(i, np.pi / 2)
+            recC = c_kai + 1
+            recA = 0
+            while recC % 2 == 0:
+                recC /= 2
+                recA += 1
+            circuit.add_gate(CZ(i, (i + recA * 2 + 1) % n_qubit))
+            circuit.add_input_RY_gate(
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+            )
+            ban = ban + 1
+            if c_kai + 1 < c_depth:
+                circuit.add_input_RZ_gate(
+                    i,
+                    lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult
+                    + np.pi / 2,
+                )
+                ban = ban + 1
+    return circuit
+
+
+# 010201030102010
+
+
+def create_largeqsv_YZCX(
+    n_qubit: int, c_depth: int = 4, x_mult: float = 0.1, seed: int = 9
+) -> LearningCircuit:
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
 
     rng = default_rng(seed)
     circuit = LearningCircuit(n_qubit)
-
+    ban = 0
     for c_kai in range(c_depth):
-        for i in range(n_qubit):
+        for i in range(0, n_qubit):
             angle = 2.0 * np.pi * rng.random()
-            circuit.add_parametric_RZ_gate(i, angle)
-            circuit.add_input_RZ_gate(i, lambda x, i=i: preprocess_x(x, i) * 0.2)
-        for i in range(0, n_qubit - 1, 2):
-            circuit.add_CNOT_gate(i, i + 1)
-        for i in range(1, n_qubit - 1, 2):
-            circuit.add_CNOT_gate(i, i + 1)
-
+            circuit.add_input_RY_gate(
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+            )
+            ban = ban + 1
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_input_RZ_gate(
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+            )
+            ban = ban + 1
+            if i % 2 == c_kai % 2 and i + 1 < n_qubit:
+                circuit.add_CNOT_gate(i, i + 1)
     return circuit

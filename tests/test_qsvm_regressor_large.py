@@ -37,12 +37,12 @@ def test_noisy_sine():
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 8
-    circuit = create_largeqsv(n_qubit, 6)
+    circuit = create_largeqsv(n_qubit, 4, 0.3)
     qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.05
+    assert loss < 0.005
 
 
 # 2要素のSVMを試してみる
