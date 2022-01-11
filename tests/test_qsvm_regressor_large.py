@@ -4,7 +4,7 @@ import numpy as np
 from numpy.random import RandomState
 from sklearn.metrics import mean_squared_error
 
-from skqulacs.circuit import create_ibm_embedding_circuit
+from skqulacs.circuit import create_largeqsv
 from skqulacs.qsvm import QSVR
 
 
@@ -19,7 +19,7 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
 
     x_train = []
     y_train = []
-    for _ in range(num_x):
+    for i in range(num_x):
         xa = x_min + (x_max - x_min) * random.random()
         xb = x_min + (x_max - x_min) * random.random()
         x_train.append([xa, xb])
@@ -32,17 +32,17 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
 def test_noisy_sine():
     x_min = -0.5
     x_max = 0.5
-    num_x = 300
+    num_x = 500
     num_test = 100
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
-    n_qubit = 6
-    circuit = create_ibm_embedding_circuit(n_qubit)
+    n_qubit = 8
+    circuit = create_largeqsv(n_qubit, 4, 0.3)
     qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.008
+    assert loss < 0.005
 
 
 # 2要素のSVMを試してみる
