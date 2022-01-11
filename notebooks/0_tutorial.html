@@ -114,11 +114,6 @@
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="../skqulacs.circuit.graph.html">
-         skqulacs.circuit.graph module
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.circuit.pre_defined.html">
          skqulacs.circuit.pre_defined module
         </a>
@@ -457,15 +452,16 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [5.9929141  2.64651766 4.32680614 4.85003272 1.25659611 5.81053533
- 1.34387364 5.07946076 5.03309188 0.85635849 2.44599883 6.09356302
- 1.73356674 4.81978833 1.43768723 2.42487635 0.12890292 3.32995099
- 4.23407467 4.88492323 3.29199749 3.06135787 4.53305353 1.72670046
- 5.01855229 0.83410135 4.33562214 5.17320434 3.8379047  5.47975233
- 0.24169364 1.50907363 4.61299744 5.66277063 3.28611382 5.13739075
- 3.2305984  5.95576384 5.45641162 1.63416435 6.10340267 5.30027471
- 2.84866821 4.08417302 1.95405644]
-loss 0.08756627950303623
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_5794</span><span class="o">/</span><span class="mf">2652384445.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">skqulacs.circuit.pre_defined</span> <span class="kn">import</span> <span class="n">create_qcl_ansatz</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNClassifier</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">nqubit</span> <span class="o">=</span> <span class="mi">5</span>                      <span class="c1"># qubitの数。必要とする入力、出力の次元数以上が必要である。</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">c_depth</span> <span class="o">=</span> <span class="mi">3</span>                     <span class="c1"># circuitの深さ。ニューラルネットワークでの隠れ層に対応する。</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;skqulacs&#39;
 </pre></div>
 </div>
 </div>
@@ -480,7 +476,7 @@ loss 0.08756627950303623
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
 </pre></div>
 </div>
 </div>
@@ -540,9 +536,9 @@ loss 0.08756627950303623
  -8.51174859e-04  2.90978510e-03  1.96177705e-03  6.80510436e-05
   1.69540322e-04  3.45813053e-04  3.20652348e-04 -2.24440888e-04
  -5.65850928e-05 -7.10191967e-04  5.10276819e-04  7.51022395e-04
-  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.67414828e-17
-  3.64993093e-17  3.58591760e-17  3.56614316e-17  3.64061535e-17
-  3.57214014e-17  3.62213635e-17  3.60955846e-17  3.61377725e-17]
+  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.54710895e-17
+  3.59299055e-17  3.59218882e-17  3.58373194e-17  3.59945889e-17
+  3.55306677e-17  3.67906416e-17  3.59392206e-17  3.58473687e-17]
 trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963  6.46225974
   3.40609952  5.00474857  3.37636039  6.31050608  5.49376378  0.139052
   5.47590209  0.64912218  4.67870237  1.41841969  5.53849844  3.7883166
@@ -551,7 +547,7 @@ trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963 
   4.33309344  2.56906654  0.6973149   4.8681623   3.38829756  1.61272237
   3.30808541  5.46822145  5.94478902  2.24809352  3.59102784  2.02236503
   3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
-loss 0.008518100629962718
+loss 0.008518100629961275
 </pre></div>
 </div>
 </div>
@@ -705,7 +701,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [1.0262319303749152, 6.007081992130317, 2.8559112917625584, 1.0783875831368275, 6.239433058447794, 4.112418431388202, 2.2849425977960522, 1.912587477407079, 0.6997161642693666, 5.611351598841494, 6.071975124403562, 0.8406906404863306, 5.1515539446097645, 4.165794319369957, 6.046785886239983, 3.3007054620486147, 4.454104343085105, 6.073546211214067, 4.886803006844113, 5.233059164980221, 4.199175629373403, 2.614159974067639, 1.0731546625864083, 0.0002352398216243469, 2.5721424041211742, 4.558010579191378, 3.9816921009681323, 4.31515252697982, 1.1601603371161446, 3.342671959815045, 1.240495363022387, 1.9135479420294086, 5.736411170310265, 0.33624306226833445, 3.1434879528953443, 3.8791335138504293, 4.040442555200209, 2.483851917112907, 5.798660781620786, 0.23363139757496235, 4.665514322342068, 4.554499705910873, 0.7368057208375552, 3.386242754238238, 4.045333052265353, 5.071848696992506, 4.152459012226849, 6.129867706122329]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [0.7238575654756965, 4.521772018945494, 5.300166829620294, 2.4396786706992875, 3.372497641445515, 0.0691143830945458, 2.4305919508432194, 0.897581496914585, 0.8153164989629146, 4.19580716083789, 4.614797622397918, 2.951713965321396, 2.449149087341643, 2.4619419636304105, 1.0029754525418129, 2.334478387370933, 2.5589036813723762, 4.50591651911791, 4.486222509952132, 1.559585289816079, 6.164351024607971, 1.47322926380012, 2.0729721326039914, 2.275646680431729, 2.9195023453638385, 2.7015553984398526, 5.814853292230643, 5.161654841481886, 0.7527848104233957, 1.728308187107492, 5.360006969176836, 5.201498343709625, 0.42675480228093243, 1.967788806417369, 1.7897854085117577, 5.321631318940725, 5.6122834079775785, 5.437876706508988, 2.4878547042811134, 3.796733572414534, 0.9677624343101473, 1.8208670050419042, 0.4657427370080585, 5.820313505901443, 1.2863802672251754, 2.4653914032427604, 0.3882421258541333, 1.4073421893586033]
 </pre></div>
 </div>
 </div>
