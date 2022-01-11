@@ -23,6 +23,7 @@ class QNNRegressor(QNN):
         do_x_scale: bool = True,
         do_y_scale: bool = True,
         y_norm_range=0.7,
+        callback=None,
     ) -> None:
         """
         :param circuit: 回路そのもの
@@ -30,7 +31,8 @@ class QNNRegressor(QNN):
         :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。
         :param do_x_scale xをscaleしますか?
         :param do_x_scale yをscaleしますか?
-        :param y_margin  [-y_norm_range,y_norm_range]に正規化.
+        :param y_norm_range  [+-y_norm_range]に正規化.
+        :param callback:コールバック関数。Adamにのみ対応
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
@@ -39,7 +41,7 @@ class QNNRegressor(QNN):
         self.do_x_scale = do_x_scale
         self.do_y_scale = do_y_scale
         self.y_norm_range = y_norm_range
-
+        self.callback = callback
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
@@ -57,6 +59,8 @@ class QNNRegressor(QNN):
         :param maxiter: scipy.optimize.minimizeのイテレーション回数
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
+
+        y_trainを同時に複数学習させるために、yにList[List[float]]を入れることを許可していた気がします
         """
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self._get_y_scale_param(y_train)
@@ -141,6 +145,8 @@ class QNNRegressor(QNN):
 
             loss = self.cost_func(theta_now, x_scaled, y_scaled)
             theta_opt = theta_now
+            if self.callback is not None:
+                self.callback(theta_now)
         else:
             raise NotImplementedError
 
