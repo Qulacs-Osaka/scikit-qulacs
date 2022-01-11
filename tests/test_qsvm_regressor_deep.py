@@ -22,9 +22,11 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
     for i in range(num_x):
         xa = x_min + (x_max - x_min) * random.random()
         xb = x_min + (x_max - x_min) * random.random()
-        x_train.append([xa, xb])
-        y_train.append(func_to_learn([xa, xb]))
-
+        xc = 0
+        xd = 0
+        x_train.append([xa, xb, xc, xd])
+        y_train.append(func_to_learn([xa, xb, xc, xd]))
+        # 2要素だと量子的な複雑さが足りず、　精度が悪いため、ダミーの2bitを加えて4bitにしている。
     mag_noise = 0.05
     y_train += mag_noise * random_state.randn(num_x)
     return x_train, y_train
