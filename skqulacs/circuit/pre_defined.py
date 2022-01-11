@@ -350,14 +350,18 @@ def create_shirai_ansatz(
 
 
 def create_largeqsv(
-    n_qubit: int, c_depth: int = 4, x_mult: float = 0.1
+    n_qubit: int, c_depth: int = 4, c: float = 0.1
 ) -> LearningCircuit:
-    # http://arxiv.org/abs/2108.01039
-    # 僕が盛大な勘違いをしていた。なるほど。そういうことか。
-    # 確かにこれは「large」なqsvだ。
-
-    # x_multは論文にあるcの倍率
-    assert n_qubit % 2 == 0
+    """
+    Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(a).
+    Args:
+        n_qubit: number of qubits. must be even.
+        c_depth: circuit depth. The number of parameters is 8+4*(c_depth-1).
+        c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.
+    """ 
+    
+    if n_qubit % 2 != 0:
+        raise ValueError("create_large_qsv takes only integer number of qubits, but given "+str(n_qubit))
 
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
@@ -367,11 +371,11 @@ def create_largeqsv(
     ban = 0
     for i in range(n_qubit):
         circuit.add_input_RY_gate(
-            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + np.pi / 2
         )
         ban = ban + 1
         circuit.add_input_RZ_gate(
-            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+            i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + np.pi / 2
         )
         ban = ban + 1
 
@@ -385,25 +389,29 @@ def create_largeqsv(
                 recA += 1
             circuit.add_gate(CZ(i, (i + recA * 2 + 1) % n_qubit))
             circuit.add_input_RY_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + np.pi / 2
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + np.pi / 2
             )
             ban = ban + 1
             if c_kai + 1 < c_depth:
                 circuit.add_input_RZ_gate(
                     i,
-                    lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult
+                    lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c
                     + np.pi / 2,
                 )
                 ban = ban + 1
     return circuit
 
 
-# 010201030102010
-
-
 def create_largeqsv_YZCX(
-    n_qubit: int, c_depth: int = 4, x_mult: float = 0.1, seed: int = 9
+    n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
 ) -> LearningCircuit:
+    """
+    Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(c).
+    Args:
+        n_qubit: number of qubits. must be even.
+        c_depth: circuit depth. The number of parameters is 8*c_depth.
+        c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.
+    """
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -415,12 +423,12 @@ def create_largeqsv_YZCX(
         for i in range(0, n_qubit):
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RY_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + angle
             )
             ban = ban + 1
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RZ_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + angle
             )
             ban = ban + 1
             if i % 2 == c_kai % 2 and i + 1 < n_qubit:
