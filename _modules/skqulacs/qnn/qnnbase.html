@@ -111,6 +111,11 @@
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.circuit.graph.html">
+         skqulacs.circuit.graph module
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../skqulacs.circuit.pre_defined.html">
          skqulacs.circuit.pre_defined module
         </a>
@@ -285,7 +290,7 @@
 <div class="viewcode-block" id="QNN"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN">[docs]</a><span class="k">class</span> <span class="nc">QNN</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <div class="viewcode-block" id="QNN.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x_train</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y_train</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Fit the model to given train data.</span>
 
@@ -301,7 +306,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="QNN.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN.predict">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">x_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Predict outcome for given data.</span>
 
 <span class="sd">        Args:</span>
