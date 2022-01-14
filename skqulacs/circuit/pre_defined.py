@@ -349,19 +349,20 @@ def create_shirai_ansatz(
     return circuit
 
 
-def create_largeqsv(
-    n_qubit: int, c_depth: int = 4, c: float = 0.1
-) -> LearningCircuit:
+def create_largeqsv(n_qubit: int, c_depth: int = 4, c: float = 0.1) -> LearningCircuit:
     """
     Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(a).
     Args:
         n_qubit: number of qubits. must be even.
         c_depth: circuit depth. The number of parameters is 8+4*(c_depth-1).
         c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.
-    """ 
-    
+    """
+
     if n_qubit % 2 != 0:
-        raise ValueError("create_large_qsv takes only integer number of qubits, but given "+str(n_qubit))
+        raise ValueError(
+            "create_large_qsv takes only integer number of qubits, but given "
+            + str(n_qubit)
+        )
 
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
@@ -395,8 +396,7 @@ def create_largeqsv(
             if c_kai + 1 < c_depth:
                 circuit.add_input_RZ_gate(
                     i,
-                    lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c
-                    + np.pi / 2,
+                    lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + np.pi / 2,
                 )
                 ban = ban + 1
     return circuit
@@ -412,6 +412,7 @@ def create_largeqsv_YZCX(
         c_depth: circuit depth. The number of parameters is 8*c_depth.
         c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.
     """
+
     def preprocess_x(x: List[float], index: int) -> float:
         xa = x[index % len(x)]
         return xa
@@ -423,13 +424,15 @@ def create_largeqsv_YZCX(
         for i in range(0, n_qubit):
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RY_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c
             )
+            circuit.add_parametric_RY_gate(i, angle)
             ban = ban + 1
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RZ_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * c
             )
+            circuit.add_parametric_RZ_gate(i, angle)
             ban = ban + 1
             if i % 2 == c_kai % 2 and i + 1 < n_qubit:
                 circuit.add_CNOT_gate(i, i + 1)
