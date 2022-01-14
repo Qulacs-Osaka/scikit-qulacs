@@ -4,7 +4,7 @@ import numpy as np
 from numpy.random import RandomState
 from sklearn.metrics import mean_squared_error
 
-from skqulacs.circuit import create_largeqsv
+from skqulacs.circuit import create_npqc_ansatz, create_yzcx_ansatz
 from skqulacs.qsvm import QSVR
 
 
@@ -29,7 +29,7 @@ def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
     return x_train, y_train
 
 
-def test_noisy_sine():
+def test_noisy_sine_npqc():
     x_min = -0.5
     x_max = 0.5
     num_x = 500
@@ -37,7 +37,23 @@ def test_noisy_sine():
     x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 8
-    circuit = create_largeqsv(n_qubit, 4, 0.3)
+    circuit = create_npqc_ansatz(n_qubit, 4, 0.3)
+    qsvm = QSVR(circuit)
+    qsvm.fit(x_train, y_train)
+    y_pred = qsvm.predict(x_test)
+    loss = mean_squared_error(y_pred, y_test)
+    assert loss < 0.005
+
+
+def test_noisy_sine_yzcx():
+    x_min = -0.5
+    x_max = 0.5
+    num_x = 500
+    num_test = 100
+    x_train, y_train = generate_noisy_sine(x_min, x_max, num_x)
+    x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
+    n_qubit = 8
+    circuit = create_yzcx_ansatz(n_qubit, 4, 0.3)
     qsvm = QSVR(circuit)
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
@@ -48,7 +64,7 @@ def test_noisy_sine():
 # 2要素のSVMを試してみる
 # sin(x1*x2*2)をフィッティングさせる
 def main():
-    test_noisy_sine()
+    test_noisy_sine_yzcx()
 
 
 if __name__ == "__main__":

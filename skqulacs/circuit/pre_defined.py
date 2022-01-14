@@ -4,14 +4,9 @@ from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator, default_rng
-from qulacs.gate import CZ, DenseMatrix, X, Z
+from qulacs.gate import CZ, DenseMatrix
 
 from .circuit import LearningCircuit
-
-# 基本ゲート
-I_mat = np.eye(2, dtype=complex)
-X_mat = X(0).get_matrix()
-Z_mat = Z(0).get_matrix()
 
 
 def create_qcl_ansatz(
@@ -349,7 +344,9 @@ def create_shirai_ansatz(
     return circuit
 
 
-def create_largeqsv(n_qubit: int, c_depth: int = 4, c: float = 0.1) -> LearningCircuit:
+def create_npqc_ansatz(
+    n_qubit: int, c_depth: int = 4, c: float = 0.1
+) -> LearningCircuit:
     """
     Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(a).
     Args:
@@ -402,7 +399,7 @@ def create_largeqsv(n_qubit: int, c_depth: int = 4, c: float = 0.1) -> LearningC
     return circuit
 
 
-def create_largeqsv_YZCX(
+def create_yzcx_ansatz(
     n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
 ) -> LearningCircuit:
     """
