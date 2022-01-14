@@ -415,13 +415,15 @@ def create_largeqsv_YZCX(
         for i in range(0, n_qubit):
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RY_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult
             )
+            circuit.add_parametric_RY_gate(i, angle)
             ban = ban + 1
             angle = 2.0 * np.pi * rng.random()
             circuit.add_input_RZ_gate(
-                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult + angle
+                i, lambda x, ban_lam=ban: preprocess_x(x, ban_lam) * x_mult
             )
+            circuit.add_parametric_RZ_gate(i, angle)
             ban = ban + 1
             if i % 2 == c_kai % 2 and i + 1 < n_qubit:
                 circuit.add_CNOT_gate(i, i + 1)
