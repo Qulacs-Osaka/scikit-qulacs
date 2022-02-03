@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNClassifier
 
+
 def binary_classification(n_qubit: int) -> float:
     """Solve a binary classification problem for the subset of iris dataset.
 
