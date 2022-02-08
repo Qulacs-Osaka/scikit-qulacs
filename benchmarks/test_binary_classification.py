@@ -1,4 +1,3 @@
-import pytest
 from binary_classification_skqulacs import binary_classification
 
 

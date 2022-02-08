@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
