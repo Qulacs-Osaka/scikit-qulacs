@@ -47,11 +47,6 @@ jobs:
         run: |
           make html
 
-      # Work around to check doc build
-      - name: Dump HTML
-        run: |
-          cat doc/build/html/notebooks/0_tutorial.html
-
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3.7.3
