@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from typing import Dict, List
 import matplotlib.pyplot as plt
 
@@ -27,29 +28,33 @@ def extract_result_for_one_test(results: List[Json], test_name: str) -> Json:
     return list(filter(lambda x: test_name in x["name"], results))[0]
 
 
-def plot_binary_classification(all_results: List[Json]) -> None:
+def plot_binary_classification(all_results: List[Json], output_dir: str) -> None:
     results = extract_results_in_file(all_results, "test_binary_classification.py")
     skqulacs_result = extract_result_for_one_test(results, "test_skqulacs")
     pennylane_result = extract_result_for_one_test(results, "pennylane")
     means = [skqulacs_result["stats"]["mean"], pennylane_result["stats"]["mean"]]
     plt.bar(["skqulacs", "pennylane"], means)
-    plt.savefig("binary_classification.png")
+    plt.savefig(f"{output_dir}/binary_classification.png")
 
 
-def plot_results(file_path: str) -> None:
+def plot_results(output_dir: str, file_path: str) -> None:
     with open(file_path, 'r') as f:
         benchmark_result = json.load(f)["benchmarks"]
 
-    plot_binary_classification(benchmark_result)
+    plot_binary_classification(benchmark_result, output_dir)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Plot results exported by pytest-benchmark")
-    parser.add_argument("file_path", type=str)
+    parser.add_argument("file_path", type=str, help="Path to JSON file containing benchmark results")
+    parser.add_argument("-o", "--output_dir", type=str, default="./.benchmarks/outputs", help="Path to directory to output plot images")
     args = parser.parse_args()
 
     file_path = args.file_path
-    plot_results(file_path)
+    output_dir = args.output_dir
+
+    os.makedirs(output_dir, exist_ok=True)
+    plot_results(output_dir, file_path)
 
 
 if __name__ == "__main__":
