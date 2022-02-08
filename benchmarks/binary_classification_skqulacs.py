@@ -7,7 +7,7 @@ from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNClassifier
 
 
-def binary_classification(n_qubit: int) -> float:
+def binary_classification_skqulacs(n_qubit: int) -> float:
     """Solve a binary classification problem for the subset of iris dataset.
 
     Returns: F1 score for trained model.
