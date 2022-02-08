@@ -94,16 +94,13 @@ Y = Y[index] * 2 - 1
 
 padding = 0.3 * np.ones((len(X), 1))
 X_pad = np.c_[np.c_[X, padding], np.zeros((len(X), 1))]
-print("First X sample (padded)    :", X_pad[0])
 
 # normalize each input
 normalization = np.sqrt(np.sum(X_pad ** 2, -1))
 X_norm = (X_pad.T / normalization).T
-print("First X sample (normalized):", X_norm[0])
 
 # angles for state preparation are new features
 features = np.array([get_angles(x) for x in X_norm], requires_grad=True)
-print("First features sample      :", features[0])
 
 X_train, X_test, Y_train, Y_test = train_test_split(
     features, Y, test_size=0.25, random_state=0
