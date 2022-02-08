@@ -9,6 +9,5 @@ def test_skqulacs(benchmark):
 
 
 def test_pennylane(benchmark):
-    n_qubit = 2
-    score = benchmark.pedantic(binary_classification_pennylane, rounds=10)
+    score = benchmark.pedantic(binary_classification_pennylane, rounds=5)
     assert score > 0.95

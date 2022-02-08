@@ -8,6 +8,8 @@ SPHINX_APIDOC := poetry run sphinx-apidoc
 PROJECT_DIR := skqulacs
 CHECK_DIR := $(PROJECT_DIR) tests
 BENCHMARK_DIR := benchmarks
+
+BENCHMARK_OPT :=  --benchmark-autosave -v
 PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
@@ -37,7 +39,10 @@ type:
 
 .PHONY: benchmark
 benchmark:
-	$(PYTEST) $(BENCHMARK_DIR) --benchmark-autosave -v
+	$(PYTEST) $(BENCHMARK_DIR) $(BENCHMARK_OPT)
+
+benchmarks/%.py: FORCE
+	$(PYTEST) $@ $(BENCHMARK_OPT)
 
 .PHONY: api
 api:
