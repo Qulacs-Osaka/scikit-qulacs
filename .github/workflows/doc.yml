@@ -41,11 +41,16 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install --no-interaction
 
       - name: Build documentation
         run: |
           make html
+
+      # Work around to check doc build
+      - name: Dump HTML
+        run: |
+          cat doc/build/html/notebooks/0_tutorial.html
 
       - name: Deploy to GitHub Pages
         if: ${{ github.ref == 'refs/heads/main' }}
