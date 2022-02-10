@@ -9,7 +9,7 @@ PROJECT_DIR := skqulacs
 CHECK_DIR := $(PROJECT_DIR) tests
 BENCHMARK_DIR := benchmarks
 
-BENCHMARK_OPT :=  --benchmark-autosave -v
+BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
