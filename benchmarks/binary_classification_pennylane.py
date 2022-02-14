@@ -20,7 +20,7 @@ def get_angles(x):
     return np.array([beta2, -beta1 / 2, beta1 / 2, -beta0 / 2, beta0 / 2])
 
 
-def statepreparation(a):
+def prepare_state(a):
     qml.RY(a[0], wires=0)
 
     qml.CNOT(wires=[0, 1])
@@ -44,7 +44,7 @@ def layer(W):
 
 @qml.qnode(dev)
 def circuit(weights, angles):
-    statepreparation(angles)
+    prepare_state(angles)
 
     for W in weights:
         layer(W)
@@ -57,9 +57,9 @@ def variational_classifier(weights, bias, angles):
 
 
 def square_loss(labels, predictions):
-    loss = 0
-    for l, p in zip(labels, predictions):
-        loss += (l - p) ** 2
+    loss = 0.0
+    for label, prediction in zip(labels, predictions):
+        loss += (label - prediction) ** 2
 
     loss = loss / len(labels)
     return loss
@@ -73,24 +73,27 @@ def cost(weights, bias, features, labels):
 
 def accuracy(labels, predictions):
     assert len(labels) == len(predictions)
-    loss = 0
-    for l, p in zip(labels, predictions):
-        if abs(l - p) < 1e-5:
-            loss = loss + 1
-    loss = loss / len(labels)
+    n_corrects = 0
+    for label, prediction in zip(labels, predictions):
+        if abs(label - prediction) < 1e-5:
+            n_corrects = n_corrects + 1
+    n_corrects = n_corrects / len(labels)
 
-    return loss
+    return n_corrects
 
 
 iris = datasets.load_iris()
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 X = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
-Y = np.array(iris.target.astype(np.float32), requires_grad=False)
 X = X.to_numpy()
 
-index = Y != 2
+# Each elements in `iris.target` is 0, 1 or 2.
+# Exclude labels 2 for binary classification.
+index = iris.target != 2
 X = X[index]
-Y = Y[index] * 2 - 1
+Y = np.array(iris.target[index], requires_grad=False)
+# In this learning process, a train label should be -1 or 1; 0 -> -1, 1 -> 1
+Y = Y * 2 - 1
 
 padding = 0.3 * np.ones((len(X), 1))
 X_pad = np.c_[np.c_[X, padding], np.zeros((len(X), 1))]
