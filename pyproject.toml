@@ -24,11 +24,8 @@ Sphinx = "^4.3.0"
 sphinx-book-theme = "^0.1.7"
 ipykernel = "^6.5.0"
 myst-nb = "^0.13.1"
-pytest-benchmark = {version = "^3.4.1", optional = true}
-PennyLane = {version = "^0.21.0", optional = true}
-
-[tool.poetry.extras]
-benchmark = ["pytest-benchmark", "PennyLane"]
+pytest-benchmark = "^3.4.1"
+PennyLane = "^0.21.0"
 
 [tool.isort]
 default_section = "THIRDPARTY"

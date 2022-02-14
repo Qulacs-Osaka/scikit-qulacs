@@ -33,7 +33,7 @@ jobs:
 
     - name: Install dependencies
       if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
-      run: poetry install --no-interaction --no-root --extras "benchmark"
+      run: poetry install --no-interaction --no-root
 
     - name: Install library
       run: poetry install --no-interaction
@@ -51,5 +51,4 @@ jobs:
     - name: Benchmark
       if: ${{ github.event_name	== 'pull_request' }}
       run: |
-        python -m pip install -r benchmarks/requirements.txt
         make benchmark
