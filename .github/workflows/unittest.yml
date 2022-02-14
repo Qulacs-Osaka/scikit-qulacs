@@ -52,4 +52,4 @@ jobs:
       if: ${{ github.event_name	== 'pull_request' }}
       run: |
         python -m pip install -r benchmarks/requirements.txt
-        make benckmark
+        make benchmark
