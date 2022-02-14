@@ -7,8 +7,8 @@ SPHINX_APIDOC := poetry run sphinx-apidoc
 
 PROJECT_DIR := skqulacs
 TEST_DIR := tests
-CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR)
 BENCHMARK_DIR := benchmarks
+CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR) $(BENCHMARK_DIR)
 
 BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000

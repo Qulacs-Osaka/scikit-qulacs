@@ -85,7 +85,7 @@ def accuracy(labels, predictions):
 iris = datasets.load_iris()
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 X = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
-Y = iris.target.astype(np.float32)
+Y = np.array(iris.target.astype(np.float32), requires_grad=False)
 X = X.to_numpy()
 
 index = Y != 2
@@ -100,7 +100,7 @@ normalization = np.sqrt(np.sum(X_pad ** 2, -1))
 X_norm = (X_pad.T / normalization).T
 
 # angles for state preparation are new features
-features = np.array([get_angles(x) for x in X_norm], requires_grad=True)
+features = np.array([get_angles(x) for x in X_norm], requires_grad=False)
 
 X_train, X_test, Y_train, Y_test = train_test_split(
     features, Y, test_size=0.25, random_state=0
@@ -113,7 +113,7 @@ X_val, X_test, Y_val, Y_test = train_test_split(
 
 def train(X_train, Y_train):
     num_qubits = 2
-    num_layers = 5
+    num_layers = 6
 
     opt = NesterovMomentumOptimizer(0.01)
     batch_size = 5

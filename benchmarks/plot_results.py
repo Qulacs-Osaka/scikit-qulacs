@@ -2,8 +2,8 @@ import argparse
 import json
 import os
 from typing import Dict, List
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
 
 Json = Dict[str, object]
 
@@ -38,16 +38,26 @@ def plot_binary_classification(all_results: List[Json], output_dir: str) -> None
 
 
 def plot_results(output_dir: str, file_path: str) -> None:
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         benchmark_result = json.load(f)["benchmarks"]
 
     plot_binary_classification(benchmark_result, output_dir)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Plot results exported by pytest-benchmark")
-    parser.add_argument("file_path", type=str, help="Path to JSON file containing benchmark results")
-    parser.add_argument("-o", "--output_dir", type=str, default="./.benchmarks/outputs", help="Path to directory to output plot images")
+    parser = argparse.ArgumentParser(
+        description="Plot results exported by pytest-benchmark"
+    )
+    parser.add_argument(
+        "file_path", type=str, help="Path to JSON file containing benchmark results"
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        default="./.benchmarks/outputs",
+        help="Path to directory to output plot images",
+    )
     args = parser.parse_args()
 
     file_path = args.file_path
