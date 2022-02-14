@@ -6,7 +6,8 @@ TYPE_CHECKER := poetry run mypy
 SPHINX_APIDOC := poetry run sphinx-apidoc
 
 PROJECT_DIR := skqulacs
-CHECK_DIR := $(PROJECT_DIR) tests
+TEST_DIR := tests
+CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR)
 BENCHMARK_DIR := benchmarks
 
 BENCHMARK_OPT := --benchmark-autosave -v
@@ -17,7 +18,7 @@ FORCE:
 
 .PHONY: test
 test:
-	$(PYTEST) -v
+	$(PYTEST) -v $(TEST_DIR)
 
 tests/%.py: FORCE
 	$(PYTEST) $@
