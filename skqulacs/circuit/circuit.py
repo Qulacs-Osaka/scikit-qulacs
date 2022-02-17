@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from typing import Callable, List, Optional, Union
 
 from qulacs import ParametricQuantumCircuit, QuantumState
-from typing_extensions import Callable, List, Optional, Union
 
 
 class _Axis(Enum):

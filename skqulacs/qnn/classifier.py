@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+from typing import List, Optional
+
 import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
-from typing_extensions import List, Optional
+from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
-from skqulacs.typing_extensions import Literal
 
 
 class QNNClassifier(QNN):
