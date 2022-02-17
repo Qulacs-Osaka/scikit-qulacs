@@ -1,10 +1,10 @@
 from functools import reduce
 from math import factorial
-from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator, default_rng
 from qulacs.gate import CZ, DenseMatrix
+from typing_extensions import List, Optional
 
 from .circuit import LearningCircuit
 

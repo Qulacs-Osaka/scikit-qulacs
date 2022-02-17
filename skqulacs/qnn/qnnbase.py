@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
 
 import numpy as np
+from typing_extensions import List, Optional, Tuple
 
 
 def _get_x_scale_param(x):

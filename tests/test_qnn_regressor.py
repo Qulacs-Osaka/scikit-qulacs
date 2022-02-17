@@ -1,10 +1,9 @@
-from typing import List, Tuple
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
 from sklearn.metrics import mean_squared_error
+from typing_extensions import List, Tuple
 
 from skqulacs.circuit import create_qcl_ansatz
 from skqulacs.qnn import QNNRegressor
