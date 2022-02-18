@@ -22,6 +22,7 @@ class QNNClassifier(QNN):
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
         y_exp_bai=5.0,
+        callback=None,
     ) -> None:
         """
         :param circuit: 回路そのもの
@@ -29,8 +30,10 @@ class QNNClassifier(QNN):
         :param solver: 何を使うか Nelderは非推奨
         :param cost: コスト関数 log_lossしかない。
         :param do_x_scale xをscaleしますか?
-        :param y_exp_bai 内部出力のyが0と1では、 e^y_exp_bai 倍の確率の倍率がある。
+        :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
+        :param callback:コールバック関数。Adamにのみ対応
         """
+
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
         self.num_class = num_class  # 分類の数（=測定するqubitの数）
@@ -38,6 +41,7 @@ class QNNClassifier(QNN):
         self.cost = cost
         self.do_x_scale = do_x_scale
         self.y_exp_bai = y_exp_bai
+        self.callback = callback
         self.scale_x_param = []
         self.scale_y_param = []  # yのスケーリングのパラメータ
 
@@ -116,6 +120,8 @@ class QNNClassifier(QNN):
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
                 # if iter % len(x_train) < 5:
                 # self.cost_func(theta_now, x_train, y_train)
+                if self.callback is not None:
+                    self.callback(theta_now)
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
