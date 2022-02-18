@@ -147,7 +147,7 @@ class LearningCircuit:
 
     def backprop(self, x: List[float], obs) -> List[float]:
         """
-        backprop(self, x: List[float],y:Observbavle)->List[Float]
+        backprop(self, x: List[float], obs)->List[Float]
 
         xは入力の状態で、yは出力値の微分値
         帰ってくるのは、それぞれのパラメータに関する微分値
@@ -163,6 +163,21 @@ class LearningCircuit:
         """
         self._set_input(x)
         ret = self._circuit.backprop(obs)
+        ans = [0] * self._learning_gate_count
+        for parameter in self._parameter_list:
+            if parameter.is_learning_parameter() and not parameter.is_input():
+                ans[parameter.theta_pos] = ret[parameter.pos]
+
+        return ans
+
+    def backprop_inner_product(self, x: List[float], state) -> List[float]:
+        """
+        backprop(self, x: List[float],  state)->List[Float]
+
+        inner_productでbackpropします。
+        """
+        self._set_input(x)
+        ret = self._circuit.backprop_inner_product(state)
         ans = [0] * self._learning_gate_count
         for parameter in self._parameter_list:
             if parameter.is_learning_parameter() and not parameter.is_input():
