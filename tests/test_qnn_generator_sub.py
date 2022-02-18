@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNGeneretor
+from skqulacs.circuit import create_farhi_neven_ansatz
 from skqulacs.circuit import LearningCircuit
 def test_generator_func_same():
     #generatorのcost_funcがあってるか検証します
@@ -60,3 +61,22 @@ def test_generator_func_hamming2():
     qcl = QNNGeneretor(circuit, "exp_hamming", 0.5,2)
     diff_score=qcl.cost_func([],np.array([0,0,1,0]))
     assert abs(diff_score-1.7293294335267746) < 0.001
+
+def test_generator_grad_true():
+
+    n_qubit = 2
+    depth = 3
+    circuit = create_farhi_neven_ansatz(n_qubit, depth)
+    qnn = QNNGeneretor(circuit,"same",0,2)
+
+    gencost=qnn.cost_func([1,1,1,1,1,1,1,1,1,1,1,1],[0.1,0.2,0.3,0.4])
+    atocost=qnn.cost_func([1.01,1,1,1,1,1,1,1,1,1,1,1],[0.1,0.2,0.3,0.4])
+    gradcost=qnn._cost_func_grad([1,1,1,1,1,1,1,1,1,1,1,1],[0.1,0.2,0.3,0.4])
+
+    print(gencost)
+    print(atocost)
+    print(gradcost)
+    assert abs(gencost+gradcost[0]*0.01*2-atocost)<0.00001
+    assert abs(gencost+gradcost[0]*0.01*1-atocost)>0.00001
+    assert abs(gencost+gradcost[0]*0.01*3-atocost)>0.00001
+
