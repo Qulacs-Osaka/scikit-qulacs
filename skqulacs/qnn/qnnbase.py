@@ -20,7 +20,7 @@ def _min_max_scaling(x: List[List[float]], scale_x_param):
 class QNN(ABC):
     @abstractmethod
     def fit(
-        self, x_train: List[List[float]], y_train, maxiter: Optional[int]
+        self, x_train: List[List[float]], y_train: List[float], maxiter: Optional[int]
     ) -> Tuple[float, np.ndarray]:
         """Fit the model to given train data.
 

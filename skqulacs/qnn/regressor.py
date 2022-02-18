@@ -59,8 +59,6 @@ class QNNRegressor(QNN):
         :param maxiter: scipy.optimize.minimizeのイテレーション回数
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
-
-        y_trainを同時に複数学習させるために、yにList[List[float]]を入れることを許可していた気がします
         """
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self._get_y_scale_param(y_train)
