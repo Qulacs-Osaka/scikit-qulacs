@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="skqulacs.qnn package" href="skqulacs.qnn.html" />
-    <link rel="prev" title="skqulacs.circuit.graph module" href="skqulacs.circuit.graph.html" />
+    <link rel="prev" title="skqulacs.circuit.circuit module" href="skqulacs.circuit.circuit.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en">
     
@@ -110,11 +110,6 @@
        <li class="toctree-l4">
         <a class="reference internal" href="skqulacs.circuit.circuit.html">
          skqulacs.circuit.circuit module
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="skqulacs.circuit.graph.html">
-         skqulacs.circuit.graph module
         </a>
        </li>
        <li class="toctree-l4 current active">
@@ -196,6 +191,23 @@
     <a class="reference internal" href="notebooks/0_tutorial.html">
      Scikit-qulacs チュートリアル
     </a>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="notebooks/paper_reproduction.html">
+     Reproducing papers
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="notebooks/arxiv_2108_01039_large_scale_quantum_machine_learning.html">
+       Reproducing arXiv:2108.01039 with scikit-qulacs
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
@@ -315,6 +327,15 @@ made by WA_TLE.
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="skqulacs.circuit.pre_defined.create_npqc_ansatz">
+<span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.pre_defined.</span></span><span class="sig-name descname"><span class="pre">create_npqc_ansatz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></span><a class="reference internal" href="_modules/skqulacs/circuit/pre_defined.html#create_npqc_ansatz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.pre_defined.create_npqc_ansatz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates circuit used in <a class="reference external" href="http://arxiv.org/abs/2108.01039">http://arxiv.org/abs/2108.01039</a>, Fig. 5(a).
+:param n_qubit: number of qubits. must be even.
+:param c_depth: circuit depth. The number of parameters is 8+4*(c_depth-1).
+:param c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="skqulacs.circuit.pre_defined.create_qcl_ansatz">
 <span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.pre_defined.</span></span><span class="sig-name descname"><span class="pre">create_qcl_ansatz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></span><a class="reference internal" href="_modules/skqulacs/circuit/pre_defined.html#create_qcl_ansatz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.pre_defined.create_qcl_ansatz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a circuit used in this page: <a class="reference external" href="https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html">https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</a>
@@ -340,6 +361,15 @@ made by WA_TLE.
 :param seed: random seed for initial parameter values</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="skqulacs.circuit.pre_defined.create_yzcx_ansatz">
+<span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.pre_defined.</span></span><span class="sig-name descname"><span class="pre">create_yzcx_ansatz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></span><a class="reference internal" href="_modules/skqulacs/circuit/pre_defined.html#create_yzcx_ansatz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.pre_defined.create_yzcx_ansatz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates circuit used in <a class="reference external" href="http://arxiv.org/abs/2108.01039">http://arxiv.org/abs/2108.01039</a>, Fig. 5(c).
+:param n_qubit: number of qubits. must be even.
+:param c_depth: circuit depth. The number of parameters is 8*c_depth.
+:param c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.</p>
+</dd></dl>
+
 </div>
 
 
@@ -348,11 +378,11 @@ made by WA_TLE.
         
             <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="skqulacs.circuit.graph.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="skqulacs.circuit.circuit.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">skqulacs.circuit.graph module</p>
+            <p class="prev-next-title">skqulacs.circuit.circuit module</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="skqulacs.qnn.html" title="next page">

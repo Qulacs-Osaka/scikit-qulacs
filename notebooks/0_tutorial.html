@@ -40,6 +40,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reproducing papers" href="paper_reproduction.html" />
     <link rel="prev" title="Notebooks" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en">
@@ -111,11 +112,6 @@
        <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.circuit.circuit.html">
          skqulacs.circuit.circuit module
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../skqulacs.circuit.graph.html">
-         skqulacs.circuit.graph module
         </a>
        </li>
        <li class="toctree-l4">
@@ -197,6 +193,23 @@
     <a class="current reference internal" href="#">
      Scikit-qulacs チュートリアル
     </a>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="paper_reproduction.html">
+     Reproducing papers
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="arxiv_2108_01039_large_scale_quantum_machine_learning.html">
+       Reproducing arXiv:2108.01039 with scikit-qulacs
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
@@ -457,15 +470,15 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 4.15533175  5.68245625 -0.02683266  2.16942365  4.8803823   2.49106549
-  0.99517343  7.46459436  5.84972234  0.19698566  0.24853571  5.56755475
-  1.23852702  3.85873768  1.54372287  2.76043327  3.05717216  2.44451835
-  1.4960075   3.45056642  5.26004904  1.25040891  5.24783684  1.65378865
-  3.12468613  1.55817442  2.95196225  1.80047635  2.88742263  0.78814847
-  5.73803469  2.54820822 -0.71456477  4.96723129  0.46158909  5.39991624
-  1.39594345  6.13827584  0.63751768  4.36670658  4.0576504   0.48175346
-  0.59049696  6.27306043  0.60932639]
-loss 0.09390466885121095
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 3.51765843  2.18825431  3.90000456  3.14558022  3.75192548  0.75888309
+  4.00912729  0.81929986  3.31882345  2.56027729  1.89315983 -0.62082713
+  3.83440631  2.03153299  6.08321701  2.6971952   3.00154748  2.33350792
+  3.05838807  5.44503551  5.31749325  5.77881793  5.27037606  1.82866106
+  3.58068     4.48592625  2.29939336  3.57623857  0.53648882 -0.50060009
+  3.39106284 -1.32945459  0.33481014  4.82717315  4.90009501  1.83315081
+  5.66702921  1.14515109  5.63659897  1.74270035  2.49267242  3.52180397
+  2.62968856  4.27357723  2.19459027]
+loss 0.12336287709256878
 </pre></div>
 </div>
 </div>
@@ -480,7 +493,7 @@ loss 0.09390466885121095
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
 </pre></div>
 </div>
 </div>
@@ -705,7 +718,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [4.876363321296599, 1.382785903345776, 1.143133823569033, 0.29378230997930294, 6.2589366025643205, 0.4900242940305748, 4.466451858889441, 0.5009648491910579, 0.3422139471243511, 2.594837337806025, 2.226921493455489, 3.0681473839606883, 0.8461133164905984, 5.377349598852664, 5.679325331577399, 1.1640935096056184, 4.128883580747288, 3.6331776602001504, 3.7894314818517745, 3.0823741317266666, 4.839071025746504, 2.6742268902591984, 2.1815065026482725, 0.3272733945068065, 1.643722891813466, 2.5846931455862645, 3.794857717782077, 3.6006737607560244, 1.876545460313647, 0.2505439971503539, 2.116368564192452, 3.7624468709948196, 6.176948564797011, 4.9748792593206925, 2.752397503247444, 5.435317403665787, 6.050371139385294, 5.183249079217562, 5.548907940257777, 1.6172409235880538, 3.817549869105865, 5.262996626710969, 0.9717005961135767, 4.3952051332722695, 1.9205453606416145, 4.897002449035046, 6.121889014997479, 2.4762037645190516]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.274786099037446, 2.3897652771100804, 2.344249953794359, 0.8164755976189613, 2.463636093653616, 2.3788083331652996, 6.275984513224143, 3.1820275752685863, 2.9823314646159114, 4.0376134976378255, 2.7331823126050097, 4.09908827945628, 2.304114977828113, 2.0543098800983683, 0.09241210494939871, 0.572880722519576, 0.31865599878170786, 2.591886946257827, 1.503299836112464, 2.1256282198389775, 2.140941745950424, 5.398502298907112, 5.933705923373463, 1.645592942473804, 3.1096763014492126, 0.8690689129984057, 3.4895347898249915, 2.655248283775206, 5.018934202473629, 1.7704405815030577, 5.728369876060358, 2.6683541886598445, 3.6672994263398406, 3.777262962509589, 5.986686824046009, 0.7934515889330572, 0.36452474373446786, 3.0296753283022295, 4.522743547182678, 0.6035339046008351, 4.263973957351509, 4.686117947263051, 0.033991698353372596, 1.7908650124871324, 3.93396503940107, 0.12041485193358892, 6.107010415044582, 2.558768821720803]
 </pre></div>
 </div>
 </div>
@@ -816,6 +829,13 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
             <p class="prev-next-subtitle">previous</p>
             <p class="prev-next-title">Notebooks</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="paper_reproduction.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Reproducing papers</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
         

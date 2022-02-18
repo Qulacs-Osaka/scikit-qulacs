@@ -111,11 +111,6 @@
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../skqulacs.circuit.graph.html">
-         skqulacs.circuit.graph module
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="../../../skqulacs.circuit.pre_defined.html">
          skqulacs.circuit.pre_defined module
         </a>
@@ -194,6 +189,23 @@
     <a class="reference internal" href="../../../notebooks/0_tutorial.html">
      Scikit-qulacs チュートリアル
     </a>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../notebooks/paper_reproduction.html">
+     Reproducing papers
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../notebooks/arxiv_2108_01039_large_scale_quantum_machine_learning.html">
+       Reproducing arXiv:2108.01039 with scikit-qulacs
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
@@ -293,6 +305,7 @@
         <span class="n">do_x_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">do_y_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">y_norm_range</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param circuit: 回路そのもの</span>
@@ -300,7 +313,8 @@
 <span class="sd">        :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。</span>
 <span class="sd">        :param do_x_scale xをscaleしますか?</span>
 <span class="sd">        :param do_x_scale yをscaleしますか?</span>
-<span class="sd">        :param y_margin  [-y_norm_range,y_norm_range]に正規化.</span>
+<span class="sd">        :param y_norm_range  [+-y_norm_range]に正規化.</span>
+<span class="sd">        :param callback:コールバック関数。Adamにのみ対応</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
@@ -309,7 +323,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">do_x_scale</span> <span class="o">=</span> <span class="n">do_x_scale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_y_scale</span> <span class="o">=</span> <span class="n">do_y_scale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_norm_range</span> <span class="o">=</span> <span class="n">y_norm_range</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># yのスケーリングのパラメータ</span>
 
@@ -411,6 +425,8 @@
 
             <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_scaled</span><span class="p">,</span> <span class="n">y_scaled</span><span class="p">)</span>
             <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">theta_now</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">theta_now</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
