@@ -6,10 +6,10 @@ import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
+from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
-from skqulacs.typing import Literal
 
 
 class QNNRegressor(QNN):
