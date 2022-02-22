@@ -69,13 +69,14 @@ def _create_time_evol_gate(
         rng = default_rng(seed)
 
     ham = _make_hamiltonian(n_qubit, rng)
-    # 対角化して時間発展演算子をつくる. H*P = P*D <-> H = P*D*P^dagger
+    # Create time evolution operator by diagonalization.
+    # H*P = P*D <-> H = P*D*P^dagger
     diag, eigen_vecs = np.linalg.eigh(ham)
     time_evol_op = np.dot(
         np.dot(eigen_vecs, np.diag(np.exp(-1j * time_step * diag))), eigen_vecs.T.conj()
     )  # e^-iHT
 
-    # qulacsのゲートに変換
+    # Convert to a qulacs gate
     time_evol_gate = DenseMatrix([i for i in range(n_qubit)], time_evol_op)
 
     return time_evol_gate
@@ -84,7 +85,6 @@ def _create_time_evol_gate(
 def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
     if rng is None:
         rng = default_rng(seed)
-    # 基本ゲート
     X_mat = np.array([[0, 1], [1, 0]])
     Z_mat = np.array([[1, 0], [0, -1]])
     ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
@@ -97,22 +97,21 @@ def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
     return ham
 
 
-def _make_fullgate(list_SiteAndOperator, nqubit):
+def _make_fullgate(list_SiteAndOperator, n_qubit):
     """
-    list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,
-    関係ないqubitにIdentityを挿入して
+    Receive `list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...]` and
+    insert identity to qubits which is not present in the list to create (2**n_qubit, 2**n_qubit) matrix
     I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...
-    という(2**nqubit, 2**nqubit)行列をつくる.
     """
     I_mat = np.eye(2, dtype=complex)
     list_Site = [SiteAndOperator[0] for SiteAndOperator in list_SiteAndOperator]
-    list_SingleGates = []  # 1-qubit gateを並べてnp.kronでreduceする
+    list_SingleGates = []
     cnt = 0
-    for i in range(nqubit):
+    for i in range(n_qubit):
         if i in list_Site:
             list_SingleGates.append(list_SiteAndOperator[cnt][1])
             cnt += 1
-        else:  # 何もないsiteはidentity
+        else:
             list_SingleGates.append(I_mat)
     return reduce(np.kron, list_SingleGates)
 
@@ -184,17 +183,19 @@ def create_farhi_neven_watle_ansatz(
 
     def preprocess_x(x: List[float], index: int):
         dex = index % len(x)
-        qubits_p_bit = ((n_qubit - dex) - 1) // len(x) + 1  # そのbitに割り当てられる量子の数
+        qubits_per_bit = ((n_qubit - dex) - 1) // len(x) + 1
         xa = (min(1, max(-1, x[dex])) + 1) / 2
         sban = index // len(x)
 
         xb = 0
-        if qubits_p_bit < 25:
-            for i in range(qubits_p_bit):
-                xb += xkeisuu[qubits_p_bit][sban][qubits_p_bit - i]
+        if qubits_per_bit < 25:
+            for i in range(qubits_per_bit):
+                xb += xkeisuu[qubits_per_bit][sban][qubits_per_bit - i]
                 xb *= xa
         else:
-            xb = xa  # bitが多すぎで,nCrのdouble型の限界を超えてあきらめた 同じbitを25以上使うことは多分ないので.
+            # Overflow `double` type of Combination(n, r).
+            # There are few cases to use the same 25 bits.
+            xb = xa
 
         if xb < 0 or 1 < xb:
             raise RuntimeError("bug")
