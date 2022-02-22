@@ -33,9 +33,12 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script src="../_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -170,11 +173,6 @@
        </li>
       </ul>
      </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../skqulacs.typing.html">
-       skqulacs.typing module
-      </a>
-     </li>
     </ul>
    </li>
   </ul>
@@ -259,7 +257,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -306,7 +304,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -395,7 +393,99 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Scikit-qulacs チュートリアル</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   scikit-qulacs とは
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   インストール
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#quantum-neural-network">
+   Quantum neural network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qnn-qnnclassifier">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.QNNClassifier
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qnn-qnnregressor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.QNNRegressor
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   量子カーネル法
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qsvm-qsvc">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qsvm.QSVC
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qsvm-qsvr">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qsvm.QSVR
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
+   用意されている量子回路
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id5">
+   ユーザー定義の量子回路を学習に利用する
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
   <div class="tex2jax_ignore mathjax_ignore section" id="scikit-qulacs">
@@ -470,15 +560,15 @@ $<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsym
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 3.51765843  2.18825431  3.90000456  3.14558022  3.75192548  0.75888309
-  4.00912729  0.81929986  3.31882345  2.56027729  1.89315983 -0.62082713
-  3.83440631  2.03153299  6.08321701  2.6971952   3.00154748  2.33350792
-  3.05838807  5.44503551  5.31749325  5.77881793  5.27037606  1.82866106
-  3.58068     4.48592625  2.29939336  3.57623857  0.53648882 -0.50060009
-  3.39106284 -1.32945459  0.33481014  4.82717315  4.90009501  1.83315081
-  5.66702921  1.14515109  5.63659897  1.74270035  2.49267242  3.52180397
-  2.62968856  4.27357723  2.19459027]
-loss 0.12336287709256878
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 4.38563889  3.72287442  5.08626536  4.61745414  2.14372926  3.05751166
+  1.66740722  1.83035417  4.10128834  5.17036882  2.57638966  5.64939952
+  4.68801656  3.58672916  2.46109319  5.68119639  5.97156808  1.48517054
+  5.35881907  0.74284006  3.15194408  0.20797704  4.31792423  2.58818665
+  1.78216905 -0.75448409  5.38220043  2.49741096  0.68937809  5.3507236
+  4.93557502  5.5006525   4.12659101  3.47479784  6.71400713  1.22291346
+  3.47803167  2.13295252  4.97076455  0.59247947  4.37525322  1.58353128
+  4.90851591  5.02545586  0.29007078]
+loss 0.09335659641644121
 </pre></div>
 </div>
 </div>
@@ -718,7 +808,7 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [3.274786099037446, 2.3897652771100804, 2.344249953794359, 0.8164755976189613, 2.463636093653616, 2.3788083331652996, 6.275984513224143, 3.1820275752685863, 2.9823314646159114, 4.0376134976378255, 2.7331823126050097, 4.09908827945628, 2.304114977828113, 2.0543098800983683, 0.09241210494939871, 0.572880722519576, 0.31865599878170786, 2.591886946257827, 1.503299836112464, 2.1256282198389775, 2.140941745950424, 5.398502298907112, 5.933705923373463, 1.645592942473804, 3.1096763014492126, 0.8690689129984057, 3.4895347898249915, 2.655248283775206, 5.018934202473629, 1.7704405815030577, 5.728369876060358, 2.6683541886598445, 3.6672994263398406, 3.777262962509589, 5.986686824046009, 0.7934515889330572, 0.36452474373446786, 3.0296753283022295, 4.522743547182678, 0.6035339046008351, 4.263973957351509, 4.686117947263051, 0.033991698353372596, 1.7908650124871324, 3.93396503940107, 0.12041485193358892, 6.107010415044582, 2.558768821720803]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [1.8838320812036629, 0.5155246734830069, 1.2143534134227136, 2.309445640037134, 1.3300960408994154, 4.1403177554925845, 5.702717519632032, 0.4397252124868595, 0.5430470443492651, 4.318674935281005, 3.9994569891099236, 5.416210913625749, 3.4156048338910265, 5.930403858955915, 3.372063041690594, 3.0551068559416334, 6.193258167512269, 3.677023478701082, 4.727562936837135, 1.3097295714353048, 4.354297475951958, 2.393707256035733, 5.468606028954532, 1.4610456983793285, 3.8682554826425597, 5.550616838343698, 0.8742453283922954, 5.660009192178679, 3.8779429062032618, 1.1780948240528388, 1.090818969353567, 0.5119787622841457, 0.4927762130449852, 5.983723996741844, 5.370126861733937, 1.540601931887855, 3.12930702394446, 2.194807596797266, 0.3576065423664865, 3.480431210678159, 4.205012162903372, 4.98838488308181, 2.429535771305107, 5.6679178709242635, 1.393147783082914, 0.342655897012798, 4.9862910085194025, 3.554735739318373]
 </pre></div>
 </div>
 </div>
@@ -820,8 +910,8 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
 
               </div>
               
-        
-            <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
     <a class='left-prev' id="prev-link" href="index.html" title="previous page">
         <i class="fas fa-angle-left"></i>
@@ -838,19 +928,17 @@ $<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}'
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-          By Qulacs-Osaka<br/>
-        
-            &copy; Copyright 2021, Qulacs-Osaka.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+      By Qulacs-Osaka<br/>
+    
+        &copy; Copyright 2021, Qulacs-Osaka.<br/>
+  </p>
+</footer>
 </main>
 
 
