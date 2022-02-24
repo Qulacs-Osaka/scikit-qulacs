@@ -471,7 +471,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test accuracy is: 0.9702380952380952
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test accuracy is: 0.9722222222222222
 </pre></div>
 </div>
 </div>
@@ -544,32 +544,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ipykernel_2521</span><span class="o">/</span><span class="mf">3154993322.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span> 
-<span class="ne">---&gt; </span><span class="mi">19</span>     <span class="n">predicted</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">20</span>     <span class="n">acc_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span> 
-
-<span class="nn">~/work/scikit-qulacs/scikit-qulacs/skqulacs/qsvm/qsvc.py</span> in <span class="ni">predict</span><span class="nt">(self, xs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">35</span>         <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)))</span>  <span class="c1"># サンプル数の二乗の情報量　距離を入れる</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span>         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)):</span>
-<span class="ne">---&gt; </span><span class="mi">37</span>             <span class="n">x_qc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">38</span>             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)):</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span>                 <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="n">x_qc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-
-<span class="nn">~/work/scikit-qulacs/scikit-qulacs/skqulacs/circuit/circuit.py</span> in <span class="ni">run</span><span class="nt">(self, x)</span>
-<span class="g g-Whitespace">    </span><span class="mi">133</span>         <span class="n">state</span><span class="o">.</span><span class="n">set_zero_state</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">134</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">135</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">136</span>         <span class="k">return</span> <span class="n">state</span>
-<span class="g g-Whitespace">    </span><span class="mi">137</span> 
-
-<span class="ne">KeyboardInterrupt</span>: 
-</pre></div>
-</div>
+<img alt="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_14_0.png" src="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_14_0.png" />
 </div>
 </div>
 </div>
