@@ -33,7 +33,7 @@ class _Parameter:
 
     Args:
         pos: Index at LearningCircuit._circuit.
-        theta_pos: Index at array of theta which are learning parameters.
+        theta_pos: Index at array of learning parameters theta.
         value: Current pos-th parameter of LearningCircuit._circuit.
         func: Transforming function for input gate.
     """
