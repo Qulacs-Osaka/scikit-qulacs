@@ -1,11 +1,18 @@
 from binary_classification_pennylane import binary_classification_pennylane
-from binary_classification_skqulacs import binary_classification_skqulacs
+from binary_classification_skqulacs import (
+    binary_classification_skqulacs,
+    create_circuit,
+    load_dataset,
+)
 
 
 def test_skqulacs(benchmark):
-    n_qubit = 2
+    x_train, x_test, y_train, y_test = load_dataset()
+    circuit = create_circuit(6)
     score = benchmark.pedantic(
-        binary_classification_skqulacs, args=[n_qubit], rounds=10
+        binary_classification_skqulacs,
+        args=[circuit, x_train, x_test, y_train, y_test],
+        rounds=10,
     )
     assert score > 0.95
 
