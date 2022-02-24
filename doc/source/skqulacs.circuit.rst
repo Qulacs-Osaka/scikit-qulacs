@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    skqulacs.circuit.circuit
-   skqulacs.circuit.graph
    skqulacs.circuit.pre_defined
 
 Module contents
