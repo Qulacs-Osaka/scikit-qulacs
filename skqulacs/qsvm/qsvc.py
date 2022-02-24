@@ -1,7 +1,8 @@
+from typing import List
+
 import numpy as np
 from qulacs.state import inner_product
 from sklearn import svm
-from typing import List
 
 from skqulacs.circuit import LearningCircuit
 

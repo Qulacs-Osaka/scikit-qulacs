@@ -1,4 +1,5 @@
 from typing import List
+
 import numpy as np
 from qulacs.state import inner_product
 from sklearn import svm
@@ -8,6 +9,7 @@ from skqulacs.circuit import LearningCircuit
 
 class QSVR:
     """class to solve regression problems with support vector regressor with a quantum kernel"""
+
     def __init__(self, circuit: LearningCircuit) -> None:
         """
         :param circuit: circuit to generate quantum feature
