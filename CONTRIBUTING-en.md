@@ -105,7 +105,7 @@ By running this command, the documentation is built and you can access it from [
 
 
 ### Create Page from jupyter notebook
-You can create jupyter notebook from jupyter notebook.
+You can create a documentation page from jupyter notebook.
 It is useful to show an example usage of APIs in this library.
 1. Create `.ipynb` file in the `doc/source/notebooks`(suppose `0_tutorial.ipynb` here).
 2. Edit the contents and **be sure to execute all cells without error**. Code and results in the notebook is embedded to documentation without modification.
