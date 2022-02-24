@@ -13,7 +13,7 @@ from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 
 
 class QNNRegressor(QNN):
-    """Class to solve regression problem by quantum circuit learning."""
+    """Class to solve regression problems with quantum neural networks"""
 
     def __init__(
         self,

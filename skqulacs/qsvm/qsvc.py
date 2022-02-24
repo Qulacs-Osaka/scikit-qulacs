@@ -1,18 +1,29 @@
 import numpy as np
 from qulacs.state import inner_product
 from sklearn import svm
+from typing import List
 
 from skqulacs.circuit import LearningCircuit
 
 
 class QSVC:
+    """class to solve classfication problems with support vector machine with quantum kernel"""
+
     def __init__(self, circuit: LearningCircuit) -> None:
+        """
+        :param circuit: circuit to generate quantum feature
+        """
         self.svc = svm.SVC(kernel="precomputed")
         self.circuit = circuit
         self.data_states = []
         self.n_qubit = 0
 
-    def fit(self, x, y):
+    def fit(self, x: List[List[float]], y: List[int]):
+        """
+        train the machine.
+        :param x: training inputs
+        :param y: training labels
+        """
         self.n_qubit = len(x[0])
         kar = np.zeros((len(x), len(x)))
         # Compute UΦx to get kernel of `x` and `y`.
@@ -27,7 +38,12 @@ class QSVC:
 
         self.svc.fit(kar, y)
 
-    def predict(self, xs):
+    def predict(self, xs: List[List[float]]):
+        """
+        predict labels of given data
+        :param xs: inputs to predict labels
+        :return: List[float], predicted labels
+        """
         kar = np.zeros((len(xs), len(self.data_states)))
         for i in range(len(xs)):
             x_qc = self.circuit.run(xs[i])

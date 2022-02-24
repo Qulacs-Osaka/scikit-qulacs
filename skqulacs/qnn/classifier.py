@@ -12,7 +12,7 @@ from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 
 
 class QNNClassifier(QNN):
-    """Class to solve classification problem by quantum circuit learning."""
+    """Class to solve classification problems by quantum neural networks"""
 
     def __init__(
         self,
