@@ -1,3 +1,3 @@
 from .classifier import QNNClassifier
-from .regressor import QNNRegressor
 from .generation import QNNGeneretor
+from .regressor import QNNRegressor

@@ -1,12 +1,12 @@
 from __future__ import annotations
-from math import sqrt
-from math import exp
-from scipy.optimize import minimize
+
+from math import exp, sqrt
 from typing import Optional
 
 import numpy as np
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
+from scipy.optimize import minimize
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
@@ -32,7 +32,7 @@ class QNNGeneretor(QNN):
         karnel_type: Literal["gauss", "exp_hamming", "same"],
         gauss_sigma: float,
         fitting_qubit: int,
-        solver: Literal["Adam","BFGS"] = "BFGS",  # Adam only
+        solver: Literal["Adam", "BFGS"] = "BFGS",  # Adam only
     ) -> None:
         """
         :param circuit: 回路そのもの
@@ -74,10 +74,9 @@ class QNNGeneretor(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-        train_scaled = np.zeros(2**self.Fqubit)
+        train_scaled = np.zeros(2 ** self.Fqubit)
         for aaa in train_data:
-            train_scaled[aaa]+=1/len(train_data)
-
+            train_scaled[aaa] += 1 / len(train_data)
 
         theta_init = self.circuit.get_parameters()
         if self.solver == "Adam":
@@ -92,10 +91,10 @@ class QNNGeneretor(QNN):
             moment = np.zeros(len(theta_init))
             vel = 0
             theta_now = theta_init
-            #print(train_scaled)
+            # print(train_scaled)
             for iter in range(0, maxiter):
-                grad = self._cost_func_grad(theta_now,train_scaled)
-                
+                grad = self._cost_func_grad(theta_now, train_scaled)
+
                 moment = moment * pr_Bi + (1 - pr_Bi) * grad
                 vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
@@ -115,7 +114,7 @@ class QNNGeneretor(QNN):
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
-            #print(self._cost_func_grad(result.x, x_scaled, y_scaled))
+            # print(self._cost_func_grad(result.x, x_scaled, y_scaled))
             loss = result.fun
             theta_opt = result.x
         else:
@@ -138,11 +137,13 @@ class QNNGeneretor(QNN):
         y_pred_conj = y_pred_in.conjugate()
 
         data_per = y_pred_in * y_pred_conj  # 2乗の和
-        
+
         if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
-            data_per = data_per.reshape((2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit))
+            data_per = data_per.reshape(
+                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+            )
             data_per = data_per.sum(axis=0)
-        
+
         return data_per
 
     def _predict_inner(self):
@@ -170,12 +171,12 @@ class QNNGeneretor(QNN):
             for i in range(miru + miru + 1):
                 conv_aite[i] = exp((i - miru) * (i - miru) * beta)
 
-            if miru + miru + 1<=2**self.Fqubit:
+            if miru + miru + 1 <= 2 ** self.Fqubit:
                 conv_diff = np.convolve(data_diff, conv_aite, mode="same")
             else:
-                #mode=same がうまくいかない
+                # mode=same がうまくいかない
                 conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
-            
+
             return np.dot(data_diff, conv_diff)
 
         elif self.karnel_type == "exp_hamming":
@@ -194,29 +195,30 @@ class QNNGeneretor(QNN):
                 batafly_gate.update_quantum_state(diff_state)
 
             conv_diff = diff_state.get_vector()
-            
+
             return np.dot(data_diff, conv_diff)
         elif self.karnel_type == "same":
-            
+
             return np.dot(data_diff, data_diff)
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def _culc_bai_state(self,conv_diff):
-        convconv_diff = np.tile(conv_diff,2 ** (self.n_qubit - self.Fqubit))
-        
-        state_vec=self._predict_inner().get_vector()
-        ret=QuantumState(self.n_qubit)
-        ret.load(convconv_diff*state_vec*4)
+    def _culc_bai_state(self, conv_diff):
+        convconv_diff = np.tile(conv_diff, 2 ** (self.n_qubit - self.Fqubit))
+
+        state_vec = self._predict_inner().get_vector()
+        ret = QuantumState(self.n_qubit)
+        ret.load(convconv_diff * state_vec * 4)
         return ret
-    def _cost_func_grad(self, theta, train_scaled): 
+
+    def _cost_func_grad(self, theta, train_scaled):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
-        
-        #まえのでのconv_diffを
+
+        # まえのでのconv_diffを
         if self.karnel_type == "gauss":
             # ガウシアンで処理する
 
@@ -227,13 +229,17 @@ class QNNGeneretor(QNN):
             for i in range(miru + miru + 1):
                 conv_aite[i] = exp((i - miru) * (i - miru) * beta)
 
-            if miru + miru + 1<=2**self.Fqubit:
+            if miru + miru + 1 <= 2 ** self.Fqubit:
                 conv_diff = np.convolve(data_diff, conv_aite, mode="same")
             else:
-                #mode=same がうまくいかない
+                # mode=same がうまくいかない
                 conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
-            self.debag_conv=conv_diff
-            return np.array(self.circuit.backprop_inner_product([0],self._culc_bai_state(conv_diff)))
+            self.debag_conv = conv_diff
+            return np.array(
+                self.circuit.backprop_inner_product(
+                    [0], self._culc_bai_state(conv_diff)
+                )
+            )
 
         elif self.karnel_type == "exp_hamming":
 
@@ -251,11 +257,19 @@ class QNNGeneretor(QNN):
                 batafly_gate.update_quantum_state(diff_state)
 
             conv_diff = diff_state.get_vector()
-            
-            return np.array(self.circuit.backprop_inner_product([0],self._culc_bai_state(conv_diff)))
+
+            return np.array(
+                self.circuit.backprop_inner_product(
+                    [0], self._culc_bai_state(conv_diff)
+                )
+            )
         elif self.karnel_type == "same":
-            
-            return np.array(self.circuit.backprop_inner_product([0],self._culc_bai_state(data_diff)))
+
+            return np.array(
+                self.circuit.backprop_inner_product(
+                    [0], self._culc_bai_state(data_diff)
+                )
+            )
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
