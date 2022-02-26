@@ -425,3 +425,6 @@ class LearningCircuit:
             self._circuit.add_parametric_RZ_gate(index, parameter)
         else:
             raise NotImplementedError
+
+    def add_parametric_multi_Pauli_rotation_gate(self, target, pauli_id, initial_angle):
+        self._circuit.add_parametric_multi_Pauli_rotation_gate(target, pauli_id, initial_angle)
