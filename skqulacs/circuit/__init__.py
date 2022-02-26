@@ -7,4 +7,5 @@ from .pre_defined import (
     create_qcl_ansatz,
     create_shirai_ansatz,
     create_yzcx_ansatz,
+    create_qcnn_ansatz,
 )
