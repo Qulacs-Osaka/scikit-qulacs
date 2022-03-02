@@ -61,8 +61,6 @@ def test_noisy_sine_yzcx():
     assert loss < 0.005
 
 
-# 2要素のSVMを試してみる
-# sin(x1*x2*2)をフィッティングさせる
 def main():
     test_noisy_sine_yzcx()
 

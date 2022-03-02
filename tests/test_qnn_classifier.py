@@ -19,15 +19,14 @@ def test_classify_iris(solver: str, maxiter: int):
     x_train = x_train.to_numpy()
     x_test = x_test.to_numpy()
 
-    nqubit = 5  # qubitの数。必要とする出力の次元数以上の必要がある
-    c_depth = 3  # circuitの深さ
+    nqubit = 5
+    c_depth = 3
     time_step = 0.5
-    num_class = 3  # 分類数（ここでは3つの品種に分類）
+    num_class = 3
     circuit = create_qcl_ansatz(nqubit, c_depth, time_step, 0)
     qcl = QNNClassifier(circuit, num_class, solver)
 
     for kai in range(maxiter):
         qcl.fit(x_train, y_train, 1)
         y_pred = qcl.predict(x_test)
-        print(f1_score(y_test, y_pred, average="weighted"))
     assert f1_score(y_test, y_pred, average="weighted") > 0.92

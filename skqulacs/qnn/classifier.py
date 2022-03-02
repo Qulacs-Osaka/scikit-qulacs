@@ -12,7 +12,23 @@ from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 
 
 class QNNClassifier(QNN):
-    """quantum circuit learningを用いて分類問題を解く"""
+    """Class to solve classification problems by quantum neural networks
+    The prediction is made by making a vector which predicts one-hot encoding of labels.
+    The prediction is made by
+    1. taking expectation values of Pauli Z operator of each qubit <Z_i>,
+    2. taking softmax function of the vector (<Z_0>, <Z_1>, ..., <Z_{n-1}>).
+    Examples:
+        >>> from skqulacs.qnn import QNNClassifier
+        >>> from skqulacs.circuit import create_qcl_ansatz
+        >>> n_qubits = 4
+        >>> depth = 3
+        >>> evo_time = 0.5
+        >>> circuit = create_qcl_ansatz(n_qubits, depth, evo_time)
+        >>> model = QNNRClassifier(circuit)
+        >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
+        >>> x_list = np.arange(x_min, x_max, 0.02)
+        >>> y_pred = qnn.predict(theta, x_list)
+    """
 
     def __init__(
         self,
@@ -21,49 +37,53 @@ class QNNClassifier(QNN):
         solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
-        y_exp_bai=5.0,
+        y_exp_ratio=5.0,
         callback=None,
     ) -> None:
         """
-        :param circuit: 回路そのもの
-        :param num_class: 分類の数（=測定するqubitの数）
-        :param solver: 何を使うか Nelderは非推奨
-        :param cost: コスト関数 log_lossしかない。
-        :param do_x_scale xをscaleしますか?
-        :param y_exp_bai 内部出力のyが0と1では、　e^y_exp_bai 倍の確率の倍率がある。
-        :param callback:コールバック関数。Adamにのみ対応
+        :param circuit: Circuit to use in the learning.
+        :param num_class: The number of classes; the number of qubits to measure.
+        :param solver: Solver to use(Nelder-Mead is not recommended).
+        :param cost: Cost function. log_loss only for now.
+        :param do_x_scale: Whether to scale x.
+        :param y_exp_ratio:
+            coeffcient used in the application of softmax function.
+            the output prediction vector is made by transforming (<Z_0>, <Z_1>, ..., <Z_{n-1}>)
+            to (y_1, y_2, ..., y_(n-1)) where y_i = e^{<Z_i>*y_exp_scale}/(sum_j e^{<Z_j>*y_exp_scale})
+        :param callback: Callback function. Available only with Adam.
         """
 
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
-        self.num_class = num_class  # 分類の数（=測定するqubitの数）
+        self.num_class = num_class
         self.solver = solver
         self.cost = cost
         self.do_x_scale = do_x_scale
-        self.y_exp_bai = y_exp_bai
+        self.y_exp_ratio = y_exp_ratio
         self.callback = callback
         self.scale_x_param = []
-        self.scale_y_param = []  # yのスケーリングのパラメータ
+        self.scale_y_param = []
 
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
-    def fit(self, x_train, y_train, maxiter: Optional[int] = None):
+    def fit(
+        self,
+        x_train: List[List[float]],
+        y_train: List[int],
+        maxiter: Optional[int] = None,
+    ):
         """
-        :param x_list: fitしたいデータのxのリスト
-        :param y_list: fitしたいデータのyのリスト
-        :param maxiter: scipy.optimize.minimizeのイテレーション回数
-        :return: 学習後のロス関数の値
-        :return: 学習後のパラメータthetaの値
+        :param x_list: List of training data inputs.
+        :param y_list: List of labels to fit. ;Labels must be represented as integers.
+        :param maxiter: The number of iterations to pass scipy.optimize.minimize
+        :return: Loss after learning.
+        :return: Parameter theta after learning.
         """
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
 
-        # x_trainからscaleのparamを取得
-        # classはyにone-hot表現をする
-        # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        # y_scaled = self.do_y_scale(y_train)
         if self.do_x_scale:
             x_scaled = _min_max_scaling(x_train, self.scale_x_param)
         else:
@@ -71,6 +91,7 @@ class QNNClassifier(QNN):
 
         y_scaled = self.do_y_scale(y_train)
 
+        # TODO: Extract solvers if the same one is used for classifier and regressor.
         theta_init = self.circuit.get_parameters()
         if self.solver == "Nelder-Mead":
             result = minimize(
@@ -78,7 +99,6 @@ class QNNClassifier(QNN):
                 theta_init,
                 args=(x_scaled, y_scaled),
                 method=self.solver,
-                # jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
             loss = result.fun
@@ -99,7 +119,7 @@ class QNNClassifier(QNN):
             pr_Bi = 0.8
             pr_Bt = 0.995
             pr_ips = 0.0000001
-            # ここまでがハイパーパラメータ
+            # Above is hyper parameters.
             Bix = 0
             Btx = 0
 
@@ -118,8 +138,6 @@ class QNNClassifier(QNN):
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                # if iter % len(x_train) < 5:
-                # self.cost_func(theta_now, x_train, y_train)
                 if self.callback is not None:
                     self.callback(theta_now)
 
@@ -138,7 +156,6 @@ class QNNClassifier(QNN):
         Returns:
             y_pred: Predicted outcome.
         """
-        # x_test = array-like of of shape (n_samples, n_features)
         if self.do_x_scale:
             x_scaled = _min_max_scaling(x_test, self.scale_x_param)
         else:
@@ -148,35 +165,30 @@ class QNNClassifier(QNN):
         return y_pred
 
     def _predict_inner(self, x_list):
-        # 入力xに関して、量子回路を通した生のデータを表示
         res = []
-        # 出力状態計算 & 観測
         for x in x_list:
             state = self.circuit.run(x)
-            # モデルの出力
             r = [
                 self.observables[i].get_expectation_value(state)
                 for i in range(self.n_qubit)
-            ]  # 出力多次元ver
+            ]
             res.append(r)
         return np.array(res)
 
+    # TODO: Extract cost function to outer class to accept other type of ones.
     def cost_func(self, theta, x_scaled, y_scaled):
-        # 生のデータを入れる
         if self.cost == "log_loss":
-            # cross-entropy loss (default)
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
-            # predについて、softmaxをする
             ypf = []
             for i in range(len(y_pred)):
                 for j in range(len(self.scale_y_param[0])):
                     hid = self.scale_y_param[1][j]
                     wa = 0
                     for k in range(self.scale_y_param[0][j]):
-                        wa += np.exp(self.y_exp_bai * y_pred[i][hid + k])
+                        wa += np.exp(self.y_exp_ratio * y_pred[i][hid + k])
                     for k in range(self.scale_y_param[0][j]):
-                        ypf.append(np.exp(self.y_exp_bai * y_pred[i][hid + k]) / wa)
+                        ypf.append(np.exp(self.y_exp_ratio * y_pred[i][hid + k]) / wa)
             ysf = y_scaled.ravel()
             cost = 0
             for i in range(len(ysf)):
@@ -191,9 +203,9 @@ class QNNClassifier(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
+    # TODO: Extract following scaling operation as other class to change several scaling method.
     def get_y_scale_param(self, y):
-        # 複数入力がある場合に対応したい
-        # yの最大値をもつ
+        # Hold `y`'s maximum value.
         syurui = np.max(y, axis=0)
         syurui = syurui.astype(int)
         syurui = syurui + 1
@@ -205,7 +217,8 @@ class QNNClassifier(QNN):
         return [syurui, rui]
 
     def do_y_scale(self, y):
-        # yをone-hot表現にする 複数入力への対応もする
+        # Represent y as one-hot vector.
+        # And handle multiple inputs.
         clsnum = int(self.scale_y_param[1][-1])
         res = np.zeros((len(y), clsnum), dtype=int)
         for i in range(len(y)):
@@ -217,8 +230,6 @@ class QNNClassifier(QNN):
         return res
 
     def rev_y_scale(self, y_inr):
-        # argmaxをとる
-        # one-hot表現の受け取りをしたら、それを与えられた番号にして返す
         res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
         for i in range(len(y_inr)):
             for j in range(len(self.scale_y_param[0])):
@@ -242,9 +253,9 @@ class QNNClassifier(QNN):
                 hid = self.scale_y_param[1][j]
                 wa = 0
                 for k in range(self.scale_y_param[0][j]):
-                    wa += np.exp(self.y_exp_bai * mto[h][hid + k])
+                    wa += np.exp(self.y_exp_ratio * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
-                    mto[h][hid + k] = np.exp(self.y_exp_bai * mto[h][hid + k]) / wa
+                    mto[h][hid + k] = np.exp(self.y_exp_ratio * mto[h][hid + k]) / wa
             backobs = Observable(self.n_qubit)
 
             for i in range(len(y_scaled[0])):

@@ -12,8 +12,7 @@ def _get_x_scale_param(x):
 
 
 def _min_max_scaling(x: List[List[float]], scale_x_param):
-    """[-1, 1]の範囲に規格化"""
-    # print([((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x])
+    """Normalize between [-1, 1]."""
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
 
 
