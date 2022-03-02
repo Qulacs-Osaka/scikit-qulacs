@@ -364,7 +364,7 @@
 <span class="sd">        &gt;&gt;&gt; circuit = LearningCircuit(n_qubit)</span>
 <span class="sd">        &gt;&gt;&gt; circuit.add_parametric_RX_gate(0, 0.5)</span>
 <span class="sd">        &gt;&gt;&gt; circuit.add_input_RZ_gate(1, np.arcsin)</span>
-<span class="sd">        &gt;&gt;&gt; model = QNNRegressor(n_qubit, circuit)</span>
+<span class="sd">        &gt;&gt;&gt; model = QNNRegressor(circuit)</span>
 <span class="sd">        &gt;&gt;&gt; _, theta = model.fit(x_train, y_train, maxiter=1000)</span>
 <span class="sd">        &gt;&gt;&gt; x_list = np.arange(x_min, x_max, 0.02)</span>
 <span class="sd">        &gt;&gt;&gt; y_pred = qnn.predict(theta, x_list)</span>

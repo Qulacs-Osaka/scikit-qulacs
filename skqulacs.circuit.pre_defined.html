@@ -354,7 +354,7 @@ made by WA_TLE.
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">circuit</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </pre></div>
 </div>

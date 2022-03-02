@@ -311,7 +311,7 @@
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; n_qubit = 4</span>
 <span class="sd">        &gt;&gt;&gt; circuit = create_qcl_ansatz(n_qubit, 3, 0.5)</span>
-<span class="sd">        &gt;&gt;&gt; qnn = QNNRegressor(n_qubit, circuit)</span>
+<span class="sd">        &gt;&gt;&gt; qnn = QNNRegressor(circuit)</span>
 <span class="sd">        &gt;&gt;&gt; qnn.fit(x_train, y_train)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -359,13 +359,14 @@
         <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="n">ham</span> <span class="o">=</span> <span class="n">_make_hamiltonian</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span>
-    <span class="c1"># 対角化して時間発展演算子をつくる. H*P = P*D &lt;-&gt; H = P*D*P^dagger</span>
+    <span class="c1"># Create time evolution operator by diagonalization.</span>
+    <span class="c1"># H*P = P*D &lt;-&gt; H = P*D*P^dagger</span>
     <span class="n">diag</span><span class="p">,</span> <span class="n">eigen_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">ham</span><span class="p">)</span>
     <span class="n">time_evol_op</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eigen_vecs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">diag</span><span class="p">))),</span> <span class="n">eigen_vecs</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
     <span class="p">)</span>  <span class="c1"># e^-iHT</span>
 
-    <span class="c1"># qulacsのゲートに変換</span>
+    <span class="c1"># Convert to a qulacs gate</span>
     <span class="n">time_evol_gate</span> <span class="o">=</span> <span class="n">DenseMatrix</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)],</span> <span class="n">time_evol_op</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">time_evol_gate</span>
@@ -374,7 +375,6 @@
 <span class="k">def</span> <span class="nf">_make_hamiltonian</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="c1"># 基本ゲート</span>
     <span class="n">X_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
     <span class="n">Z_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">ham</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
@@ -387,22 +387,21 @@
     <span class="k">return</span> <span class="n">ham</span>
 
 
-<span class="k">def</span> <span class="nf">_make_fullgate</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">,</span> <span class="n">nqubit</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_make_fullgate</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">,</span> <span class="n">n_qubit</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...] を受け取り,</span>
-<span class="sd">    関係ないqubitにIdentityを挿入して</span>
+<span class="sd">    Receive `list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...]` and</span>
+<span class="sd">    insert identity to qubits which is not present in the list to create (2**n_qubit, 2**n_qubit) matrix</span>
 <span class="sd">    I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...</span>
-<span class="sd">    という(2**nqubit, 2**nqubit)行列をつくる.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
     <span class="n">list_Site</span> <span class="o">=</span> <span class="p">[</span><span class="n">SiteAndOperator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">SiteAndOperator</span> <span class="ow">in</span> <span class="n">list_SiteAndOperator</span><span class="p">]</span>
-    <span class="n">list_SingleGates</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 1-qubit gateを並べてnp.kronでreduceする</span>
+    <span class="n">list_SingleGates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nqubit</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_Site</span><span class="p">:</span>
             <span class="n">list_SingleGates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">[</span><span class="n">cnt</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 何もないsiteはidentity</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">list_SingleGates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">I_mat</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">,</span> <span class="n">list_SingleGates</span><span class="p">)</span>
 
@@ -474,17 +473,19 @@
 
     <span class="k">def</span> <span class="nf">preprocess_x</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">dex</span> <span class="o">=</span> <span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">qubits_p_bit</span> <span class="o">=</span> <span class="p">((</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="n">dex</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># そのbitに割り当てられる量子の数</span>
+        <span class="n">qubits_per_bit</span> <span class="o">=</span> <span class="p">((</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="n">dex</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">xa</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">dex</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">sban</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="n">xb</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">qubits_p_bit</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qubits_p_bit</span><span class="p">):</span>
-                <span class="n">xb</span> <span class="o">+=</span> <span class="n">xkeisuu</span><span class="p">[</span><span class="n">qubits_p_bit</span><span class="p">][</span><span class="n">sban</span><span class="p">][</span><span class="n">qubits_p_bit</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">qubits_per_bit</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qubits_per_bit</span><span class="p">):</span>
+                <span class="n">xb</span> <span class="o">+=</span> <span class="n">xkeisuu</span><span class="p">[</span><span class="n">qubits_per_bit</span><span class="p">][</span><span class="n">sban</span><span class="p">][</span><span class="n">qubits_per_bit</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span>
                 <span class="n">xb</span> <span class="o">*=</span> <span class="n">xa</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">xb</span> <span class="o">=</span> <span class="n">xa</span>  <span class="c1"># bitが多すぎで,nCrのdouble型の限界を超えてあきらめた 同じbitを25以上使うことは多分ないので.</span>
+            <span class="c1"># Overflow `double` type of Combination(n, r).</span>
+            <span class="c1"># There are few cases to use the same 25 bits.</span>
+            <span class="n">xb</span> <span class="o">=</span> <span class="n">xa</span>
 
         <span class="k">if</span> <span class="n">xb</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">xb</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;bug&quot;</span><span class="p">)</span>

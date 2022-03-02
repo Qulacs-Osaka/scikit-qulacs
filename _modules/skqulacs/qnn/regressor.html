@@ -303,7 +303,20 @@
 
 
 <div class="viewcode-block" id="QNNRegressor"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor">[docs]</a><span class="k">class</span> <span class="nc">QNNRegressor</span><span class="p">(</span><span class="n">QNN</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;quantum circuit learningを用いて分類問題を解く&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to solve regression problems with quantum neural networks</span>
+<span class="sd">    The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is &lt;Z_0&gt;.</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from skqulacs.qnn import QNNRegressor</span>
+<span class="sd">        &gt;&gt;&gt; from skqulacs.circuit import create_qcl_ansatz</span>
+<span class="sd">        &gt;&gt;&gt; n_qubits = 4</span>
+<span class="sd">        &gt;&gt;&gt; depth = 3</span>
+<span class="sd">        &gt;&gt;&gt; evo_time = 0.5</span>
+<span class="sd">        &gt;&gt;&gt; circuit = create_qcl_ansatz(n_qubits, depth, evo_time)</span>
+<span class="sd">        &gt;&gt;&gt; model = QNNRegressor(circuit)</span>
+<span class="sd">        &gt;&gt;&gt; _, theta = model.fit(x_train, y_train, maxiter=1000)</span>
+<span class="sd">        &gt;&gt;&gt; x_list = np.arange(x_min, x_max, 0.02)</span>
+<span class="sd">        &gt;&gt;&gt; y_pred = qnn.predict(theta, x_list)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -316,13 +329,13 @@
         <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param circuit: 回路そのもの</span>
-<span class="sd">        :param solver: 何を使うか Nelderは非推奨</span>
-<span class="sd">        :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。</span>
-<span class="sd">        :param do_x_scale xをscaleしますか?</span>
-<span class="sd">        :param do_x_scale yをscaleしますか?</span>
-<span class="sd">        :param y_norm_range  [+-y_norm_range]に正規化.</span>
-<span class="sd">        :param callback:コールバック関数。Adamにのみ対応</span>
+<span class="sd">        :param circuit: Circuit to use in the learning.</span>
+<span class="sd">        :param solver: Solver to use(Nelder-Mead is not recommended).</span>
+<span class="sd">        :param cost: Cost function. MSE only for now. MSE computes squared sum after normalization.</span>
+<span class="sd">        :param do_x_scale: Whether to scale x.</span>
+<span class="sd">        :param do_x_scale: Whether to scale y.</span>
+<span class="sd">        :param y_norm_range: Normalize y in [+-y_norm_range].</span>
+<span class="sd">        :param callback: Callback function. Available only with Adam.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
@@ -333,8 +346,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y_norm_range</span> <span class="o">=</span> <span class="n">y_norm_range</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># yのスケーリングのパラメータ</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="QNNRegressor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
@@ -344,11 +356,11 @@
         <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param x_list: fitしたいデータのxのリスト</span>
-<span class="sd">        :param y_list: fitしたいデータのyのリスト</span>
-<span class="sd">        :param maxiter: scipy.optimize.minimizeのイテレーション回数</span>
-<span class="sd">        :return: 学習後のロス関数の値</span>
-<span class="sd">        :return: 学習後のパラメータthetaの値</span>
+<span class="sd">        :param x_list: List of x to fit.</span>
+<span class="sd">        :param y_list: List of y to fit.</span>
+<span class="sd">        :param maxiter: The number of iterations to pass scipy.optimize.minimize</span>
+<span class="sd">        :return: Loss after learning.</span>
+<span class="sd">        :return: Parameter theta after learning.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="n">_get_x_scale_param</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_y_scale_param</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
@@ -363,11 +375,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">y_scaled</span> <span class="o">=</span> <span class="n">y_train</span>
 
-        <span class="c1"># x_trainからscaleのparamを取得</span>
-        <span class="c1"># regreはyもscaleさせる</span>
-        <span class="c1"># x_scaled = _min_max_scaling(x_train, self.scale_x_param)</span>
-        <span class="c1"># y_scaled = self._do_y_scale(y_scaled)</span>
-
         <span class="k">if</span> <span class="n">y_train</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_scaled</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -376,7 +383,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">):</span>
             <span class="n">observable</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-            <span class="c1"># Z0, Z1, Z2をオブザーバブルとして設定</span>
             <span class="n">observable</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
 
@@ -387,7 +393,6 @@
                 <span class="n">theta_init</span><span class="p">,</span>
                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">,</span> <span class="n">y_scaled</span><span class="p">),</span>
                 <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span>
-                <span class="c1"># jac=self._cost_func_grad,</span>
                 <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
             <span class="p">)</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
@@ -401,7 +406,6 @@
                 <span class="n">jac</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">,</span>
                 <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">},</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">x_scaled</span><span class="p">,</span> <span class="n">y_scaled</span><span class="p">))</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span>
             <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;Adam&quot;</span><span class="p">:</span>
@@ -409,7 +413,7 @@
             <span class="n">pr_Bi</span> <span class="o">=</span> <span class="mf">0.8</span>
             <span class="n">pr_Bt</span> <span class="o">=</span> <span class="mf">0.995</span>
             <span class="n">pr_ips</span> <span class="o">=</span> <span class="mf">0.0000001</span>
-            <span class="c1"># ここまでがハイパーパラメータ</span>
+            <span class="c1"># Above is hyper parameters.</span>
             <span class="n">Bix</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">Btx</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -463,14 +467,12 @@
 
     <span class="k">def</span> <span class="nf">_predict_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_scaled</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># 出力状態計算 &amp; 観測</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_scaled</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="c1"># モデルの出力</span>
             <span class="n">r</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">)</span>
-            <span class="p">]</span>  <span class="c1"># 出力多次元ver</span>
+            <span class="p">]</span>
             <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
@@ -487,7 +489,6 @@
             <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_y_scale_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="c1"># 複数入力がある場合に対応したい</span>
         <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">sa</span> <span class="o">=</span> <span class="p">(</span><span class="n">maximum</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
@@ -497,12 +498,11 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">,</span> <span class="n">sa</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_do_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="c1"># yを[-1,1]の範囲に収める</span>
-        <span class="c1"># print([((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y])</span>
+        <span class="c1"># Clamp `y` in [-1,1].</span>
         <span class="k">return</span> <span class="p">[((</span><span class="n">ya</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">ya</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_rev_y_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_inr</span><span class="p">):</span>
-        <span class="c1"># y_inrに含まれる数を、　self.scale_paramを用いて復元する</span>
+        <span class="c1"># Restore `y_inr` by `self.scale_param`.</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">(((</span><span class="n">ya</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">ya</span> <span class="ow">in</span> <span class="n">y_inr</span>
         <span class="p">]</span>
@@ -513,8 +513,6 @@
         <span class="n">mto</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
-        <span class="c1"># gradA = np.zeros((len(x_scaled),len(theta)))</span>
-        <span class="c1"># gradB = np.zeros((len(x_scaled),len(theta)))</span>
 
         <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)):</span>
             <span class="n">backobs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>

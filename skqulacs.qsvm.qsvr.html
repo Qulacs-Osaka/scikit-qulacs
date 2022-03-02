@@ -312,15 +312,22 @@
 <dt class="sig sig-object py" id="skqulacs.qsvm.qsvr.QSVR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.qsvm.qsvr.</span></span><span class="sig-name descname"><span class="pre">QSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qsvm/qsvr.html#QSVR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qsvm.qsvr.QSVR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>class to solve regression problems with support vector regressor with a quantum kernel</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qsvm.qsvr.QSVR.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qsvm/qsvr.html#QSVR.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qsvm.qsvr.QSVR.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qsvm/qsvr.html#QSVR.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qsvm.qsvr.QSVR.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>train the machine.
+:param x: training inputs
+:param y: training teacher values</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qsvm.qsvr.QSVR.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qsvm/qsvr.html#QSVR.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qsvm.qsvr.QSVR.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qsvm/qsvr.html#QSVR.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qsvm.qsvr.QSVR.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>predict y values for each of xs
+:param xs: inputs to make predictions
+:return: List[int], predicted values of y</p>
+</dd></dl>
 
 </dd></dl>
 
