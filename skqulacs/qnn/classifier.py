@@ -49,7 +49,7 @@ class QNNClassifier(QNN):
         :param y_exp_ratio:
             coeffcient used in the application of softmax function.
             the output prediction vector is made by transforming (<Z_0>, <Z_1>, ..., <Z_{n-1}>)
-            to (y_1, y_2, ..., y_(n-1)) where y_i = e^{<Z_i>*y_exp_scale}/(\sum_j e^{<Z_j>*y_exp_scale})
+            to (y_1, y_2, ..., y_(n-1)) where y_i = e^{<Z_i>*y_exp_scale}/(sum_j e^{<Z_j>*y_exp_scale})
         :param callback: Callback function. Available only with Adam.
         """
 
