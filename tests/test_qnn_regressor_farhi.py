@@ -50,7 +50,7 @@ def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
 
     qnn = QNNRegressor(circuit, solver)
     qnn.fit(x_train, y_train, maxiter)
-    # BFGSじゃないなら600
+
     x_test, y_test = generate_noisy_sine_two_vars(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)

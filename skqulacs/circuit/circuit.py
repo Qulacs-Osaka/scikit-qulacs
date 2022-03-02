@@ -74,7 +74,7 @@ class LearningCircuit:
         >>> circuit = LearningCircuit(n_qubit)
         >>> circuit.add_parametric_RX_gate(0, 0.5)
         >>> circuit.add_input_RZ_gate(1, np.arcsin)
-        >>> model = QNNRegressor(n_qubit, circuit)
+        >>> model = QNNRegressor(circuit)
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
