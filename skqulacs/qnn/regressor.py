@@ -109,7 +109,7 @@ class QNNRegressor(QNN):
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
-            #print(self._cost_func_grad(result.x, x_scaled, y_scaled))
+            # print(self._cost_func_grad(result.x, x_scaled, y_scaled))
             loss = result.fun
             theta_opt = result.x
         elif self.solver == "Adam":

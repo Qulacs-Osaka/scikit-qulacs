@@ -19,11 +19,12 @@ class QNNGeneretor(QNN):
 
     入力無し、出力される確率分布をテストデータの確率分布に近くするのが目的
 
-    とりあえず、shot数はなしで。
+    入力は、データの配列.入力はビット列を2進表記することによる整数しか受け取らない。
 
-    入力は、2**fitting_qubit 個のfloatで、和が1
+    fit_direct_distributionは、直接確率分布を入力する。
 
-    これが、確率分布を示す。
+
+    出力は、予想される確率分布を返す。
     """
 
     def __init__(
@@ -32,28 +33,27 @@ class QNNGeneretor(QNN):
         karnel_type: Literal["gauss", "exp_hamming", "same"],
         gauss_sigma: float,
         fitting_qubit: int,
-        solver: Literal["Adam", "BFGS"] = "BFGS",  # Adam only
+        solver: Literal["Adam", "BFGS"] = "BFGS",
     ) -> None:
         """
         :param circuit: 回路そのもの
 
-        :param fitting_qubit: circuitのqubitとは無関係に、、残りは読み飛ばす(隠れ層的な役割を果たしてくれると信じて)
-        :param kernel_type 出力を数値として使うならgauss,文字列ならexp_hammingやsameを用いる。
-        gaussの場合、0 is bigend, n-1 is littleend.
+        :param fitting_qubit: circuitのqubitとは別で、データのqubit数を示す。
+        circuitがデータのビットより大きいと、隠れ層的な役割でうまくいく可能性がある。
+        fitting_qubitがcircuitのqubitより大きい場合、出力のビット番号が大きい側は無視される。
+        fitting_qubitがcircuitのqubitより小さい場合、多分バグる。
 
-        :param kernel_sigma カーネルはガウシアン関数で測られるが、そのシグマ値。
 
-        gaussの場合、k(x,y)=exp((-1/2σ)  (x-y)^2)
-        exp_hammingの場合、k(x,y)=exp((-1/2σ)  (xとyのハミング距離))
+        :param kernel_type 2つの出力がどのくらい似ているかのカーネルっぽいものを指定します。(うまく説明できない)
+        gauss_sigmaで詳しく説明します。
+
+        :param gauss_sigma カーネルはガウシアン関数で測られるが、そのシグマ値。
+        sameの場合、数字はなんでもいい。
+
+        gaussの場合、k(x,y)= exp((-1/2σ)  (x-y)^2)
+        exp_hammingの場合、k(x,y)= exp((-1/2σ)  (xとyのハミング距離))
         sameを指定した場合、k(x,y)= if(x==y):1 else 0
 
-        高速化:
-        gaussの場合、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。
-        exp_hammingの場合、バタフライ演算が適用できる。
-
-        gaussなら10bitで、σ=0.5～4 だった。
-
-        :param solver: Adam一択。
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
@@ -77,7 +77,9 @@ class QNNGeneretor(QNN):
         train_scaled = np.zeros(2 ** self.Fqubit)
         for aaa in train_data:
             train_scaled[aaa] += 1 / len(train_data)
+        return self.fit_direct_distribution(train_scaled, maxiter)
 
+    def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None):
         theta_init = self.circuit.get_parameters()
         if self.solver == "Adam":
             pr_A = 0.03
@@ -126,11 +128,7 @@ class QNNGeneretor(QNN):
         予想される確率分布を、np.ndarray[float]の形で返す。
 
         Returns:
-            y_pred: Predicted outcome.
-
-        上Fqubitだけを取るから、どうしよう
-
-        loadして、2乗して、和を求める
+            data_per: Predicted distribution.
         """
 
         y_pred_in = self._predict_inner().get_vector()
@@ -152,18 +150,13 @@ class QNNGeneretor(QNN):
         state = self.circuit.run([0])
         return state
 
-    def cost_func(self, theta, train_scaled):
-        # 生のデータを入れない
-        # (xの確率分布-yの確率分布) (カーネルを行列にしたもの) (xの確率分布-yの確率分布) で求められる。
-        # これ行列の計算だし、qulacsのゲートをつなげたやつで行けない?
-        # バタフライ演算にできることが判明
-        # バタフライ演算、手で書くよりも、qulacsを使ったほうが速いのでは?
-        self.circuit.update_parameters(theta)
-        # y-xを求める
-        data_diff = self.predict() - train_scaled
+    def conving(self, data_diff):
+        # data_diffは、現在の分布ー正しい分布
+        # (data_diff) (カーネル行列) (data_diffの行ベクトル)　を計算すると、cost_funcになる。
+        # ここでは、(data_diff) (カーネル行列)  のベクトルを求める。
+        # 　つまり、確率差ベクトルにカーネル行列を掛ける。
         if self.karnel_type == "gauss":
-            # ガウシアンで処理する
-
+            # 高速化として、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。
             beta = -0.5 / self.gauss_sigma
 
             miru = int(4 * sqrt(self.gauss_sigma))
@@ -174,10 +167,11 @@ class QNNGeneretor(QNN):
             if miru + miru + 1 <= 2 ** self.Fqubit:
                 conv_diff = np.convolve(data_diff, conv_aite, mode="same")
             else:
-                # mode=same がうまくいかない
+                # convの行列のほうが長いので、sameがバグった。
+                # だから、わざわざfullのを取って、スライスしている。
                 conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
 
-            return np.dot(data_diff, conv_diff)
+            return conv_diff
 
         elif self.karnel_type == "exp_hamming":
 
@@ -187,6 +181,7 @@ class QNNGeneretor(QNN):
             # これはバタフライ演算でできます。
             # バタフライ演算を行うのにqulacsを使います。
             # 注意！ユニタリ的な量子演算ではありません！
+            # この演算をすることで高速にできる。
 
             diff_state = QuantumState(self.Fqubit)
             diff_state.load(data_diff)
@@ -195,82 +190,35 @@ class QNNGeneretor(QNN):
                 batafly_gate.update_quantum_state(diff_state)
 
             conv_diff = diff_state.get_vector()
+            return conv_diff
 
-            return np.dot(data_diff, conv_diff)
         elif self.karnel_type == "same":
-
-            return np.dot(data_diff, data_diff)
+            return data_diff
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def _culc_bai_state(self, conv_diff):
-        convconv_diff = np.tile(conv_diff, 2 ** (self.n_qubit - self.Fqubit))
-
-        state_vec = self._predict_inner().get_vector()
-        ret = QuantumState(self.n_qubit)
-        ret.load(convconv_diff * state_vec * 4)
-        return ret
+    def cost_func(self, theta, train_scaled):
+        self.circuit.update_parameters(theta)
+        # y-xを求める
+        data_diff = self.predict() - train_scaled
+        conv_diff = self.conving(data_diff)
+        return np.dot(data_diff, conv_diff)
 
     def _cost_func_grad(self, theta, train_scaled):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
+        conv_diff = self.conving(data_diff)
 
-        # まえのでのconv_diffを
-        if self.karnel_type == "gauss":
-            # ガウシアンで処理する
+        convconv_diff = np.tile(
+            conv_diff, 2 ** (self.n_qubit - self.Fqubit)
+        )  # 得られた確率ベクトルの添え字の大きい桁を無視する。
+        # 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -> [0.2,-0.1,0,-0.1]
 
-            beta = -0.5 / self.gauss_sigma
-
-            miru = int(4 * sqrt(self.gauss_sigma))
-            conv_aite = np.zeros(miru + miru + 1)
-            for i in range(miru + miru + 1):
-                conv_aite[i] = exp((i - miru) * (i - miru) * beta)
-
-            if miru + miru + 1 <= 2 ** self.Fqubit:
-                conv_diff = np.convolve(data_diff, conv_aite, mode="same")
-            else:
-                # mode=same がうまくいかない
-                conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
-            self.debag_conv = conv_diff
-            return np.array(
-                self.circuit.backprop_inner_product(
-                    [0], self._culc_bai_state(conv_diff)
-                )
-            )
-
-        elif self.karnel_type == "exp_hamming":
-
-            beta = -0.5 / self.gauss_sigma
-            swap_pena = exp(beta)
-            # ハミング距離の畳み込み演算をします。
-            # これはバタフライ演算でできます。
-            # バタフライ演算を行うのにqulacsを使います。
-            # 注意！ユニタリ的な量子演算ではありません！
-
-            diff_state = QuantumState(self.Fqubit)
-            diff_state.load(data_diff)
-            for i in range(self.Fqubit):
-                batafly_gate = DenseMatrix(i, [[1, swap_pena], [swap_pena, 1]])
-                batafly_gate.update_quantum_state(diff_state)
-
-            conv_diff = diff_state.get_vector()
-
-            return np.array(
-                self.circuit.backprop_inner_product(
-                    [0], self._culc_bai_state(conv_diff)
-                )
-            )
-        elif self.karnel_type == "same":
-
-            return np.array(
-                self.circuit.backprop_inner_product(
-                    [0], self._culc_bai_state(data_diff)
-                )
-            )
-        else:
-            raise NotImplementedError(
-                f"Cost function {self.cost} is not implemented yet."
-            )
+        state_vec = self._predict_inner().get_vector()
+        ret = QuantumState(self.n_qubit)
+        ret.load(convconv_diff * state_vec * 4)
+        # 各要素ごとに積を取り、4を掛けている。　4なのは、2乗だから2をかけるのと、　実際はカーネルの左と右両方にベクトルあるから2を掛ける。
+        return np.array(self.circuit.backprop_inner_product([0], ret))

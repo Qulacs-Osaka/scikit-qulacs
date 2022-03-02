@@ -66,11 +66,13 @@ def test_mix_gauss():
         for j in range(-10, 10):
             hei += data_param[i + j] / 21
         gosa += abs(hei - prob_list[i])
-    assert gosa < 0.2
-
+    assert gosa / 2 < 0.1
 
 
 """
+test_bar_stripeは短時間でまともな成果を得られないのでテストから外された
+80%程度の正解率は出る。
+
 def test_bar_stripe():
 
     n_qubit = 9
