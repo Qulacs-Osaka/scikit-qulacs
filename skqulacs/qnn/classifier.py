@@ -12,7 +12,23 @@ from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 
 
 class QNNClassifier(QNN):
-    """Class to solve classification problems by quantum neural networks"""
+    """Class to solve classification problems by quantum neural networks
+    The prediction is made by making a vector which predicts one-hot encoding of labels.
+    The prediction is made by
+    1. taking expectation values of Pauli Z operator of each qubit <Z_i>,
+    2. taking softmax function of the vector (<Z_0>, <Z_1>, ..., <Z_{n-1}>).
+    Examples:
+        >>> from skqulacs.qnn import QNNClassifier
+        >>> from skqulacs.circuit import create_qcl_ansatz
+        >>> n_qubits = 4
+        >>> depth = 3
+        >>> evo_time = 0.5
+        >>> circuit = create_qcl_ansatz(n_qubits, depth, evo_time)
+        >>> model = QNNRClassifier(circuit)
+        >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
+        >>> x_list = np.arange(x_min, x_max, 0.02)
+        >>> y_pred = qnn.predict(theta, x_list)
+    """
 
     def __init__(
         self,
@@ -30,7 +46,10 @@ class QNNClassifier(QNN):
         :param solver: Solver to use(Nelder-Mead is not recommended).
         :param cost: Cost function. log_loss only for now.
         :param do_x_scale: Whether to scale x.
-        :param y_exp_ratio: 内部出力のyが0と1では、e^y_exp_bai 倍の確率の倍率がある。
+        :param y_exp_ratio:
+            coeffcient used in the application of softmax function.
+            the output prediction vector is made by transforming (<Z_0>, <Z_1>, ..., <Z_{n-1}>)
+            to (y_1, y_2, ..., y_(n-1)) where y_i = e^{<Z_i>*y_exp_scale}/(\sum_j e^{<Z_j>*y_exp_scale})
         :param callback: Callback function. Available only with Adam.
         """
 
@@ -49,10 +68,15 @@ class QNNClassifier(QNN):
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
-    def fit(self, x_train, y_train, maxiter: Optional[int] = None):
+    def fit(
+        self,
+        x_train: List[List[float]],
+        y_train: List[int],
+        maxiter: Optional[int] = None,
+    ):
         """
-        :param x_list: List of x to fit.
-        :param y_list: List of y to fit.
+        :param x_list: List of training data inputs.
+        :param y_list: List of labels to fit. ;Labels must be represented as integers.
         :param maxiter: The number of iterations to pass scipy.optimize.minimize
         :return: Loss after learning.
         :return: Parameter theta after learning.

@@ -13,7 +13,20 @@ from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
 
 
 class QNNRegressor(QNN):
-    """Class to solve regression problems with quantum neural networks"""
+    """Class to solve regression problems with quantum neural networks
+    The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.
+    Examples:
+        >>> from skqulacs.qnn import QNNRegressor
+        >>> from skqulacs.circuit import create_qcl_ansatz
+        >>> n_qubits = 4
+        >>> depth = 3
+        >>> evo_time = 0.5
+        >>> circuit = create_qcl_ansatz(n_qubits, depth, evo_time)
+        >>> model = QNNRegressor(circuit)
+        >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
+        >>> x_list = np.arange(x_min, x_max, 0.02)
+        >>> y_pred = qnn.predict(theta, x_list)
+    """
 
     def __init__(
         self,
@@ -31,7 +44,7 @@ class QNNRegressor(QNN):
         :param cost: Cost function. MSE only for now. MSE computes squared sum after normalization.
         :param do_x_scale: Whether to scale x.
         :param do_x_scale: Whether to scale y.
-        :param y_norm_range Normalize y in [+-y_norm_range].
+        :param y_norm_range: Normalize y in [+-y_norm_range].
         :param callback: Callback function. Available only with Adam.
         """
         self.n_qubit = circuit.n_qubit

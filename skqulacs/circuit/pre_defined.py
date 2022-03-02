@@ -21,7 +21,7 @@ def create_qcl_ansatz(
     Examples:
         >>> n_qubit = 4
         >>> circuit = create_qcl_ansatz(n_qubit, 3, 0.5)
-        >>> qnn = QNNRegressor(n_qubit, circuit)
+        >>> qnn = QNNRegressor(circuit)
         >>> qnn.fit(x_train, y_train)
     """
 
