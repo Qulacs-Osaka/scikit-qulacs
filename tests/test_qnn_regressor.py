@@ -21,7 +21,6 @@ def generate_noisy_sine_two_vars(
     x_train = [
         [rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)
     ]
-    # Add dummy 2 bits to gain quantum complexity.
     y_train = [sine_two_vars(x) for x in x_train]
     mag_noise = 0.001
     y_train += mag_noise * rng.random(num_x)
