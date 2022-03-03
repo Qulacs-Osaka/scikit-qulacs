@@ -1,5 +1,8 @@
 # Contributing scikit-qulacs
 
+## Requirements
+- poetry([installation](https://python-poetry.org/docs/#installation))
+
 ## Start coding
 Set up the project.
 1. First, clone this repository.
@@ -10,10 +13,7 @@ cd scikit-qulacs
 
 2. Install dependencies and development tools.
 ```bash
-pip install -r requirements-dev.txt
-# This installs dependencies and creates a symbolic link to this directory in 
-# the site-packages directory.
-make install
+poetry install
 ```
 
 Next, workflow through modification to merge.
@@ -83,21 +83,6 @@ The purpose of CI is
 * Find error you cannot notice at your local machine.
 * Avoid unnecessary diff by forcing code format and linter error.
 
-## Installation
-You can install skqulacs to your python's site-packages by `setup-tools`.
-Although `make install` just creates a symlink to this directory, this method builds a complete package.
-
-First, install `build`.
-```bash
-pip install build
-```
-Then, build and install this package.
-```bash
-python -m build
-# This file name might be different among environments.
-pip install dist/scikit_qulacs-0.0.1-py3-none-any.whl
-```
-
 ## Documentation
 This repository's documentation includes API document and Jupyter Notebook style tutorials.
 
@@ -105,31 +90,29 @@ The documentation is available here: https://qulacs-osaka.github.io/scikit-qulac
 It is built and deployed on pushing(merged from PR) to `main` branch.
 
 ### Build document
-First, move into `doc`.
-```bash
-cd doc
-```
-
-You can install dependencies to build docs in a following command.
-```bash
-pip install -r requirements-doc.txt
-```
-
-Then just run following command.
+Just run following command.
 ```bash
 make html
 ```
 
 In `doc/build/html`, you can find build artifacts including HTML files.
 
+Or you can check artifacts via browser easily.
+```bash
+make serve
+```
+By running this command, the documentation is built and you can access it from [`localhost:8080`](http://localhost:8000/).
+
 
 ### Create Page from jupyter notebook
-jupyter notebook からページを作ることができます．ライブラリの使用例などを書くのに便利です．
-1. `doc/source/notebooks` に ipynb ファイルを作って編集する(0_example.ipynb とする)
-2. `doc/source/notebook/index.rst` にそのファイル名を拡張子なしで追記する(*)
-3. `make html -C doc` を実行すると HTML が生成されるのでブラウザなどで開く
+You can create a documentation page from jupyter notebook.
+It is useful to show an example usage of APIs in this library.
+1. Create `.ipynb` file in the `doc/source/notebooks`(suppose `0_tutorial.ipynb` here).
+2. Edit the contents and **be sure to execute all cells without error**. Code and results in the notebook is embedded to documentation without modification.
+3. Add the file name without its extension to `doc/source/notebooks/index.rst`.
+4. Execute `make html` or `make serve` to generate HTMLs.
 
-(*) `doc/source/notebook/index.rst` の一部を抜粋します:
+Example of `doc/source/notebook/index.rst`:
 ```
 Notebooks
 ---------
@@ -139,4 +122,4 @@ Notebooks
    0_tutorial
 ```
 
-LaTeX や画像なども表示できます．
+You can display LaTeX and images.

@@ -6,14 +6,27 @@ import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
+from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
-from skqulacs.typing import Literal
 
 
 class QNNRegressor(QNN):
-    """quantum circuit learningを用いて分類問題を解く"""
+    """Class to solve regression problems with quantum neural networks
+    The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.
+    Examples:
+        >>> from skqulacs.qnn import QNNRegressor
+        >>> from skqulacs.circuit import create_qcl_ansatz
+        >>> n_qubits = 4
+        >>> depth = 3
+        >>> evo_time = 0.5
+        >>> circuit = create_qcl_ansatz(n_qubits, depth, evo_time)
+        >>> model = QNNRegressor(circuit)
+        >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
+        >>> x_list = np.arange(x_min, x_max, 0.02)
+        >>> y_pred = qnn.predict(theta, x_list)
+    """
 
     def __init__(
         self,
@@ -23,14 +36,16 @@ class QNNRegressor(QNN):
         do_x_scale: bool = True,
         do_y_scale: bool = True,
         y_norm_range=0.7,
+        callback=None,
     ) -> None:
         """
-        :param circuit: 回路そのもの
-        :param solver: 何を使うか Nelderは非推奨
-        :param cost: コスト関数 mseしかない。 mseは、正規化した後での二乗和をとる。
-        :param do_x_scale xをscaleしますか?
-        :param do_x_scale yをscaleしますか?
-        :param y_margin  [-y_norm_range,y_norm_range]に正規化.
+        :param circuit: Circuit to use in the learning.
+        :param solver: Solver to use(Nelder-Mead is not recommended).
+        :param cost: Cost function. MSE only for now. MSE computes squared sum after normalization.
+        :param do_x_scale: Whether to scale x.
+        :param do_x_scale: Whether to scale y.
+        :param y_norm_range: Normalize y in [+-y_norm_range].
+        :param callback: Callback function. Available only with Adam.
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
@@ -39,10 +54,9 @@ class QNNRegressor(QNN):
         self.do_x_scale = do_x_scale
         self.do_y_scale = do_y_scale
         self.y_norm_range = y_norm_range
-
+        self.callback = callback
         self.scale_x_param = []
-        self.scale_y_param = []  # yのスケーリングのパラメータ
-
+        self.scale_y_param = []
         self.observables = []
 
     def fit(
@@ -52,11 +66,11 @@ class QNNRegressor(QNN):
         maxiter: Optional[int] = None,
     ) -> Tuple[float, np.ndarray]:
         """
-        :param x_list: fitしたいデータのxのリスト
-        :param y_list: fitしたいデータのyのリスト
-        :param maxiter: scipy.optimize.minimizeのイテレーション回数
-        :return: 学習後のロス関数の値
-        :return: 学習後のパラメータthetaの値
+        :param x_list: List of x to fit.
+        :param y_list: List of y to fit.
+        :param maxiter: The number of iterations to pass scipy.optimize.minimize
+        :return: Loss after learning.
+        :return: Parameter theta after learning.
         """
         self.scale_x_param = _get_x_scale_param(x_train)
         self.scale_y_param = self._get_y_scale_param(y_train)
@@ -71,11 +85,6 @@ class QNNRegressor(QNN):
         else:
             y_scaled = y_train
 
-        # x_trainからscaleのparamを取得
-        # regreはyもscaleさせる
-        # x_scaled = _min_max_scaling(x_train, self.scale_x_param)
-        # y_scaled = self._do_y_scale(y_scaled)
-
         if y_train.ndim == 2:
             self.n_outputs = len(y_scaled[0])
         else:
@@ -84,7 +93,6 @@ class QNNRegressor(QNN):
         self.observables = []
         for i in range(self.n_outputs):
             observable = Observable(self.n_qubit)
-            # Z0, Z1, Z2をオブザーバブルとして設定
             observable.add_operator(1.0, f"Z {i}")
             self.observables.append(observable)
 
@@ -95,7 +103,6 @@ class QNNRegressor(QNN):
                 theta_init,
                 args=(x_scaled, y_scaled),
                 method=self.solver,
-                # jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
             loss = result.fun
@@ -109,7 +116,6 @@ class QNNRegressor(QNN):
                 jac=self._cost_func_grad,
                 options={"maxiter": maxiter},
             )
-            print(self._cost_func_grad(result.x, x_scaled, y_scaled))
             loss = result.fun
             theta_opt = result.x
         elif self.solver == "Adam":
@@ -117,7 +123,7 @@ class QNNRegressor(QNN):
             pr_Bi = 0.8
             pr_Bt = 0.995
             pr_ips = 0.0000001
-            # ここまでがハイパーパラメータ
+            # Above is hyper parameters.
             Bix = 0
             Btx = 0
 
@@ -141,6 +147,8 @@ class QNNRegressor(QNN):
 
             loss = self.cost_func(theta_now, x_scaled, y_scaled)
             theta_opt = theta_now
+            if self.callback is not None:
+                self.callback(theta_now)
         else:
             raise NotImplementedError
 
@@ -169,14 +177,12 @@ class QNNRegressor(QNN):
 
     def _predict_inner(self, x_scaled):
         res = []
-        # 出力状態計算 & 観測
         for x in x_scaled:
             state = self.circuit.run(x)
-            # モデルの出力
             r = [
                 self.observables[i].get_expectation_value(state)
                 for i in range(self.n_outputs)
-            ]  # 出力多次元ver
+            ]
             res.append(r)
         return np.array(res)
 
@@ -193,7 +199,6 @@ class QNNRegressor(QNN):
             )
 
     def _get_y_scale_param(self, y):
-        # 複数入力がある場合に対応したい
         minimum = np.min(y, axis=0)
         maximum = np.max(y, axis=0)
         sa = (maximum - minimum) / 2
@@ -203,12 +208,11 @@ class QNNRegressor(QNN):
         return [minimum, maximum, sa]
 
     def _do_y_scale(self, y):
-        # yを[-1,1]の範囲に収める
-        # print([((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y])
+        # Clamp `y` in [-1,1].
         return [((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y]
 
     def _rev_y_scale(self, y_inr):
-        # y_inrに含まれる数を、　self.scale_paramを用いて復元する
+        # Restore `y_inr` by `self.scale_param`.
         return [
             (((ya + 1) * self.scale_y_param[2]) + self.scale_y_param[0]) for ya in y_inr
         ]
@@ -219,8 +223,6 @@ class QNNRegressor(QNN):
         mto = self._predict_inner(x_scaled).copy()
 
         grad = np.zeros(len(theta))
-        # gradA = np.zeros((len(x_scaled),len(theta)))
-        # gradB = np.zeros((len(x_scaled),len(theta)))
 
         for h in range(len(x_scaled)):
             backobs = Observable(self.n_qubit)

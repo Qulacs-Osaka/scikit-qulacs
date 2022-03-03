@@ -12,15 +12,14 @@ def _get_x_scale_param(x):
 
 
 def _min_max_scaling(x: List[List[float]], scale_x_param):
-    """[-1, 1]の範囲に規格化"""
-    # print([((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x])
+    """Normalize between [-1, 1]."""
     return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
 
 
 class QNN(ABC):
     @abstractmethod
     def fit(
-        self, x_train: List[float], y_train: List[float], maxiter: Optional[int]
+        self, x_train: List[List[float]], y_train: List[float], maxiter: Optional[int]
     ) -> Tuple[float, np.ndarray]:
         """Fit the model to given train data.
 
@@ -36,7 +35,7 @@ class QNN(ABC):
         pass
 
     @abstractmethod
-    def predict(self, theta: List[float], x_list: List[float]) -> List[float]:
+    def predict(self, x_test: List[List[float]]) -> List[float]:
         """Predict outcome for given data.
 
         Args:

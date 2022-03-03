@@ -11,14 +11,6 @@ Subpackages
    skqulacs.qnn
    skqulacs.qsvm
 
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   skqulacs.typing
-
 Module contents
 ---------------
 

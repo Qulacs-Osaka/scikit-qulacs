@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    skqulacs.qsvm.qsvc
-   skqulacs.qsvm.qsvmbase
    skqulacs.qsvm.qsvr
 
 Module contents

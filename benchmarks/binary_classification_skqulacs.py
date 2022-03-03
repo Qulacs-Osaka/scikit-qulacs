@@ -96,4 +96,3 @@ def binary_classification_skqulacs(
     qcl.fit(x_train, y_train, 50)
     y_pred = qcl.predict(x_test)
     return f1_score(y_test, y_pred)
-
