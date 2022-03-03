@@ -84,7 +84,7 @@ def binary_classification_skqulacs(
     x_test: np.ndarray,
     y_train: np.ndarray,
     y_test: np.ndarray,
-) -> float:
+) -> None:
     """Solve a binary classification problem for the subset of iris dataset.
 
     Returns: F1 score for trained model.
@@ -95,4 +95,4 @@ def binary_classification_skqulacs(
     qcl = QNNClassifier(circuit, num_class, "Adam", do_x_scale=False)
     qcl.fit(x_train, y_train, 50)
     y_pred = qcl.predict(x_test)
-    return f1_score(y_test, y_pred)
+    f1_score(y_test, y_pred) > 0.95

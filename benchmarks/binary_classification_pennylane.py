@@ -2,6 +2,7 @@ from typing import Tuple
 
 import pandas as pd
 import pennylane as qml
+from numpy.random import Generator
 from pennylane import NesterovMomentumOptimizer
 from pennylane import numpy as np
 from sklearn import datasets
@@ -122,7 +123,11 @@ def load_iris_pennylane() -> Tuple[
 
 
 def train(
-    x_train: np.ndarray, x_val: np.ndarray, y_train: np.ndarray, y_val: np.ndarray
+    x_train: np.ndarray,
+    x_val: np.ndarray,
+    y_train: np.ndarray,
+    y_val: np.ndarray,
+    rng: Generator,
 ):
     num_qubits = 2
     num_layers = 6
@@ -131,7 +136,9 @@ def train(
     batch_size = 5
 
     # train the variational classifier
-    weights = 0.01 * np.random.randn(num_layers, num_qubits, 3, requires_grad=True)
+    weights = 0.01 * rng.random((num_layers, num_qubits, 3))
+    # Convert for autograd
+    weights = np.array(weights, requires_grad=True)
     bias = np.array(0.0, requires_grad=True)
     best_weights = weights
     best_bias = bias
@@ -139,7 +146,7 @@ def train(
     n_epoch = 20
     for epoch in range(n_epoch):
         # Update the weights by one optimizer step
-        batch_index = np.random.randint(0, len(x_train), (batch_size,))
+        batch_index = rng.integers(0, len(x_train), (batch_size,))
         x_train_batch = x_train[batch_index]
         y_train_batch = y_train[batch_index]
         weights, bias, _, _ = opt.step(
@@ -166,7 +173,8 @@ def binary_classification_pennylane(
     y_train: np.ndarray,
     y_val: np.ndarray,
     y_test: np.ndarray,
-):
-    weights, bias = train(x_train, x_val, y_train, y_val)
+    rng: Generator,
+) -> None:
+    weights, bias = train(x_train, x_val, y_train, y_val, rng)
     y_pred = [np.sign(variational_classifier(weights, bias, x)) for x in x_test]
-    return f1_score(y_test, y_pred)
+    f1_score(y_test, y_pred) > 0.95

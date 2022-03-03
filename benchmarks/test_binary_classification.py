@@ -7,24 +7,25 @@ from binary_classification_skqulacs import (
     create_circuit,
     load_iris_skqulacs,
 )
+from numpy.random import default_rng
 
 
 def test_skqulacs(benchmark):
     x_train, x_test, y_train, y_test = load_iris_skqulacs()
     circuit = create_circuit(6)
-    score = benchmark.pedantic(
+    benchmark.pedantic(
         binary_classification_skqulacs,
         args=[circuit, x_train, x_test, y_train, y_test],
         rounds=5,
     )
-    assert score > 0.95
 
 
 def test_pennylane(benchmark):
     x_train, x_val, x_test, y_train, y_val, y_test = load_iris_pennylane()
-    score = benchmark.pedantic(
+    # Fix seed for deterministic result.
+    rng = default_rng(0)
+    benchmark.pedantic(
         binary_classification_pennylane,
-        args=[x_train, x_val, x_test, y_train, y_val, y_test],
+        args=[x_train, x_val, x_test, y_train, y_val, y_test, rng],
         rounds=5,
     )
-    assert score > 0.95
