@@ -147,9 +147,6 @@ def train(
         )
 
         # Compute predictions on train and validation set
-        predictions_train = [
-            np.sign(variational_classifier(weights, bias, x)) for x in x_train
-        ]
         predictions_val = [
             np.sign(variational_classifier(weights, bias, x)) for x in x_val
         ]
