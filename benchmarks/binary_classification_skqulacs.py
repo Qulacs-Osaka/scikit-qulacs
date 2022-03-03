@@ -13,7 +13,7 @@ from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn import QNNClassifier
 
 
-def load_dataset() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def load_iris_skqulacs() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
     x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
@@ -92,12 +92,8 @@ def binary_classification_skqulacs(
 
     num_class = 2
     circuit = create_circuit(6)
-    qcl = QNNClassifier(circuit, num_class, "Nelder-Mead", do_x_scale=False)
-    qcl.fit(x_train, y_train, 1000)
+    qcl = QNNClassifier(circuit, num_class, "Adam", do_x_scale=False)
+    qcl.fit(x_train, y_train, 50)
     y_pred = qcl.predict(x_test)
     return f1_score(y_test, y_pred)
 
-
-# if __name__ == "__main__":
-#     score = binary_classification_skqulacs()
-#     print(score)

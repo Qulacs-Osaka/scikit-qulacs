@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pandas as pd
 import pennylane as qml
 from pennylane import NesterovMomentumOptimizer
@@ -82,39 +84,46 @@ def accuracy(labels, predictions):
     return n_corrects
 
 
-iris = datasets.load_iris()
-df = pd.DataFrame(iris.data, columns=iris.feature_names)
-X = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
-X = X.to_numpy()
+def load_iris_pennylane() -> Tuple[
+    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray
+]:
+    iris = datasets.load_iris()
+    df = pd.DataFrame(iris.data, columns=iris.feature_names)
+    x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
+    x = x.to_numpy()
 
-# Each elements in `iris.target` is 0, 1 or 2.
-# Exclude labels 2 for binary classification.
-index = iris.target != 2
-X = X[index]
-Y = np.array(iris.target[index], requires_grad=False)
-# In this learning process, a train label should be -1 or 1; 0 -> -1, 1 -> 1
-Y = Y * 2 - 1
+    # Each elements in `iris.target` is 0, 1 or 2.
+    # Exclude labels 2 for binary classification.
+    index = iris.target != 2
+    x = x[index]
+    y = np.array(iris.target[index], requires_grad=False)
+    # In this learning process, a train label should be -1 or 1; 0 -> -1, 1 -> 1
+    y = y * 2 - 1
 
-padding = 0.3 * np.ones((len(X), 1))
-X_pad = np.c_[np.c_[X, padding], np.zeros((len(X), 1))]
+    padding = 0.3 * np.ones((len(x), 1))
+    x_pad = np.c_[np.c_[x, padding], np.zeros((len(x), 1))]
 
-# normalize each input
-normalization = np.sqrt(np.sum(X_pad ** 2, -1))
-X_norm = (X_pad.T / normalization).T
+    # normalize each input
+    normalization = np.sqrt(np.sum(x_pad ** 2, -1))
+    x_norm = (x_pad.T / normalization).T
 
-# angles for state preparation are new features
-features = np.array([get_angles(x) for x in X_norm], requires_grad=False)
+    # angles for state preparation are new features
+    features = np.array([get_angles(x) for x in x_norm], requires_grad=False)
 
-X_train, X_test, Y_train, Y_test = train_test_split(
-    features, Y, test_size=0.25, random_state=0
-)
+    x_train, x_test, y_train, y_test = train_test_split(
+        features, y, test_size=0.25, random_state=0
+    )
 
-X_val, X_test, Y_val, Y_test = train_test_split(
-    X_test, Y_test, test_size=0.5, random_state=0
-)
+    x_val, x_test, y_val, y_test = train_test_split(
+        x_test, y_test, test_size=0.5, random_state=0
+    )
+
+    return x_train, x_val, x_test, y_train, y_val, y_test
 
 
-def train(X_train, Y_train):
+def train(
+    x_train: np.ndarray, x_val: np.ndarray, y_train: np.ndarray, y_val: np.ndarray
+):
     num_qubits = 2
     num_layers = 6
 
@@ -130,36 +139,37 @@ def train(X_train, Y_train):
     n_epoch = 20
     for epoch in range(n_epoch):
         # Update the weights by one optimizer step
-        batch_index = np.random.randint(0, len(X_train), (batch_size,))
-        X_train_batch = X_train[batch_index]
-        Y_train_batch = Y_train[batch_index]
+        batch_index = np.random.randint(0, len(x_train), (batch_size,))
+        x_train_batch = x_train[batch_index]
+        y_train_batch = y_train[batch_index]
         weights, bias, _, _ = opt.step(
-            cost, weights, bias, X_train_batch, Y_train_batch
+            cost, weights, bias, x_train_batch, y_train_batch
         )
 
         # Compute predictions on train and validation set
         predictions_train = [
-            np.sign(variational_classifier(weights, bias, x)) for x in X_train
+            np.sign(variational_classifier(weights, bias, x)) for x in x_train
         ]
         predictions_val = [
-            np.sign(variational_classifier(weights, bias, x)) for x in X_val
+            np.sign(variational_classifier(weights, bias, x)) for x in x_val
         ]
 
-        # Compute accuracy on train and validation set
-        acc_train = accuracy(Y_train, predictions_train)
-        acc_val = accuracy(Y_val, predictions_val)
+        # Compute accuracy on validation set
+        acc_val = accuracy(y_val, predictions_val)
         if acc_val >= best_acc_val:
             best_weights, best_bias = weights, bias
-
-        print(
-            "Epoch: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc val: {:0.7f}"
-            "".format(epoch + 1, cost(weights, bias, features, Y), acc_train, acc_val)
-        )
 
     return best_weights, best_bias
 
 
-def binary_classification_pennylane():
-    weights, bias = train(X_train, Y_train)
-    Y_pred = [np.sign(variational_classifier(weights, bias, x)) for x in X_test]
-    return f1_score(Y_test, Y_pred)
+def binary_classification_pennylane(
+    x_train: np.ndarray,
+    x_val: np.ndarray,
+    x_test: np.ndarray,
+    y_train: np.ndarray,
+    y_val: np.ndarray,
+    y_test: np.ndarray,
+):
+    weights, bias = train(x_train, x_val, y_train, y_val)
+    y_pred = [np.sign(variational_classifier(weights, bias, x)) for x in x_test]
+    return f1_score(y_test, y_pred)
