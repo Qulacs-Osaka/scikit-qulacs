@@ -73,3 +73,11 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+# Some cells which requires longer time to finish raises `KeyboardInterrupt`.
+# They are seemed to be interrupted by Sphinx.
+# It is troublesome to annotate cells which spends more time, so turn off
+# execution of jupyter notebook on documentation build.
+# There is no problem for now because every notebook embedded in documetation
+# is executed once at local environment and the result is committed.
+jupyter_execute_notebooks = "off"
