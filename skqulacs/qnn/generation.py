@@ -94,6 +94,8 @@ class QNNGeneretor(QNN):
             vel = 0
             theta_now = theta_init
             # print(train_scaled)
+            if maxiter is None:
+                maxiter = 50
             for iter in range(0, maxiter):
                 grad = self._cost_func_grad(theta_now, train_scaled)
 
