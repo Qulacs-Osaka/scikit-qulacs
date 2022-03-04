@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from math import exp, sqrt
-from typing import Optional
+from typing import Literal, Optional
 
 import numpy as np
 from qulacs import Observable, QuantumState
@@ -10,7 +10,6 @@ from scipy.optimize import minimize
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
-from skqulacs.typing import Literal
 
 
 class QNNGeneretor(QNN):

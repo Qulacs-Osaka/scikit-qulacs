@@ -19,7 +19,6 @@ def test_mix_gauss_mini():
     prob_list[1] = 0.2
     prob_list[2] = 0.3
     prob_list[3] = 0.4
-    
 
     maxiter = 5
     qnn.fit_direct_distribution(prob_list, maxiter)
