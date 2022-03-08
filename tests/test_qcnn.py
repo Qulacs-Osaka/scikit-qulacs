@@ -26,8 +26,12 @@ def generate_data(bits: int, random_seed: int = 0):
     train_labels = labels[:split_ind]
     test_labels = labels[split_ind:]
 
-    return train_excitations, np.array(train_labels), \
-        test_excitations, np.array(test_labels)
+    return (
+        train_excitations,
+        np.array(train_labels),
+        test_excitations,
+        np.array(test_labels),
+    )
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [("Adam", 20)])
@@ -43,7 +47,7 @@ def test_qcnn(solver: str, maxiter: int):
     qcl.fit(x_train, y_train, maxiter)
     y_pred = qcl.predict(x_test)
     score = f1_score(y_test, y_pred, average="weighted")
-    #print("score:", score)
+    # print("score:", score)
     assert score > 0.9
     return x_test, y_test, y_pred
 
