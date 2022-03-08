@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "scikit-qulacs is a library for quantum neural network. This library is based on qulacs and named after scikit-learn."
 authors = [""]
 license = "MIT"
+readme = "./README.md"
+repository = "https://github.com/Qulacs-Osaka/scikit-qulacs"
+homepage = "https://github.com/Qulacs-Osaka/scikit-qulacs"
 documentation = "https://qulacs-osaka.github.io/scikit-qulacs/index.html"
 classifiers = [
     "Development Status :: 3 - Alpha",
