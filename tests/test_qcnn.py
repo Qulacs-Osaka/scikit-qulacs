@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from sklearn.metrics import f1_score
-from skqulacs.qnn import QNNClassifier
+
 from skqulacs.circuit.pre_defined import create_qcnn_ansatz
-import pytest
+from skqulacs.qnn import QNNClassifier
 
 
 def generate_data(bits: int, random_seed: int = 0):

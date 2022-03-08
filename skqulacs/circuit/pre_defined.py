@@ -87,7 +87,7 @@ def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
         rng = default_rng(seed)
     X_mat = np.array([[0, 1], [1, 0]])
     Z_mat = np.array([[1, 0], [0, -1]])
-    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+    ham = np.zeros((2**n_qubit, 2**n_qubit), dtype=complex)
     for i in range(n_qubit):
         Jx = rng.uniform(-1.0, 1.0)
         ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)
@@ -437,9 +437,7 @@ def create_yzcx_ansatz(
     return circuit
 
 
-def create_qcnn_ansatz(
-    n_qubit: int, seed: int = 0
-) -> LearningCircuit:
+def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
     """
     Creates circuit used in https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en, Section 1.
     Args:
@@ -465,7 +463,9 @@ def create_qcnn_ansatz(
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_RZ_gate(index, angle)
 
-    def two_qubit_unitary(circuit: LearningCircuit, target: List[int], pauli_ids: List[int]):
+    def two_qubit_unitary(
+        circuit: LearningCircuit, target: List[int], pauli_ids: List[int]
+    ):
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_multi_Pauli_rotation_gate(target, pauli_ids, angle)
 
@@ -508,7 +508,7 @@ def create_qcnn_ansatz(
         circuit.add_H_gate(i)
     for this_bit in range(n_qubit):
         next_bit = this_bit + 1 if this_bit < n_qubit - 1 else 0
-        #print(f"this_bit: {this_bit} next_bit: {next_bit}")
+        # print(f"this_bit: {this_bit} next_bit: {next_bit}")
         circuit.add_CNOT_gate(this_bit, next_bit)
         circuit.add_Z_gate(next_bit)
 
