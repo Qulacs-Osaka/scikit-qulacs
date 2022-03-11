@@ -4,18 +4,6 @@ from typing import List, Optional, Tuple
 import numpy as np
 
 
-def _get_x_scale_param(x):
-    minimum = np.min(x, axis=0)
-    maximum = np.max(x, axis=0)
-    sa = (maximum - minimum) / 2
-    return [minimum, maximum, sa]
-
-
-def _min_max_scaling(x: List[List[float]], scale_x_param):
-    """Normalize between [-1, 1]."""
-    return [((xa - scale_x_param[0]) / scale_x_param[2]) - 1 for xa in x]
-
-
 class QNN(ABC):
     @abstractmethod
     def fit(

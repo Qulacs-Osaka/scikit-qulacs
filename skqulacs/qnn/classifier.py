@@ -5,10 +5,11 @@ from typing import List, Optional
 import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
+from skqulacs.qnn.qnnbase import QNN
 
 
 class QNNClassifier(QNN):
@@ -37,6 +38,7 @@ class QNNClassifier(QNN):
         solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
+        x_norm_range=1.0,
         y_exp_ratio=5.0,
         callback=None,
     ) -> None:
@@ -59,6 +61,7 @@ class QNNClassifier(QNN):
         self.solver = solver
         self.cost = cost
         self.do_x_scale = do_x_scale
+        self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
         self.callback = callback
         self.scale_x_param = []
@@ -81,15 +84,25 @@ class QNNClassifier(QNN):
         :return: Loss after learning.
         :return: Parameter theta after learning.
         """
-        self.scale_x_param = _get_x_scale_param(x_train)
+
+        if y_train.ndim == 1:
+            y_train = y_train.reshape((-1, 1))
+        self.enc = OneHotEncoder(sparse=False)
+
+        self.enc.fit(y_train)
+        y_scaled = self.enc.transform(y_train)
         self.scale_y_param = self.get_y_scale_param(y_train)
 
+        if x_train.ndim == 1:
+            x_train = x_train.reshape((-1, 1))
+
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+            self.scale_x_scaler = MinMaxScaler(
+                feature_range=(-self.x_norm_range, self.x_norm_range)
+            )
+            x_scaled = self.scale_x_scaler.fit_transform(x_train)
         else:
             x_scaled = x_train
-
-        y_scaled = self.do_y_scale(y_train)
 
         # TODO: Extract solvers if the same one is used for classifier and regressor.
         theta_init = self.circuit.get_parameters()
@@ -156,8 +169,11 @@ class QNNClassifier(QNN):
         Returns:
             y_pred: Predicted outcome.
         """
+        x_test = np.array(x_test)
+        if x_test.ndim == 1:
+            x_test = x_test.reshape((-1, 1))
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+            x_scaled = self.scale_x_scaler.transform(x_test)
         else:
             x_scaled = x_test
 
@@ -203,33 +219,20 @@ class QNNClassifier(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    # TODO: Extract following scaling operation as other class to change several scaling method.
     def get_y_scale_param(self, y):
-        # Hold `y`'s maximum value.
-        syurui = np.max(y, axis=0)
-        syurui = syurui.astype(int)
-        syurui = syurui + 1
-        if not isinstance(syurui, np.ndarray):
-            eee = syurui
-            syurui = np.zeros(1, dtype=int)
-            syurui[0] = eee
-        rui = np.concatenate((np.zeros(1, dtype=int), syurui.cumsum()))
-        return [syurui, rui]
+        # 種類数の配列と、　その累積和を取得します。
+        syurui = []
+        syurui_rui = [0]
+        genkaz = 0
+        for aaa in self.enc.categories_:
+            syurui.append(len(aaa))
+            genkaz += len(aaa)
+            syurui_rui.append(genkaz)
 
-    def do_y_scale(self, y):
-        # Represent y as one-hot vector.
-        # And handle multiple inputs.
-        clsnum = int(self.scale_y_param[1][-1])
-        res = np.zeros((len(y), clsnum), dtype=int)
-        for i in range(len(y)):
-            if y.ndim == 1:
-                res[i][y[i]] = 1
-            else:
-                for j in range(len(y[i])):
-                    res[i][y[i][j] + self.scale_y_param[1][j]] = 1
-        return res
+        return [syurui, syurui_rui]
 
     def rev_y_scale(self, y_inr):
+        # scikitのone-hotを使っても、　種類ごとにmaxの要素を検出してくれるわけではないので、ここはそのままです。
         res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
         for i in range(len(y_inr)):
             for j in range(len(self.scale_y_param[0])):
