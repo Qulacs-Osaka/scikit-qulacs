@@ -1,5 +1,33 @@
 {
-  "extends": [
-    "config:base"
-  ]
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base",
+        "schedule:nonOfficeHours",
+        ":prHourlyLimitNone",
+        ":automergeBranch"
+    ],
+    "timezone": "Asia/Tokyo",
+    "labels": [
+        "dependencies"
+    ],
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "major": {
+        "stabilityDays": 7
+    },
+    "minor": {
+        "stabilityDays": 4
+    },
+    "patch": {
+        "stabilityDays": 2
+    },
+    "packageRules": [
+        {
+            "matchDepTypes": [
+                "devDependencies"
+            ],
+            "rangeStrategy": "pin"
+        }
+    ]
 }
