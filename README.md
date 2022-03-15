@@ -14,7 +14,7 @@ pip install skqulacs
 ```
 
 ### Build from Source
-Install [poetry] before building package.
+Install [poetry](https://python-poetry.org/docs/) before building package.
 ```bash
 git clone https://github.com/Qulacs-Osaka/scikit-qulacs.git
 cd scikit-qulacs
