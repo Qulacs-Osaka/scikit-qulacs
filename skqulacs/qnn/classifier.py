@@ -37,7 +37,7 @@ class QNNClassifier(QNN):
         solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
-        y_exp_ratio=5.0,
+        y_exp_ratio=2.2,
         callback=None,
     ) -> None:
         """
@@ -194,8 +194,6 @@ class QNNClassifier(QNN):
             for i in range(len(ysf)):
                 if ysf[i] == 1:
                     cost -= np.log(ypf[i])
-                else:
-                    cost -= np.log(1 - ypf[i])
             cost /= len(ysf)
             return cost
         else:
@@ -234,7 +232,7 @@ class QNNClassifier(QNN):
         for i in range(len(y_inr)):
             for j in range(len(self.scale_y_param[0])):
                 hid = self.scale_y_param[1][j]
-                sai = -9999
+                sai = -99998888
                 arg = 0
                 for k in range(self.scale_y_param[0][j]):
                     if sai < y_inr[i][hid + k]:
@@ -256,13 +254,12 @@ class QNNClassifier(QNN):
                     wa += np.exp(self.y_exp_ratio * mto[h][hid + k])
                 for k in range(self.scale_y_param[0][j]):
                     mto[h][hid + k] = np.exp(self.y_exp_ratio * mto[h][hid + k]) / wa
-            backobs = Observable(self.n_qubit)
 
+            backobs = Observable(self.n_qubit)
             for i in range(len(y_scaled[0])):
-                if y_scaled[h][i] == 0:
-                    backobs.add_operator(1.0 / (1.0 - mto[h][i]), f"Z {i}")
-                else:
-                    backobs.add_operator(-1.0 / (mto[h][i]), f"Z {i}")
+                backobs.add_operator(
+                    (mto[h][i] - y_scaled[h][i]) * self.y_exp_ratio, f"Z {i}"
+                )
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
         self.circuit.update_parameters(theta)
