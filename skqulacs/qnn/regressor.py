@@ -28,7 +28,7 @@ class QNNRegressor(QNN):
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
     """
-     
+
     def __init__(
         self,
         circuit: LearningCircuit,

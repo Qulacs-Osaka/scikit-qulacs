@@ -5,7 +5,9 @@ from typing import List, Optional
 import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+from scipy.special import softmax
+from sklearn.metrics import log_loss
+from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
@@ -64,8 +66,6 @@ class QNNClassifier(QNN):
         self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
         self.callback = callback
-        self.scale_x_param = []
-        self.scale_y_param = []
 
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
@@ -85,13 +85,7 @@ class QNNClassifier(QNN):
         :return: Parameter theta after learning.
         """
 
-        if y_train.ndim == 1:
-            y_train = y_train.reshape((-1, 1))
-        self.enc = OneHotEncoder(sparse=False)
-
-        self.enc.fit(y_train)
-        y_scaled = self.enc.transform(y_train)
-        self.scale_y_param = self.get_y_scale_param(y_train)
+        y_scaled = y_train
 
         if x_train.ndim == 1:
             x_train = x_train.reshape((-1, 1))
@@ -177,91 +171,45 @@ class QNNClassifier(QNN):
         else:
             x_scaled = x_test
 
-        y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
+        y_pred = self._predict_inner(x_scaled).argmax(axis=1)
         return y_pred
 
     def _predict_inner(self, x_list):
-        res = []
-        for x in x_list:
-            state = self.circuit.run(x)
-            r = [
-                self.observables[i].get_expectation_value(state)
-                for i in range(self.n_qubit)
-            ]
-            res.append(r)
-        return np.array(res)
+        res = np.zeros((len(x_list), self.num_class))
+        for i in range(len(x_list)):
+            state = self.circuit.run(x_list[i])
+            for j in range(self.num_class):
+                res[i][j] = (
+                    self.observables[j].get_expectation_value(state) * self.y_exp_ratio
+                )
+        return res
 
     # TODO: Extract cost function to outer class to accept other type of ones.
     def cost_func(self, theta, x_scaled, y_scaled):
         if self.cost == "log_loss":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
-            ypf = []
-            for i in range(len(y_pred)):
-                for j in range(len(self.scale_y_param[0])):
-                    hid = self.scale_y_param[1][j]
-                    wa = 0
-                    for k in range(self.scale_y_param[0][j]):
-                        wa += np.exp(self.y_exp_ratio * y_pred[i][hid + k])
-                    for k in range(self.scale_y_param[0][j]):
-                        ypf.append(np.exp(self.y_exp_ratio * y_pred[i][hid + k]) / wa)
-            ysf = y_scaled.ravel()
-            cost = 0
-            for i in range(len(ysf)):
-                if ysf[i] == 1:
-                    cost -= np.log(ypf[i])
-            cost /= len(ysf)
-            return cost
+            y_pred_sm = softmax(y_pred, axis=1)
+            return log_loss(y_scaled, y_pred_sm)
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def get_y_scale_param(self, y):
-        # 種類数の配列と、　その累積和を取得します。
-        syurui = []
-        syurui_rui = [0]
-        genkaz = 0
-        for aaa in self.enc.categories_:
-            syurui.append(len(aaa))
-            genkaz += len(aaa)
-            syurui_rui.append(genkaz)
-
-        return [syurui, syurui_rui]
-
-    def rev_y_scale(self, y_inr):
-        # scikitのone-hotを使っても、　種類ごとにmaxの要素を検出してくれるわけではないので、ここはそのままです。
-        res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
-        for i in range(len(y_inr)):
-            for j in range(len(self.scale_y_param[0])):
-                hid = self.scale_y_param[1][j]
-                sai = -99998888
-                arg = 0
-                for k in range(self.scale_y_param[0][j]):
-                    if sai < y_inr[i][hid + k]:
-                        sai = y_inr[i][hid + k]
-                        arg = k
-                res[i][j] = arg
-        return res
-
     def _cost_func_grad(self, theta, x_scaled, y_scaled):
         self.circuit.update_parameters(theta)
 
-        mto = self._predict_inner(x_scaled).copy()
+        y_pred = self._predict_inner(x_scaled)
+        y_pred_sm = softmax(y_pred, axis=1)
         grad = np.zeros(len(theta))
         for h in range(len(x_scaled)):
-            for j in range(len(self.scale_y_param[0])):
-                hid = self.scale_y_param[1][j]
-                wa = 0
-                for k in range(self.scale_y_param[0][j]):
-                    wa += np.exp(self.y_exp_ratio * mto[h][hid + k])
-                for k in range(self.scale_y_param[0][j]):
-                    mto[h][hid + k] = np.exp(self.y_exp_ratio * mto[h][hid + k]) / wa
-
             backobs = Observable(self.n_qubit)
-            for i in range(len(y_scaled[0])):
+            for i in range(self.num_class):
+                aaa = 0.0
+                if i == y_scaled[h]:
+                    aaa = 1.0
                 backobs.add_operator(
-                    (mto[h][i] - y_scaled[h][i]) * self.y_exp_ratio, f"Z {i}"
+                    (-aaa + y_pred_sm[h][i]) * self.y_exp_ratio, f"Z {i}"
                 )
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
