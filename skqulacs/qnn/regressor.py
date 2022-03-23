@@ -28,7 +28,7 @@ class QNNRegressor(QNN):
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
     """
-
+     
     def __init__(
         self,
         circuit: LearningCircuit,
@@ -48,6 +48,8 @@ class QNNRegressor(QNN):
         :param do_x_scale: Whether to scale y.
         :param y_norm_range: Normalize y in [+-y_norm_range].
         :param callback: Callback function. Available only with Adam.
+
+        Setting y_norm_range to 0.7 improves performance.
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
