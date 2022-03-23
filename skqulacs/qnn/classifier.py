@@ -39,6 +39,8 @@ class QNNClassifier(QNN):
         do_x_scale: bool = True,
         y_exp_ratio=5.0,
         callback=None,
+        tol=1e-4,
+        n_iter_no_change=999999,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
@@ -63,7 +65,8 @@ class QNNClassifier(QNN):
         self.callback = callback
         self.scale_x_param = []
         self.scale_y_param = []
-
+        self.tol = tol
+        self.n_iter_no_change = n_iter_no_change
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
@@ -127,6 +130,9 @@ class QNNClassifier(QNN):
             vel = 0
             theta_now = theta_init
             maxiter *= len(x_train)
+            prev_cost = self.cost_func(theta_now, x_scaled, y_scaled)
+
+            nochan = 0
             for iter in range(0, maxiter, 5):
                 grad = self._cost_func_grad(
                     theta_now,
@@ -138,8 +144,17 @@ class QNNClassifier(QNN):
                 Bix = Bix * pr_Bi + (1 - pr_Bi)
                 Btx = Btx * pr_Bt + (1 - pr_Bt)
                 theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if self.callback is not None:
-                    self.callback(theta_now)
+                if (self.n_iter_no_change < 999999) and (iter % len(x_scaled) < 5):
+                    if self.callback is not None:
+                        self.callback(theta_now)
+                    now_cost = self.cost_func(theta_now, x_scaled, y_scaled)
+                    if prev_cost - self.tol < now_cost:
+                        nochan = nochan + 1
+                        if nochan >= self.n_iter_no_change:
+                            break
+                    else:
+                        nochan = 0
+                    prev_cost = now_cost
 
             loss = self.cost_func(theta_now, x_train, y_train)
             theta_opt = theta_now
