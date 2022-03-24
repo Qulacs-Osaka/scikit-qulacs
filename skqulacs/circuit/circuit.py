@@ -20,21 +20,21 @@ InputFuncWithParam = Callable[[float, List[float]], float]
 
 @dataclass
 class _Parameter:
-    """Manage a parameter of ParametricQuantumCircuit.
-    This class manages index and value of parameter, which is a little complicated.
-    There is two member variables: pos and theta_pos.
-    pos is an index of ParametricQuantumCircuit.
-    And theta_pos is an index of learning parameters.
-    This is used by method of LearningCircuit which has "parametric" in its name.
+    """Manage a parameter of `ParametricQuantumCircuit`.
+    This class manages index and value of parameter.
+    There is two member variables representing index: `pos` and `theta_pos`.
+    `pos` is an index of `ParametricQuantumCircuit`.
+    And `theta_pos` is an index of a whole set of learning parameters.
+    This is used by method of `LearningCircuit` which has "parametric" in its name.
 
-    Example of a relationship between pos and theta_pos is following:
-    [(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]
-    Here "-" means absence.
+    Example of a relationship between `pos` and `theta_pos` is following:
+    `[(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]`
+    Here `-` means absence.
 
     Args:
-        pos: Index at LearningCircuit._circuit.
-        theta_pos: Index at array of theta which are learning parameters.
-        value: Current pos-th parameter of LearningCircuit._circuit.
+        pos: Index of a parameter at LearningCircuit._circuit.
+        theta_pos: Index at array of learning parameter(theta).
+        value: Current `pos`-th parameter of LearningCircuit._circuit.
         func: Transforming function for input gate.
     """
 
@@ -63,6 +63,28 @@ class _Parameter:
 
 class LearningCircuit:
     """Construct and run quantum circuit for QNN.
+
+    ## About parameters
+
+    This class manages parameters of underlying `ParametricQuantumCircuit`.
+    A parameter has either type of features: learning and input.
+
+    Learning parameter represents a parameter to be optimized.
+    This is updated by `LearningCircuit.update_parameter()`.
+
+    Input parameter represents a placeholder of circuit input.
+    This is updated in a execution of `LearningCircuit.run()` while applying `func` of the parameter.
+
+    And there is a parameter being both learning and input one.
+    This parameter transforms its input by applying the parameter's `func` with its learning parameter.
+
+    ## Execution flow
+
+    1. Set up gates by `LearningCircuit.add_*_gate()`.
+    2. For each execution, at first, feed input parameter with the value computed from input data `x`.
+    3. Apply |0> state to the circuit.
+    4. Compute optimized learning parameters in a certain way.
+    5. Update the learning parameters in the circuit with the optimized ones by `LearningCircuit.update_parameters()`.
 
     Args:
         n_qubit: The number of qubits in the circuit.
@@ -99,7 +121,7 @@ class LearningCircuit:
             if parameter.is_learning_parameter():
                 parameter.value = theta[parameter.theta_pos]
                 if not parameter.is_input():
-                    # For non-input parameter, just update.
+                    # Update non-input parameter; input parameter is updated in `_set_input()`.
                     self._circuit.set_parameter(
                         parameter.pos, theta[parameter.theta_pos]
                     )
@@ -111,16 +133,16 @@ class LearningCircuit:
         ]
         return theta_list
 
-    def _set_input(self, x_list: List[float]) -> None:
+    def _set_input(self, x: List[float]) -> None:
         for parameter in self._parameter_list:
             if parameter.is_input():
                 # Input parameter is updated here, not update_parameters(),
-                # because input parameter is determined with input data x.
-                angle = parameter.calculate_angle(x_list)
+                # because input parameter is determined with the input data `x`.
+                angle = parameter.calculate_angle(x)
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
 
-    def run(self, x_list: List[float] = list()) -> QuantumState:
+    def run(self, x: List[float] = list()) -> QuantumState:
         """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
 
         Arguments:
@@ -131,13 +153,13 @@ class LearningCircuit:
         """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
-        self._set_input(x_list)
+        self._set_input(x)
         self._circuit.update_quantum_state(state)
         return state
 
     def run_x_no_change(self) -> QuantumState:
         """
-        run. but x is not changed from prev run.
+        Run the circuit while x is not changed from the previous run.
         (can change parameters)
         """
         state = QuantumState(self.n_qubit)
@@ -147,8 +169,6 @@ class LearningCircuit:
 
     def backprop(self, x: List[float], obs) -> List[float]:
         """
-        backprop(self, x: List[float],y:Observbavle)->List[Float]
-
         xは入力の状態で、yは出力値の微分値
         帰ってくるのは、それぞれのパラメータに関する微分値
         例えば、出力が[0,2]
