@@ -111,16 +111,16 @@ class LearningCircuit:
         ]
         return theta_list
 
-    def _set_input(self, x: List[float]):
+    def _set_input(self, x_list: List[float]) -> None:
         for parameter in self._parameter_list:
             if parameter.is_input():
                 # Input parameter is updated here, not update_parameters(),
                 # because input parameter is determined with input data x.
-                angle = parameter.calculate_angle(x)
+                angle = parameter.calculate_angle(x_list)
                 parameter.value = angle
                 self._circuit.set_parameter(parameter.pos, angle)
 
-    def run(self, x: List[float] = list()) -> QuantumState:
+    def run(self, x_list: List[float] = list()) -> QuantumState:
         """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
 
         Arguments:
@@ -131,7 +131,7 @@ class LearningCircuit:
         """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
-        self._set_input(x)
+        self._set_input(x_list)
         self._circuit.update_quantum_state(state)
         return state
 
@@ -170,7 +170,7 @@ class LearningCircuit:
 
         return ans
 
-    def add_gate(self, gate):
+    def add_gate(self, gate) -> None:
         """Add arbitrary gate.
 
         Args:
@@ -178,28 +178,28 @@ class LearningCircuit:
         """
         self._circuit.add_gate(gate)
 
-    def add_X_gate(self, index: int):
+    def add_X_gate(self, index: int) -> None:
         """
         Args:
             index: Index of qubit to add X gate.
         """
         self._circuit.add_X_gate(index)
 
-    def add_Y_gate(self, index: int):
+    def add_Y_gate(self, index: int) -> None:
         """
         Args:
             index: Index of qubit to add Y gate.
         """
         self._circuit.add_Y_gate(index)
 
-    def add_Z_gate(self, index: int):
+    def add_Z_gate(self, index: int) -> None:
         """
         Args:
             index: Index of qubit to add Z gate.
         """
         self._circuit.add_Z_gate(index)
 
-    def add_RX_gate(self, index: int, angle: float):
+    def add_RX_gate(self, index: int, angle: float) -> None:
         """
         Args:
             index: Index of qubit to add RX gate.
@@ -207,7 +207,7 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, angle, _Axis.X)
 
-    def add_RY_gate(self, index: int, parameter: float):
+    def add_RY_gate(self, index: int, parameter: float) -> None:
         """
         Args:
             index: Index of qubit to add RY gate.
@@ -215,7 +215,7 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, parameter, _Axis.Y)
 
-    def add_RZ_gate(self, index: int, parameter: float):
+    def add_RZ_gate(self, index: int, parameter: float) -> None:
         """
         Args:
             index: Index of qubit to add RZ gate.
@@ -223,7 +223,7 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, parameter, _Axis.Z)
 
-    def add_CNOT_gate(self, indexA: int, indexB: int):
+    def add_CNOT_gate(self, indexA: int, indexB: int) -> None:
         """
         Args:
             indexA: Index of qubit to CNOT gate.
@@ -231,7 +231,7 @@ class LearningCircuit:
         """
         self._circuit.add_CNOT_gate(indexA, indexB)
 
-    def add_H_gate(self, index: int):
+    def add_H_gate(self, index: int) -> None:
         """
         Args:
             index: Index of qubit to H gate.
@@ -242,7 +242,7 @@ class LearningCircuit:
         self,
         index: int,
         input_func: InputFunc = lambda x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RX gate.
@@ -254,7 +254,7 @@ class LearningCircuit:
         self,
         index: int,
         input_func: InputFunc = lambda x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RY gate.
@@ -266,7 +266,7 @@ class LearningCircuit:
         self,
         index: int,
         input_func: InputFunc = lambda x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RZ gate.
@@ -274,7 +274,7 @@ class LearningCircuit:
         """
         self._add_input_R_gate_inner(index, _Axis.Z, input_func)
 
-    def add_parametric_RX_gate(self, index: int, parameter: float):
+    def add_parametric_RX_gate(self, index: int, parameter: float) -> None:
         """
         Args:
             index: Index of qubit to add RX gate.
@@ -282,7 +282,7 @@ class LearningCircuit:
         """
         self._add_parametric_R_gate_inner(index, parameter, _Axis.X)
 
-    def add_parametric_RY_gate(self, index: int, parameter: float):
+    def add_parametric_RY_gate(self, index: int, parameter: float) -> None:
         """
         Args:
             index: Index of qubit to add RY gate.
@@ -290,7 +290,7 @@ class LearningCircuit:
         """
         self._add_parametric_R_gate_inner(index, parameter, _Axis.Y)
 
-    def add_parametric_RZ_gate(self, index: int, parameter: float):
+    def add_parametric_RZ_gate(self, index: int, parameter: float) -> None:
         """
         Args:
             index: Index of qubit to add RZ gate.
@@ -303,7 +303,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         input_func: InputFuncWithParam = lambda theta, x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RX gate.
@@ -317,7 +317,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         input_func: InputFuncWithParam = lambda theta, x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RY gate.
@@ -331,7 +331,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         input_func: InputFuncWithParam = lambda theta, x: x[0],
-    ):
+    ) -> None:
         """
         Args:
             index: Index of qubit to add RZ gate.
@@ -345,7 +345,7 @@ class LearningCircuit:
         index: int,
         angle: Optional[float],
         target: _Axis,
-    ):
+    ) -> None:
         if target == _Axis.X:
             self._circuit.add_RX_gate(index, angle)
         elif target == _Axis.Y:
@@ -360,7 +360,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         target: _Axis,
-    ):
+    ) -> None:
         self._parameter_list.append(
             _Parameter(
                 self._circuit.get_parameter_count(),
@@ -384,7 +384,7 @@ class LearningCircuit:
         index: int,
         target: _Axis,
         input_func: InputFunc,
-    ):
+    ) -> None:
         self._parameter_list.append(
             _Parameter(self._circuit.get_parameter_count(), None, None, input_func)
         )
@@ -406,7 +406,7 @@ class LearningCircuit:
         parameter: float,
         target: _Axis,
         input_func: InputFuncWithParam,
-    ):
+    ) -> None:
         self._parameter_list.append(
             _Parameter(
                 self._circuit.get_parameter_count(),
