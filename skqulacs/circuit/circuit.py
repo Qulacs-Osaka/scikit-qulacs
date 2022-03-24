@@ -127,6 +127,7 @@ class LearningCircuit:
             # Input parameter is updated here, not update_parameters(),
             # because input parameter is determined with the input data `x`.
             if parameter.companion_theta_pos is None:
+                # If `companion_theta_pos` is `None`, `func` does not need a learning parameter.
                 angle = parameter.func(x)
             else:
                 theta = self._learning_parameter_list[parameter.companion_theta_pos]
@@ -138,7 +139,7 @@ class LearningCircuit:
         """Determine parameters for input gate based on `x` and apply the circuit to |0> state.
 
         Arguments:
-            x: Input data whose shape is (n_features).
+            x: Input data whose shape is (n_features,).
 
         Returns:
             Quantum state applied the circuit.
@@ -420,10 +421,7 @@ class LearningCircuit:
         pos = self._circuit.get_parameter_count()
 
         learning_parameter = _LearningParameter(
-            pos,
-            len(self._learning_parameter_list),
-            parameter,
-            True
+            pos, len(self._learning_parameter_list), parameter, True
         )
         self._learning_parameter_list.append(learning_parameter)
 
