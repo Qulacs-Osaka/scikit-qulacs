@@ -46,7 +46,7 @@ class QNNClassifier(QNN):
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
-        :param num_class: The number of classes; the number of qubits to measure.
+        :param num_class: The number of classes; the number of qubits to measure. must be n_qubits >= num_class .
         :param solver: Solver to use(Nelder-Mead is not recommended).
         :param cost: Cost function. log_loss only for now.
         :param do_x_scale: Whether to scale x.
@@ -202,16 +202,18 @@ class QNNClassifier(QNN):
         y_pred = self._predict_inner(x_scaled)
         y_pred_sm = softmax(y_pred, axis=1)
         grad = np.zeros(len(theta))
-        for h in range(len(x_scaled)):
+        for sample_index in range(len(x_scaled)):
             backobs = Observable(self.n_qubit)
-            for i in range(self.num_class):
-                aaa = 0.0
-                if i == y_scaled[h]:
-                    aaa = 1.0
+            for current_class in range(self.num_class):
+                expected = 0.0
+                if current_class == y_scaled[sample_index]:
+                    expected = 1.0
                 backobs.add_operator(
-                    (-aaa + y_pred_sm[h][i]) * self.y_exp_ratio, f"Z {i}"
+                    (-expected + y_pred_sm[sample_index][current_class])
+                    * self.y_exp_ratio,
+                    f"Z {current_class}",
                 )
-            grad += self.circuit.backprop(x_scaled[h], backobs)
+            grad += self.circuit.backprop(x_scaled[sample_index], backobs)
 
         self.circuit.update_parameters(theta)
         grad /= len(x_scaled)
