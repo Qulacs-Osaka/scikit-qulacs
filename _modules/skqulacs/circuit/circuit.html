@@ -314,50 +314,67 @@
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_Parameter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Manage a parameter of ParametricQuantumCircuit.</span>
-<span class="sd">    This class manages index and value of parameter, which is a little complicated.</span>
-<span class="sd">    There is two member variables: pos and theta_pos.</span>
-<span class="sd">    pos is an index of ParametricQuantumCircuit.</span>
-<span class="sd">    And theta_pos is an index of learning parameters.</span>
-<span class="sd">    This is used by method of LearningCircuit which has &quot;parametric&quot; in its name.</span>
+<span class="k">class</span> <span class="nc">_LearningParameter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit`.</span>
+<span class="sd">    This class manages index and value of parameter.</span>
+<span class="sd">    There is two member variables representing index: `pos` and `theta_pos`.</span>
+<span class="sd">    `pos` is an index of `ParametricQuantumCircuit`.</span>
+<span class="sd">    And `theta_pos` is an index of a whole set of learning parameters.</span>
+<span class="sd">    This is used by method of `LearningCircuit` which has &quot;parametric&quot; in its name.</span>
 
-<span class="sd">    Example of a relationship between pos and theta_pos is following:</span>
-<span class="sd">    [(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]</span>
-<span class="sd">    Here &quot;-&quot; means absence.</span>
+<span class="sd">    Example of a relationship between `pos` and `theta_pos` is following:</span>
+<span class="sd">    `[(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]`</span>
+<span class="sd">    Here `-` means absence.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pos: Index at LearningCircuit._circuit.</span>
-<span class="sd">        theta_pos: Index at array of theta which are learning parameters.</span>
-<span class="sd">        value: Current pos-th parameter of LearningCircuit._circuit.</span>
-<span class="sd">        func: Transforming function for input gate.</span>
+<span class="sd">        pos: Index of a parameter at LearningCircuit._circuit.</span>
+<span class="sd">        theta_pos: Index at array of learning parameter(theta).</span>
+<span class="sd">        value: Current `pos`-th parameter of LearningCircuit._circuit.</span>
+<span class="sd">        is_input: Whethter this parameter is used with a input parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">theta_pos</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
-    <span class="n">func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">InputFunc</span><span class="p">,</span> <span class="n">InputFuncWithParam</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">theta_pos</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">is_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">is_learning_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return if this parameter is for learning.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">_InputParameter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Manage transformation of an input.</span>
+<span class="sd">    `func` transforms the given input and the outcome is stored at `pos`-th parameter in `LearningCircuit._circuit`.</span>
+<span class="sd">    If the `func` needs a learning parameter, supply `companion_theta_pos` with the learning parameter&#39;s `theta_pos`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">calculate_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate angle for rotation gate from input data x.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x: Input data encoded by self.func.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_learning_parameter</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">InputFunc</span><span class="p">,</span> <span class="n">InputFuncWithParam</span><span class="p">]</span>
+    <span class="n">companion_theta_pos</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="LearningCircuit"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit">[docs]</a><span class="k">class</span> <span class="nc">LearningCircuit</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Construct and run quantum circuit for QNN.</span>
+
+<span class="sd">    ## About parameters</span>
+
+<span class="sd">    This class manages parameters of underlying `ParametricQuantumCircuit`.</span>
+<span class="sd">    A parameter has either type of features: learning and input.</span>
+
+<span class="sd">    Learning parameter represents a parameter to be optimized.</span>
+<span class="sd">    This is updated by `LearningCircuit.update_parameter()`.</span>
+
+<span class="sd">    Input parameter represents a placeholder of circuit input.</span>
+<span class="sd">    This is updated in a execution of `LearningCircuit.run()` while applying `func` of the parameter.</span>
+
+<span class="sd">    And there is a parameter being both learning and input one.</span>
+<span class="sd">    This parameter transforms its input by applying the parameter&#39;s `func` with its learning parameter.</span>
+
+<span class="sd">    ## Execution flow</span>
+
+<span class="sd">    1. Set up gates by `LearningCircuit.add_*_gate()`.</span>
+<span class="sd">    2. For each execution, at first, feed input parameter with the value computed from input data `x`.</span>
+<span class="sd">    3. Apply |0&gt; state to the circuit.</span>
+<span class="sd">    4. Compute optimized learning parameters in a certain way.</span>
+<span class="sd">    5. Update the learning parameters in the circuit with the optimized ones by `LearningCircuit.update_parameters()`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: The number of qubits in the circuit.</span>
@@ -381,45 +398,43 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span> <span class="o">=</span> <span class="n">ParametricQuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_LearningParameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_parameter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_InputParameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="LearningCircuit.update_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<div class="viewcode-block" id="LearningCircuit.update_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update learning parameter of the circuit.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            theta: New learning parameter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_learning_parameter</span><span class="p">():</span>
-                <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">]</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
-                    <span class="c1"># For non-input parameter, just update.</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
-                        <span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">theta</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">]</span>
-                    <span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span>
+            <span class="n">parameter_value</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">]</span>
+            <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">parameter_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.get_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get a list of learning parameters.&quot;&quot;&quot;</span>
-        <span class="n">theta_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_learning_parameter</span><span class="p">()</span>
-        <span class="p">]</span>
+        <span class="n">theta_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">theta_list</span></div>
 
-    <span class="k">def</span> <span class="nf">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
-                <span class="c1"># Input parameter is updated here, not update_parameters(),</span>
-                <span class="c1"># because input parameter is determined with input data x.</span>
-                <span class="n">angle</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">calculate_angle</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">angle</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_parameter_list</span><span class="p">:</span>
+            <span class="c1"># Input parameter is updated here, not update_parameters(),</span>
+            <span class="c1"># because input parameter is determined with the input data `x`.</span>
+            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">companion_theta_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># If `companion_theta_pos` is `None`, `func` does not need a learning parameter.</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">companion_theta_pos</span><span class="p">]</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">theta</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">theta</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">angle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LearningCircuit.run"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Determine parameters for input gate based on `x` and apply the circuit to |0&gt; state.</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            x: Input data whose shape is (n_features).</span>
+<span class="sd">            x: Input data whose shape is (n_features,).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Quantum state applied the circuit.</span>
@@ -432,7 +447,7 @@
 
 <div class="viewcode-block" id="LearningCircuit.run_x_no_change"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run_x_no_change">[docs]</a>    <span class="k">def</span> <span class="nf">run_x_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        run. but x is not changed from prev run.</span>
+<span class="sd">        Run the circuit while x is not changed from the previous run.</span>
 <span class="sd">        (can change parameters)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
@@ -442,8 +457,6 @@
 
 <div class="viewcode-block" id="LearningCircuit.backprop"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop">[docs]</a>    <span class="k">def</span> <span class="nf">backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">obs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        backprop(self, x: List[float],y:Observbavle)-&gt;List[Float]</span>
-
 <span class="sd">        xは入力の状態で、yは出力値の微分値</span>
 <span class="sd">        帰ってくるのは、それぞれのパラメータに関する微分値</span>
 <span class="sd">        例えば、出力が[0,2]</span>
@@ -458,14 +471,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span>
-        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_learning_parameter</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">():</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">:</span>
                 <span class="n">ans</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">ans</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add arbitrary gate.</span>
 
 <span class="sd">        Args:</span>
@@ -473,28 +486,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_X_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_X_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_X_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_X_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_X_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_X_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add X gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_X_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_Y_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Y_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Y_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_Y_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Y_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Y_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add Y gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_Y_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_Z_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Z_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Z_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_Z_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Z_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Z_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add Z gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_Z_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RX_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RX_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
@@ -502,7 +515,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RY_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RY_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
@@ -510,7 +523,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RZ_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RZ_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
@@ -518,7 +531,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_CNOT_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_CNOT_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexA</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indexB</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_CNOT_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_CNOT_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexA</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indexB</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            indexA: Index of qubit to CNOT gate.</span>
@@ -526,7 +539,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">indexA</span><span class="p">,</span> <span class="n">indexB</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_H_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_H_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_H_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_H_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_H_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_H_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to H gate.</span>
@@ -537,7 +550,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
@@ -549,7 +562,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
@@ -561,7 +574,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
@@ -569,7 +582,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_input_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">input_func</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_parametric_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RX_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_parametric_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RX_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
@@ -577,7 +590,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_parametric_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RY_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_parametric_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RY_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
@@ -585,7 +598,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.add_parametric_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RZ_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.add_parametric_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RZ_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
@@ -598,7 +611,7 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
@@ -612,7 +625,7 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
@@ -626,7 +639,7 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
@@ -640,7 +653,7 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">angle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_RX_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">:</span>
@@ -655,15 +668,13 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">_Parameter</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span><span class="p">,</span>
-                <span class="n">parameter</span><span class="p">,</span>
-            <span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">learning_parameter</span> <span class="o">=</span> <span class="n">_LearningParameter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">(),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">),</span>
+            <span class="n">parameter</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">learning_parameter</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
@@ -679,9 +690,9 @@
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">_Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">(),</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">input_func</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_InputParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">(),</span> <span class="n">input_func</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Input gate is implemented with parametric gate because this gate should be</span>
@@ -701,16 +712,17 @@
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">_Parameter</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span><span class="p">,</span>
-                <span class="n">parameter</span><span class="p">,</span>
-                <span class="n">input_func</span><span class="p">,</span>
-            <span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
+
+        <span class="n">learning_parameter</span> <span class="o">=</span> <span class="n">_LearningParameter</span><span class="p">(</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">),</span> <span class="n">parameter</span><span class="p">,</span> <span class="kc">True</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_gate_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">learning_parameter</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_InputParameter</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">input_func</span><span class="p">,</span> <span class="n">learning_parameter</span><span class="o">.</span><span class="n">theta_pos</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
