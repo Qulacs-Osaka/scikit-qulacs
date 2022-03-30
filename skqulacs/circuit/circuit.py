@@ -178,7 +178,7 @@ class LearningCircuit:
         """
         self._set_input(x)
         ret = self._circuit.backprop(obs)
-        ans = [0] * len(self._learning_parameter_list)
+        ans = [0.0] * len(self._learning_parameter_list)
         for parameter in self._learning_parameter_list:
             if not parameter.is_input:
                 for pos in parameter.positions_in_circuit:
@@ -303,6 +303,10 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+
+        Returns:
+            parameter_id which is added or updated.
         """
         return self._add_parametric_R_gate_inner(index, parameter, _Axis.X, share_with)
 
@@ -311,8 +315,12 @@ class LearningCircuit:
     ) -> int:
         """
         Args:
-            index: Index of qubit to add RY gate.
+            index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+
+        Returns:
+            parameter_id which is added or updated.
         """
         return self._add_parametric_R_gate_inner(index, parameter, _Axis.Y, share_with)
 
@@ -321,8 +329,12 @@ class LearningCircuit:
     ) -> int:
         """
         Args:
-            index: Index of qubit to add RZ gate.
+            index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+
+        Returns:
+            parameter_id which is added or updated.
         """
         return self._add_parametric_R_gate_inner(index, parameter, _Axis.Z, share_with)
 
