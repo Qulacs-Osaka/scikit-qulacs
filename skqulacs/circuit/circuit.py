@@ -318,7 +318,7 @@ class LearningCircuit:
     ) -> int:
         """
         Args:
-            index: Index of qubit to add RX gate.
+            index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
 
@@ -332,7 +332,7 @@ class LearningCircuit:
     ) -> int:
         """
         Args:
-            index: Index of qubit to add RX gate.
+            index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
 
