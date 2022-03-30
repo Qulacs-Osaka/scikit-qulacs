@@ -13,7 +13,9 @@ class _Axis(Enum):
     Z = auto()
 
 
-InputFunc = Callable[[List[float]], float]  # Depends on x
+# Depends on x
+InputFunc = Callable[[List[float]], float]
+
 # Depends on theta, x
 InputFuncWithParam = Callable[[float, List[float]], float]
 
@@ -90,7 +92,8 @@ class LearningCircuit:
         >>> from skqulacs.qnn.regressor import QNNRegressor
         >>> n_qubit = 2
         >>> circuit = LearningCircuit(n_qubit)
-        >>> circuit.add_parametric_RX_gate(0, 0.5)
+        >>> theta = circuit.add_parametric_RX_gate(0, 0.5)
+        >>> circuit.add_parametric_RY_gate(1, 0.1, share_with=theta)
         >>> circuit.add_input_RZ_gate(1, np.arcsin)
         >>> model = QNNRegressor(circuit)
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
@@ -108,10 +111,10 @@ class LearningCircuit:
         self._input_parameter_list: List[_InputParameter] = []
 
     def update_parameters(self, theta: List[float]) -> None:
-        """Update learning parameter of the circuit.
+        """Update learning parameter of the circuit with given `theta`.
 
         Args:
-            theta: New learning parameter.
+            theta: New learning parameters.
         """
         for parameter in self._learning_parameter_list:
             parameter_value = theta[parameter.parameter_id]
@@ -120,7 +123,7 @@ class LearningCircuit:
                 self._circuit.set_parameter(pos, parameter_value)
 
     def get_parameters(self) -> List[float]:
-        """Get a list of learning parameters."""
+        """Get a list of learning parameters' values."""
         theta_list = [p.value for p in self._learning_parameter_list]
         return theta_list
 
@@ -187,7 +190,7 @@ class LearningCircuit:
         return ans
 
     def _new_parameter_position(self) -> int:
-        """Return a position of a new parameter in `ParametricQuantumCircuit`.
+        """Return a position of a new parameter to be registered to `ParametricQuantumCircuit`.
         This function does not actually register a new parameter.
         """
         return self._circuit.get_parameter_count()
@@ -245,18 +248,18 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, parameter, _Axis.Z)
 
-    def add_CNOT_gate(self, indexA: int, indexB: int) -> None:
+    def add_CNOT_gate(self, control_index: int, target_index: int) -> None:
         """
         Args:
-            indexA: Index of qubit to CNOT gate.
-            indexB: Index of qubit to CNOT gate.
+            control_index: Index of control qubit.
+            target_index: Index of target qubit.
         """
-        self._circuit.add_CNOT_gate(indexA, indexB)
+        self._circuit.add_CNOT_gate(control_index, target_index)
 
     def add_H_gate(self, index: int) -> None:
         """
         Args:
-            index: Index of qubit to H gate.
+            index: Index of qubit to put H gate.
         """
         self._circuit.add_H_gate(index)
 
@@ -268,7 +271,7 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RX gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.X, input_func)
 
@@ -280,7 +283,7 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RY gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.Y, input_func)
 
@@ -292,7 +295,7 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RZ gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.Z, input_func)
 
@@ -348,7 +351,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.X, input_func)
 
@@ -362,7 +365,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Y, input_func)
 
@@ -376,7 +379,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Z, input_func)
 
