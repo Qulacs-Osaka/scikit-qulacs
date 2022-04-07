@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>skqulacs.circuit.circuit module &#8212; scikit-qulacs  documentation</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -18,16 +19,13 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -37,8 +35,8 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="skqulacs.circuit.pre_defined module" href="skqulacs.circuit.pre_defined.html" />
@@ -50,7 +48,21 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -59,14 +71,10 @@
     <div class="container-xl">
       <div class="row">
           
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
       
@@ -217,87 +225,136 @@
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
-<div class="sbt-scroll-pixel-helper"></div>
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
-            <div class="topbar-left">
-                
-                <label class="nav-toggle-button" for="__navigation">
-                    <div class="visually-hidden">Toggle navigation</div>
-                    <i class="fas fa-bars"></i>
-                </label>
-                
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
             </div>
             
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/skqulacs.circuit.circuit.rst.txt"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.rst</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/Qulacs-Osaka/scikit-qulacs"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
         </div>
     </div>
+    <div id="rtd-footer-container"></div>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/Qulacs-Osaka/scikit-qulacs"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/skqulacs.circuit.circuit.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>skqulacs.circuit.circuit module</h1>
@@ -308,14 +365,15 @@
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
   <div class="section" id="module-skqulacs.circuit.circuit">
-<span id="skqulacs-circuit-circuit-module"></span><h1>skqulacs.circuit.circuit module<a class="headerlink" href="#module-skqulacs.circuit.circuit" title="Permalink to this headline">¶</a></h1>
+<span id="skqulacs-circuit-circuit-module"></span><h1>skqulacs.circuit.circuit module<a class="headerlink" href="#module-skqulacs.circuit.circuit" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.circuit.</span></span><span class="sig-name descname"><span class="pre">LearningCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.circuit.</span></span><span class="sig-name descname"><span class="pre">LearningCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct and run quantum circuit for QNN.</p>
 <p>## About parameters</p>
@@ -355,7 +413,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate">
-<span class="sig-name descname"><span class="pre">add_CNOT_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexB</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_CNOT_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_CNOT_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indexA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexB</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_CNOT_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -368,7 +426,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_H_gate">
-<span class="sig-name descname"><span class="pre">add_H_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_H_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_H_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_H_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_H_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_H_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>index</strong> – Index of qubit to H gate.</p>
@@ -378,7 +436,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_RX_gate">
-<span class="sig-name descname"><span class="pre">add_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RX_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RX_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -391,7 +449,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_RY_gate">
-<span class="sig-name descname"><span class="pre">add_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RY_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RY_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -404,7 +462,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate">
-<span class="sig-name descname"><span class="pre">add_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -417,7 +475,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_X_gate">
-<span class="sig-name descname"><span class="pre">add_X_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_X_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_X_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_X_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_X_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_X_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>index</strong> – Index of qubit to add X gate.</p>
@@ -427,7 +485,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_Y_gate">
-<span class="sig-name descname"><span class="pre">add_Y_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_Y_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_Y_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_Y_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_Y_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_Y_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>index</strong> – Index of qubit to add Y gate.</p>
@@ -437,7 +495,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_Z_gate">
-<span class="sig-name descname"><span class="pre">add_Z_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_Z_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_Z_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_Z_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_Z_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_Z_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>index</strong> – Index of qubit to add Z gate.</p>
@@ -447,7 +505,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_gate">
-<span class="sig-name descname"><span class="pre">add_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_gate" title="Permalink to this definition">#</a></dt>
 <dd><p>Add arbitrary gate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -458,7 +516,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_input_RX_gate">
-<span class="sig-name descname"><span class="pre">add_input_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RX_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_input_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RX_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -471,7 +529,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_input_RY_gate">
-<span class="sig-name descname"><span class="pre">add_input_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RY_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_input_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RY_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -484,7 +542,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_input_RZ_gate">
-<span class="sig-name descname"><span class="pre">add_input_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RZ_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_input_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_input_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_input_RZ_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -497,7 +555,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -510,7 +568,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -523,7 +581,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -536,7 +594,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RX_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_input_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RX_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_input_RX_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RX_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RX_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -550,7 +608,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RY_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_input_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RY_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_input_RY_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RY_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RY_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -564,7 +622,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RZ_gate">
-<span class="sig-name descname"><span class="pre">add_parametric_input_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RZ_gate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_parametric_input_RZ_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index:</span> <span class="pre">int,</span> <span class="pre">parameter:</span> <span class="pre">float,</span> <span class="pre">input_func:</span> <span class="pre">Callable[[float,</span> <span class="pre">List[float]],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">LearningCircuit.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.add_parametric_input_RZ_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RZ_gate" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -578,7 +636,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.backprop">
-<span class="sig-name descname"><span class="pre">backprop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.backprop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.backprop" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">backprop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.backprop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.backprop" title="Permalink to this definition">#</a></dt>
 <dd><p>xは入力の状態で、yは出力値の微分値
 帰ってくるのは、それぞれのパラメータに関する微分値
 例えば、出力が[0,2]
@@ -592,13 +650,13 @@ backprop(GeneralQuantumOperator* obs)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.get_parameters">
-<span class="sig-name descname"><span class="pre">get_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.get_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.get_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.get_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.get_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a list of learning parameters.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qulacs_core.QuantumState</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.run" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qulacs_core.QuantumState</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Determine parameters for input gate based on <cite>x</cite> and apply the circuit to <a href="#id3"><span class="problematic" id="id4">|</span></a>0&gt; state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -612,14 +670,14 @@ backprop(GeneralQuantumOperator* obs)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.run_x_no_change">
-<span class="sig-name descname"><span class="pre">run_x_no_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qulacs_core.QuantumState</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.run_x_no_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.run_x_no_change" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run_x_no_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qulacs_core.QuantumState</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.run_x_no_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.run_x_no_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Run the circuit while x is not changed from the previous run.
 (can change parameters)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.update_parameters">
-<span class="sig-name descname"><span class="pre">update_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.update_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.update_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.update_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.update_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>Update learning parameter of the circuit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -635,9 +693,11 @@ backprop(GeneralQuantumOperator* obs)</p>
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="skqulacs.circuit.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -653,24 +713,28 @@ backprop(GeneralQuantumOperator* obs)</p>
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Qulacs-Osaka<br/>
+  
+      &copy; Copyright 2021, Qulacs-Osaka.<br/>
+</p>
+        </footer>
+    </div>
     
-      By Qulacs-Osaka<br/>
-    
-        &copy; Copyright 2021, Qulacs-Osaka.<br/>
-  </p>
-</footer>
-</main>
+</div>
 
 
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>
