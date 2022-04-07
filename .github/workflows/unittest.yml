@@ -45,3 +45,10 @@ jobs:
     - name: Test with pytest
       run: |
         make test
+
+      # CI environment is not stable enough for accurate benchmark, so just check
+      # benchmark works without error.
+    - name: Benchmark
+      if: ${{ github.event_name	== 'pull_request' }}
+      run: |
+        make benchmark

@@ -26,7 +26,6 @@ def test_classify_iris(solver: str, maxiter: int):
     circuit = create_qcl_ansatz(nqubit, c_depth, time_step, 0)
     qcl = QNNClassifier(circuit, num_class, solver)
 
-    for kai in range(maxiter):
-        qcl.fit(x_train, y_train, 1)
-        y_pred = qcl.predict(x_test)
+    qcl.fit(x_train, y_train, maxiter)
+    y_pred = qcl.predict(x_test)
     assert f1_score(y_test, y_pred, average="weighted") > 0.92
