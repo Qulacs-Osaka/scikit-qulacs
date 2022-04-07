@@ -368,6 +368,8 @@ title="Source repository"
         <span class="n">do_x_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">y_exp_ratio</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
         <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">n_iter_no_change</span><span class="o">=</span><span class="mi">999999</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param circuit: Circuit to use in the learning.</span>
@@ -392,7 +394,8 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_param</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_param</span> <span class="o">=</span> <span class="p">[]</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_no_change</span> <span class="o">=</span> <span class="n">n_iter_no_change</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -456,6 +459,9 @@ title="Source repository"
             <span class="n">vel</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">theta_now</span> <span class="o">=</span> <span class="n">theta_init</span>
             <span class="n">maxiter</span> <span class="o">*=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>
+            <span class="n">prev_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_scaled</span><span class="p">,</span> <span class="n">y_scaled</span><span class="p">)</span>
+
+            <span class="n">nochan</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
                 <span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">(</span>
                     <span class="n">theta_now</span><span class="p">,</span>
@@ -467,8 +473,17 @@ title="Source repository"
                 <span class="n">Bix</span> <span class="o">=</span> <span class="n">Bix</span> <span class="o">*</span> <span class="n">pr_Bi</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bi</span><span class="p">)</span>
                 <span class="n">Btx</span> <span class="o">=</span> <span class="n">Btx</span> <span class="o">*</span> <span class="n">pr_Bt</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pr_Bt</span><span class="p">)</span>
                 <span class="n">theta_now</span> <span class="o">-=</span> <span class="n">pr_A</span> <span class="o">/</span> <span class="p">(((</span><span class="n">vel</span> <span class="o">/</span> <span class="n">Btx</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">pr_ips</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">moment</span> <span class="o">/</span> <span class="n">Bix</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">theta_now</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_iter_no_change</span> <span class="o">&lt;</span> <span class="mi">999999</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">iter</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">theta_now</span><span class="p">)</span>
+                    <span class="n">now_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_scaled</span><span class="p">,</span> <span class="n">y_scaled</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">prev_cost</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">&lt;</span> <span class="n">now_cost</span><span class="p">:</span>
+                        <span class="n">nochan</span> <span class="o">=</span> <span class="n">nochan</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">nochan</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_no_change</span><span class="p">:</span>
+                            <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">nochan</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">prev_cost</span> <span class="o">=</span> <span class="n">now_cost</span>
 
             <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">(</span><span class="n">theta_now</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
             <span class="n">theta_opt</span> <span class="o">=</span> <span class="n">theta_now</span>
