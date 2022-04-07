@@ -13,7 +13,9 @@ class _Axis(Enum):
     Z = auto()
 
 
-InputFunc = Callable[[List[float]], float]  # Depends on x
+# Depends on x
+InputFunc = Callable[[List[float]], float]
+
 # Depends on theta, x
 InputFuncWithParam = Callable[[float, List[float]], float]
 
@@ -22,38 +24,39 @@ InputFuncWithParam = Callable[[float, List[float]], float]
 class _LearningParameter:
     """Manage a parameter of `ParametricQuantumCircuit`.
     This class manages index and value of parameter.
-    There is two member variables representing index: `pos` and `theta_pos`.
-    `pos` is an index of `ParametricQuantumCircuit`.
-    And `theta_pos` is an index of a whole set of learning parameters.
+    There is two member variables to note: `positions_in_circuit` and `parameter_id`.
+    `positions_in_circuit` is indices of parameters in `ParametricQuantumCircuit` held by `LearningCircuit`.
+    If you change the parameter value of the `_LearningParameter` instance, all of the parameters
+    specified in `positions_in_circuit` are also updated with that value.
+    And `parameter_id` is an index of a whole set of learning parameters.
     This is used by method of `LearningCircuit` which has "parametric" in its name.
 
-    Example of a relationship between `pos` and `theta_pos` is following:
-    `[(pos, theta_pos)] = [(0, 0), (1, -), (2, 1), (3, 2), (4, -)]`
-    Here `-` means absence.
-
     Args:
-        pos: Index of a parameter at LearningCircuit._circuit.
-        theta_pos: Index at array of learning parameter(theta).
-        value: Current `pos`-th parameter of LearningCircuit._circuit.
+        positions_in_circuit: Indices of a parameter in LearningCircuit._circuit.
+        parameter_id: Index at array of learning parameter(theta).
+        value: Current `parameter_id`-th parameter of LearningCircuit._circuit.
         is_input: Whethter this parameter is used with a input parameter.
     """
 
-    pos: int
-    theta_pos: int
+    positions_in_circuit: List[int]
+    parameter_id: int
     value: float
     is_input: bool = field(default=False)
+
+    def append_position(self, position: int) -> None:
+        self.positions_in_circuit.append(position)
 
 
 @dataclass
 class _InputParameter:
     """Manage transformation of an input.
     `func` transforms the given input and the outcome is stored at `pos`-th parameter in `LearningCircuit._circuit`.
-    If the `func` needs a learning parameter, supply `companion_theta_pos` with the learning parameter's `theta_pos`.
+    If the `func` needs a learning parameter, supply `companion_parameter_id` with the learning parameter's `parameter_id`.
     """
 
     pos: int
     func: Union[InputFunc, InputFuncWithParam]
-    companion_theta_pos: Optional[int]
+    companion_parameter_id: Optional[int]
 
 
 class LearningCircuit:
@@ -89,7 +92,8 @@ class LearningCircuit:
         >>> from skqulacs.qnn.regressor import QNNRegressor
         >>> n_qubit = 2
         >>> circuit = LearningCircuit(n_qubit)
-        >>> circuit.add_parametric_RX_gate(0, 0.5)
+        >>> theta = circuit.add_parametric_RX_gate(0, 0.5)
+        >>> circuit.add_parametric_RY_gate(1, 0.1, share_with=theta)
         >>> circuit.add_input_RZ_gate(1, np.arcsin)
         >>> model = QNNRegressor(circuit)
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
@@ -107,18 +111,19 @@ class LearningCircuit:
         self._input_parameter_list: List[_InputParameter] = []
 
     def update_parameters(self, theta: List[float]) -> None:
-        """Update learning parameter of the circuit.
+        """Update learning parameter of the circuit with given `theta`.
 
         Args:
-            theta: New learning parameter.
+            theta: New learning parameters.
         """
         for parameter in self._learning_parameter_list:
-            parameter_value = theta[parameter.theta_pos]
+            parameter_value = theta[parameter.parameter_id]
             parameter.value = parameter_value
-            self._circuit.set_parameter(parameter.pos, parameter_value)
+            for pos in parameter.positions_in_circuit:
+                self._circuit.set_parameter(pos, parameter_value)
 
     def get_parameters(self) -> List[float]:
-        """Get a list of learning parameters."""
+        """Get a list of learning parameters' values."""
         theta_list = [p.value for p in self._learning_parameter_list]
         return theta_list
 
@@ -126,11 +131,11 @@ class LearningCircuit:
         for parameter in self._input_parameter_list:
             # Input parameter is updated here, not update_parameters(),
             # because input parameter is determined with the input data `x`.
-            if parameter.companion_theta_pos is None:
-                # If `companion_theta_pos` is `None`, `func` does not need a learning parameter.
+            if parameter.companion_parameter_id is None:
+                # If `companion_parameter_id` is `None`, `func` does not need a learning parameter.
                 angle = parameter.func(x)
             else:
-                theta = self._learning_parameter_list[parameter.companion_theta_pos]
+                theta = self._learning_parameter_list[parameter.companion_parameter_id]
                 angle = parameter.func(theta.value, x)
                 theta.value = angle
             self._circuit.set_parameter(parameter.pos, angle)
@@ -176,12 +181,19 @@ class LearningCircuit:
         """
         self._set_input(x)
         ret = self._circuit.backprop(obs)
-        ans = [0] * len(self._learning_parameter_list)
+        ans = [0.0] * len(self._learning_parameter_list)
         for parameter in self._learning_parameter_list:
             if not parameter.is_input:
-                ans[parameter.theta_pos] = ret[parameter.pos]
+                for pos in parameter.positions_in_circuit:
+                    ans[parameter.parameter_id] += ret[pos]
 
         return ans
+
+    def _new_parameter_position(self) -> int:
+        """Return a position of a new parameter to be registered to `ParametricQuantumCircuit`.
+        This function does not actually register a new parameter.
+        """
+        return self._circuit.get_parameter_count()
 
     def add_gate(self, gate) -> None:
         """Add arbitrary gate.
@@ -236,18 +248,18 @@ class LearningCircuit:
         """
         self._add_R_gate_inner(index, parameter, _Axis.Z)
 
-    def add_CNOT_gate(self, indexA: int, indexB: int) -> None:
+    def add_CNOT_gate(self, control_index: int, target_index: int) -> None:
         """
         Args:
-            indexA: Index of qubit to CNOT gate.
-            indexB: Index of qubit to CNOT gate.
+            control_index: Index of control qubit.
+            target_index: Index of target qubit.
         """
-        self._circuit.add_CNOT_gate(indexA, indexB)
+        self._circuit.add_CNOT_gate(control_index, target_index)
 
     def add_H_gate(self, index: int) -> None:
         """
         Args:
-            index: Index of qubit to H gate.
+            index: Index of qubit to put H gate.
         """
         self._circuit.add_H_gate(index)
 
@@ -259,7 +271,7 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RX gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.X, input_func)
 
@@ -271,7 +283,7 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RY gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.Y, input_func)
 
@@ -283,33 +295,51 @@ class LearningCircuit:
         """
         Args:
             index: Index of qubit to add RZ gate.
-            input_func: Function transforming index value.
+            input_func: Function transforming input value.
         """
         self._add_input_R_gate_inner(index, _Axis.Z, input_func)
 
-    def add_parametric_RX_gate(self, index: int, parameter: float) -> None:
+    def add_parametric_RX_gate(
+        self, index: int, parameter: float, share_with: Optional[int] = None
+    ) -> int:
         """
         Args:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
-        """
-        self._add_parametric_R_gate_inner(index, parameter, _Axis.X)
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
 
-    def add_parametric_RY_gate(self, index: int, parameter: float) -> None:
+        Returns:
+            parameter_id which is added or updated.
+        """
+        return self._add_parametric_R_gate_inner(index, parameter, _Axis.X, share_with)
+
+    def add_parametric_RY_gate(
+        self, index: int, parameter: float, share_with: Optional[int] = None
+    ) -> int:
         """
         Args:
             index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
-        """
-        self._add_parametric_R_gate_inner(index, parameter, _Axis.Y)
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
 
-    def add_parametric_RZ_gate(self, index: int, parameter: float) -> None:
+        Returns:
+            parameter_id which is added or updated.
+        """
+        return self._add_parametric_R_gate_inner(index, parameter, _Axis.Y, share_with)
+
+    def add_parametric_RZ_gate(
+        self, index: int, parameter: float, share_with: Optional[int] = None
+    ) -> int:
         """
         Args:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
+            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+
+        Returns:
+            parameter_id which is added or updated.
         """
-        self._add_parametric_R_gate_inner(index, parameter, _Axis.Z)
+        return self._add_parametric_R_gate_inner(index, parameter, _Axis.Z, share_with)
 
     def add_parametric_input_RX_gate(
         self,
@@ -321,7 +351,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.X, input_func)
 
@@ -335,7 +365,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Y, input_func)
 
@@ -349,7 +379,7 @@ class LearningCircuit:
         Args:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
-            input_func: Function transforming this gate's parameter and index value.
+            input_func: Function transforming this gate's parameter and input value.
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Z, input_func)
 
@@ -373,13 +403,22 @@ class LearningCircuit:
         index: int,
         parameter: float,
         target: _Axis,
-    ) -> None:
-        learning_parameter = _LearningParameter(
-            self._circuit.get_parameter_count(),
-            len(self._learning_parameter_list),
-            parameter,
-        )
-        self._learning_parameter_list.append(learning_parameter)
+        share_with: Optional[int],
+    ) -> int:
+        new_gate_pos = self._new_parameter_position()
+
+        if share_with is None:
+            parameter_id = len(self._learning_parameter_list)
+            learning_parameter = _LearningParameter(
+                [new_gate_pos],
+                parameter_id,
+                parameter,
+            )
+            self._learning_parameter_list.append(learning_parameter)
+        else:
+            parameter_id = share_with
+            sharing_parameter = self._learning_parameter_list[parameter_id]
+            sharing_parameter.append_position(new_gate_pos)
 
         if target == _Axis.X:
             self._circuit.add_parametric_RX_gate(index, parameter)
@@ -390,6 +429,8 @@ class LearningCircuit:
         else:
             raise NotImplementedError
 
+        return parameter_id
+
     def _add_input_R_gate_inner(
         self,
         index: int,
@@ -397,7 +438,7 @@ class LearningCircuit:
         input_func: InputFunc,
     ) -> None:
         self._input_parameter_list.append(
-            _InputParameter(self._circuit.get_parameter_count(), input_func, None)
+            _InputParameter(self._new_parameter_position(), input_func, None)
         )
 
         # Input gate is implemented with parametric gate because this gate should be
@@ -421,12 +462,12 @@ class LearningCircuit:
         pos = self._circuit.get_parameter_count()
 
         learning_parameter = _LearningParameter(
-            pos, len(self._learning_parameter_list), parameter, True
+            [pos], len(self._learning_parameter_list), parameter, True
         )
         self._learning_parameter_list.append(learning_parameter)
 
         self._input_parameter_list.append(
-            _InputParameter(pos, input_func, learning_parameter.theta_pos)
+            _InputParameter(pos, input_func, learning_parameter.parameter_id)
         )
 
         if target == _Axis.X:
