@@ -591,8 +591,10 @@ title="Print to PDF"
 <div class="section" id="quantum-neural-network">
 <h2>Quantum neural network<a class="headerlink" href="#quantum-neural-network" title="Permalink to this headline">#</a></h2>
 <p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> に対して、学習パラメータ <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> を使って
-$<span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsymbol x}) = \langle 0|U^\dagger({\boldsymbol \theta}, {\boldsymbol x}) O U({\boldsymbol \theta}, {\boldsymbol x})|0\rangle\)</span><span class="math notranslate nohighlight">\( 
-の形でモデル \)</span>y_{{\boldsymbol \theta}}({\boldsymbol x})$ を構築する手法を量子ニューラルネットワークと呼びます。scikit-qulacs では <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn</span></code> モジュールに実装されています。分類問題をとく <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.classifier</span></code> と回帰問題を解く <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.regressor</span></code> の２つがあります。</p>
+<div class="math notranslate nohighlight">
+\[y_{{\boldsymbol \theta}}({\boldsymbol x}) = \langle 0|U^\dagger({\boldsymbol \theta}, {\boldsymbol x}) O U({\boldsymbol \theta}, {\boldsymbol x})|0\rangle\]</div>
+
+の形でモデル <span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsymbol x})\)</span> を構築する手法を量子ニューラルネットワークと呼びます。scikit-qulacs では <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn</span></code> モジュールに実装されています。分類問題をとく <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.classifier</span></code> と回帰問題を解く <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.regressor</span></code> の２つがあります。</p>
 <div class="section" id="skqulacs-qnn-qnnclassifier">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.QNNClassifier</span></code> の使い方<a class="headerlink" href="#skqulacs-qnn-qnnclassifier" title="Permalink to this headline">#</a></h3>
 <p>例として、有名な <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを分類する量子ニューラルネットワークを組んでみます。まず、以下のコードによって <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> から <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを取り出し、訓練データとテストデータに分けます。</p>
@@ -764,7 +766,9 @@ loss 0.008518100629961275
 <div class="section" id="id3">
 <h2>量子カーネル法<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
 <p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> を量子状態 <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> にマップし、この量子状態間の内積で定義されるカーネル関数
-$<span class="math notranslate nohighlight">\(K({\boldsymbol x},{\boldsymbol x}')=|\langle \psi({\boldsymbol x})| \psi({\boldsymbol x}')\rangle|^2\)</span>$
+<div class="math notranslate nohighlight">
+\[K({\boldsymbol x},{\boldsymbol x}')=|\langle \psi({\boldsymbol x})| \psi({\boldsymbol x}')\rangle|^2\]</div>
+
 を使ったカーネル法を量子カーネル法と呼びます。scikit-qulacs には、support vector classifier <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> と support vector regressor <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の2つが実装されています。</p>
 <div class="section" id="skqulacs-qsvm-qsvc">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> の使い方<a class="headerlink" href="#skqulacs-qsvm-qsvc" title="Permalink to this headline">#</a></h3>
