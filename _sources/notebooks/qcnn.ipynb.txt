@@ -1,0 +1,201 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Quantum Convolutional Neural Network with scikit-qulacs\n",
+    "\n",
+    "[Quantum Convolutional Neural Networks](https://arxiv.org/abs/1810.03787)をTensorFlow Quantum（以降TFQ）で実装したチュートリアルの[Quantum Convolutional Neural Network](https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en)（以降QCNN）のscikit-qulacs実装例です。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## インポート\n",
+    "`scikit-qulacs`の`QNNClassifier`と`create_qcnn_ansatz`をインポートします。`numpy`や`matplotlib.pyplot`等も併せてインポートします。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "from numpy.random import default_rng\n",
+    "from sklearn.metrics import f1_score\n",
+    "from skqulacs.qnn import QNNClassifier\n",
+    "from skqulacs.circuit.pre_defined import create_qcnn_ansatz\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## テストデータの生成\n",
+    "TFQ版QCNNと同様に、テストデータを生成します。\n",
+    "TFQ版はデータの中に量子状態を表す回路を埋め込みテンソルに変換して持たせます。\n",
+    "`scikit-qulacs`の場合、入力データはInputParameterとして`create_qcnn_ansatz`の中でエンコードされます。\n",
+    "そのため、データとしては単純に回転角と正解ラベルを持たせます。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def generate_data(bits: int, random_seed: int = 0):\n",
+    "    \"\"\"Generate training and testing data.\"\"\"\n",
+    "    rng = default_rng(random_seed)\n",
+    "    n_rounds = 20\n",
+    "    excitations = []\n",
+    "    labels = []\n",
+    "    for n in range(n_rounds):\n",
+    "        for bit in range(bits):\n",
+    "            r = rng.uniform(-np.pi, np.pi)\n",
+    "            excitations.append(r)\n",
+    "            labels.append(1 if (-np.pi / 2) <= r <= (np.pi / 2) else 0)\n",
+    "\n",
+    "    split_ind = int(len(excitations) * 0.7)\n",
+    "    train_excitations = excitations[:split_ind]\n",
+    "    test_excitations = excitations[split_ind:]\n",
+    "\n",
+    "    train_labels = labels[:split_ind]\n",
+    "    test_labels = labels[split_ind:]\n",
+    "\n",
+    "    return train_excitations, np.array(train_labels), \\\n",
+    "        test_excitations, np.array(test_labels)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## QCNN回路の作成\n",
+    "`create_qcnn_ansatz()`を呼び出して回路を作成してください。  \n",
+    "第一引数に量子ビットを指定します。現在は固定の8ビットに対応しています。  \n",
+    "第二引数は乱数のシード値を指定してください。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nqubit = 8        # 量子ビット数。現在8固定\n",
+    "random_seed = 0   # 乱数のシード値\n",
+    "circuit = create_qcnn_ansatz(nqubit, random_seed)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## QNNClassifierクラスの作成\n",
+    "作成した回路を`QNNClassifierクラス`に指定してください。  \n",
+    "第一引数に回路を指定します。第二引数に分類数を指定します。ここでは二値問題のため2を指定してください。  \n",
+    "第三引数に探索アルゴリズムを指定します。`Adam`を指定してください。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "num_class = 2  # 分類数（ここでは2つに分類）\n",
+    "solver=\"Adam\"  # 探索アルゴリズム。\"Adam\"を指定してください。\n",
+    "qcl = QNNClassifier(circuit, num_class, solver)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 実行\n",
+    "`generate_data()`を呼び出してテストデータを生成し、`qcl.fit()`を実行し学習を行います。  \n",
+    "`opt_params`に学習されたパラメータが入ります。  \n",
+    "`qcl.predict()`で推論を行います。  \n",
+    "`sklearn.metrics`の`f1_score`を使用して結果の精度を計算します。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "trained parameters:  [ 0.86055566 -1.47257325 -2.84277113 -3.64540393  1.63813567  2.0645404\n",
+      "  2.81517295  1.47490504 -3.12438615  2.0480168  -3.09803583  1.29147571\n",
+      " -2.03791584  2.14666105  0.29468943 -1.45328126 -0.48317123 -3.19778986\n",
+      " -2.13290226  1.18254825  3.12406216  3.02117754  1.16579467  1.00568327\n",
+      "  1.20771264 -0.61939065 -2.29275628  1.35106086  0.15930591 -1.19228546\n",
+      " -0.08899907  2.44722424  2.72717584 -0.89349913 -1.01843381 -0.6809779\n",
+      "  2.45216607 -1.7143194   0.77400766 -2.61370868  2.09006482  1.80389187\n",
+      " -1.63759009  2.36552019 -2.77359884 -1.02970688 -2.19735892 -0.31202696\n",
+      " -0.59971848 -1.89429841 -2.57137445  0.50474327 -1.2648295   1.08067569\n",
+      " -1.88800015  2.7778786  -0.98279722 -2.28221508  1.03800729  2.64329979\n",
+      " -0.31567124  2.91988853  3.29547352  3.01294356 -0.25104379  1.61935809\n",
+      " -0.01619368  0.18417373  1.79564452 -0.53623311  1.47330373  1.32664983\n",
+      "  2.71471107 -2.41944962  1.43894442  2.68558375  3.02343761  2.87273628\n",
+      " -2.2068808   2.96961442  2.45003735  2.0255345  -0.12573958 -1.68155054\n",
+      "  1.89677162  2.66111848 -1.46944684  0.2446321  -0.35969458  2.70816167\n",
+      " -2.96336781  1.37739846 -3.04111365  1.62075395  0.08016542  2.69614134\n",
+      " -2.72638408  2.14455972]\n",
+      "f1_score:  0.9375814155449413\n"
+     ]
+    }
+   ],
+   "source": [
+    "maxiter = 20  # ループの最大。これが多いほど、正確になるが、時間がかかる。\n",
+    "x_train, y_train, x_test, y_test = generate_data(nqubit)\n",
+    "opt_loss, opt_params = qcl.fit(x_train, y_train, maxiter)\n",
+    "print(\"trained parameters: \", opt_params)\n",
+    "y_pred = qcl.predict(x_test)\n",
+    "print(\"f1_score: \", f1_score(y_test, y_pred, average=\"weighted\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "0.9以上の正解率となります。"
+   ]
+  }
+ ],
+ "metadata": {
+  "interpreter": {
+   "hash": "31f2aee4e71d21fbe5cf8b01ff0e069b9275f58929596ceb00d14d90e3e16cd6"
+  },
+  "kernelspec": {
+   "display_name": "Python 3.8.10 64-bit",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.10"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

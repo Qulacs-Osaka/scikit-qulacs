@@ -218,6 +218,11 @@
        Reproducing arXiv:2108.01039 with scikit-qulacs
       </a>
      </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="notebooks/qcnn.html">
+       Quantum Convolutional Neural Network with scikit-qulacs
+      </a>
+     </li>
     </ul>
    </li>
   </ul>
@@ -421,6 +426,14 @@ made by WA_TLE.
 <span class="gp">&gt;&gt;&gt; </span><span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="skqulacs.circuit.pre_defined.create_qcnn_ansatz">
+<span class="sig-prename descclassname"><span class="pre">skqulacs.circuit.pre_defined.</span></span><span class="sig-name descname"><span class="pre">create_qcnn_ansatz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></span><a class="reference internal" href="_modules/skqulacs/circuit/pre_defined.html#create_qcnn_ansatz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.pre_defined.create_qcnn_ansatz" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates circuit used in <a class="reference external" href="https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en">https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en</a>, Section 1.
+:param n_qubit: number of qubits. must be even.
+:param seed: seed for random numbers. used for determining the interaction strength of the hamiltonian simulation</p>
 </dd></dl>
 
 <dl class="py function">

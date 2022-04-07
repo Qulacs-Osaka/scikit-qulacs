@@ -216,6 +216,11 @@
        Reproducing arXiv:2108.01039 with scikit-qulacs
       </a>
      </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../notebooks/qcnn.html">
+       Quantum Convolutional Neural Network with scikit-qulacs
+      </a>
+     </li>
     </ul>
    </li>
   </ul>
@@ -760,7 +765,14 @@ title="Source repository"
         <span class="k">elif</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="LearningCircuit.add_parametric_multi_Pauli_rotation_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_multi_Pauli_rotation_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">pauli_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">initial_angle</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">pauli_id</span><span class="p">,</span> <span class="n">initial_angle</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
               </div>
