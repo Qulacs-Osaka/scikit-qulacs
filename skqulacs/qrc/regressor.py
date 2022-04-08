@@ -35,10 +35,8 @@ class QRCRegressor:
         n_qubit: int = 8,
     ) -> None:
         self.x_scaler = MinMaxScaler()
-        self.y_scaler = MinMaxScaler()
         self.x_scaler.fit(x_train)
-        self.y_scaler.fit(y_train)
-        x_train_scaled, y_train_scaled = self.x_scaler(x_train), self.y_scaler(y_train)
+        x_train_scaled = self.x_scaler.transform(x_train)
 
         if generate_observables:
             self.observables = self.create_observables()
@@ -47,20 +45,18 @@ class QRCRegressor:
 
         observation_results = self.get_observation_results(x_train_scaled)
         self.regression = LinearRegression()
-        self.regression.fit(observation_results, y_train_scaled)
+        self.regression.fit(observation_results, y_train)
 
     def predict(self, x_test: List[List[float]]) -> List[float]:
         x_test_scaled = self.x_scaler.transform(x_test)
         observation_results = self.get_observation_results(x_test_scaled)
-        ret_val: List[float] = self.y_scaler.inverse_transform(
-            self.regression.predict(observation_results)
-        )
+        ret_val: List[float] = self.regression.predict(observation_results)
         return ret_val
 
-    def score(self, x_test: List[List[float]], y_test: List[List[float]]) -> float:
-        x_test_scaled, y_test_scaled = self.x_scaler(x_test), self.y_scaler(y_test)
+    def score(self, x_test: List[List[float]], y_test: List[float]) -> float:
+        x_test_scaled = self.x_scaler.transform(x_test)
         observation_results = self.get_observation_results(x_test_scaled)
-        ret_val: float = self.regression.score(observation_results, y_test_scaled)
+        ret_val: float = self.regression.score(observation_results, y_test)
         return ret_val
 
     def create_observables(self) -> List[Observable]:
@@ -71,8 +67,8 @@ class QRCRegressor:
             observables.append(observable)
         return observables
 
-    def get_observation_results(self, X: List[List[float]]) -> List[float]:
-        observation_results: List[float] = list()
+    def get_observation_results(self, X: List[List[float]]) -> List[List[float]]:
+        observation_results: List[List[float]] = list()
 
         for x in X:
             state = QuantumState(self.n_qubit)
@@ -85,10 +81,10 @@ class QRCRegressor:
 
             self.circuit._circuit.update_quantum_state(state)
 
-            observation_results += [
+            observation_results.append([
                 observable.get_expectation_value(state)
                 for observable in self.observables
-            ]
+            ])
 
         return observation_results
 
