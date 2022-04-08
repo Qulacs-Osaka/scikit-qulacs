@@ -81,10 +81,12 @@ class QRCRegressor:
 
             self.circuit._circuit.update_quantum_state(state)
 
-            observation_results.append([
-                observable.get_expectation_value(state)
-                for observable in self.observables
-            ])
+            observation_results.append(
+                [
+                    observable.get_expectation_value(state)
+                    for observable in self.observables
+                ]
+            )
 
         return observation_results
 
