@@ -4,7 +4,6 @@ from typing import List, Optional
 
 import numpy as np
 from qulacs import Observable
-from scipy.optimize import minimize
 from scipy.special import softmax
 from sklearn.metrics import log_loss
 from sklearn.preprocessing import MinMaxScaler
@@ -12,6 +11,7 @@ from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
+from skqulacs.qnn.optimizer import Optimizer
 
 
 class QNNClassifier(QNN):
@@ -37,14 +37,10 @@ class QNNClassifier(QNN):
         self,
         circuit: LearningCircuit,
         num_class: int,
-        solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
+        solver: Optimizer,
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
-        x_norm_range=1.0,
-        y_exp_ratio=2.2,
-        callback=None,
-        tol=1e-4,
-        n_iter_no_change=999999,
+        y_exp_ratio=5.0,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
@@ -67,9 +63,8 @@ class QNNClassifier(QNN):
         self.do_x_scale = do_x_scale
         self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
-        self.callback = callback
-        self.tol = tol
-        self.n_iter_no_change = n_iter_no_change
+        self.scale_x_param = []
+        self.scale_y_param = []
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
@@ -101,72 +96,12 @@ class QNNClassifier(QNN):
         else:
             x_scaled = x_train
 
-        # TODO: Extract solvers if the same one is used for classifier and regressor.
+        y_scaled = self.do_y_scale(y_train)
         theta_init = self.circuit.get_parameters()
-        if self.solver == "Nelder-Mead":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "BFGS":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                jac=self._cost_func_grad,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "Adam":
-            pr_A = 0.02
-            pr_Bi = 0.8
-            pr_Bt = 0.995
-            pr_ips = 0.0000001
-            # Above is hyper parameters.
-            Bix = 0
-            Btx = 0
+        self.solver.setup(self.cost_func, self._cost_func_grad)
+        loss, theta_opt = self.solver.run(theta_init, x_scaled, y_scaled, maxiter)
+        # TODO: Extract solvers if the same one is used for classifier and regressor.
 
-            moment = np.zeros(len(theta_init))
-            vel = 0
-            theta_now = theta_init
-            maxiter *= len(x_train)
-            prev_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-
-            nochan = 0
-            for iter in range(0, maxiter, 5):
-                grad = self._cost_func_grad(
-                    theta_now,
-                    x_scaled[iter % len(x_train) : iter % len(x_train) + 5],
-                    y_scaled[iter % len(y_train) : iter % len(y_train) + 5],
-                )
-                moment = moment * pr_Bi + (1 - pr_Bi) * grad
-                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
-                Bix = Bix * pr_Bi + (1 - pr_Bi)
-                Btx = Btx * pr_Bt + (1 - pr_Bt)
-                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if (self.n_iter_no_change < 999999) and (iter % len(x_scaled) < 5):
-                    if self.callback is not None:
-                        self.callback(theta_now)
-                    now_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-                    if prev_cost - self.tol < now_cost:
-                        nochan = nochan + 1
-                        if nochan >= self.n_iter_no_change:
-                            break
-                    else:
-                        nochan = 0
-                    prev_cost = now_cost
-
-            loss = self.cost_func(theta_now, x_train, y_train)
-            theta_opt = theta_now
-        else:
-            raise NotImplementedError
         return loss, theta_opt
 
     def predict(self, x_test: List[List[float]]):

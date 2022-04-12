@@ -6,10 +6,14 @@ from sklearn.model_selection import train_test_split
 
 from skqulacs.circuit.pre_defined import create_qcl_ansatz
 from skqulacs.qnn import QNNClassifier
+from skqulacs.qnn.optimizer import Adam, Bfgs, Optimizer
 
 
-@pytest.mark.parametrize(("solver", "maxiter"), [("Adam", 7), ("BFGS", 9)])
-def test_classify_iris(solver: str, maxiter: int):
+@pytest.mark.parametrize(
+    ("solver", "maxiter"),
+    [(Adam(tolerance=1e-2, n_iter_no_change=5), 777), (Bfgs(), 8)],
+)
+def test_classify_iris(solver: Optimizer, maxiter: int) -> None:
     iris = datasets.load_iris()
     df = pd.DataFrame(iris.data, columns=iris.feature_names)
     x = df.loc[:, ["petal length (cm)", "petal width (cm)"]]
