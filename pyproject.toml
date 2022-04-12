@@ -1,33 +1,46 @@
 [tool.poetry]
 name = "skqulacs"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "scikit-qulacs is a library for quantum neural network. This library is based on qulacs and named after scikit-learn."
+authors = ["Qulacs-Osaka <qulacs.osaka@gmail.com>"]
 license = "MIT"
+readme = "./README.md"
+repository = "https://github.com/Qulacs-Osaka/scikit-qulacs"
+homepage = "https://github.com/Qulacs-Osaka/scikit-qulacs"
+documentation = "https://qulacs-osaka.github.io/scikit-qulacs/index.html"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.7.1,<3.11"
 numpy = "^1.21.4"
 scipy = "^1.7.2"
 scikit-learn = "^1.0.1"
-qulacs-osaka = {git = "https://github.com/Qulacs-Osaka/qulacs-osaka", rev = "dev"}
+qulacs-osaka = ">=0.3.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+pytest = "^7.0.0"
 matplotlib = "^3.5.0"
 pandas = "^1.3.4"
 black = "^21.11b1"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
-mypy = "^0.910"
+mypy = "^0.942"
 Sphinx = "^4.3.0"
-sphinx-book-theme = "^0.1.7"
+sphinx-book-theme = "^0.3.0"
 ipykernel = "^6.5.0"
 myst-nb = "^0.13.1"
+pytest-benchmark = "^3.4.1"
 typing-extensions = "^4.1.1"
-
-[tool.pysen]
-version = "0.9"
+PennyLane = "^0.22.2"
 
 [tool.isort]
 default_section = "THIRDPARTY"

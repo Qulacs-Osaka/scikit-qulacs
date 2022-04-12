@@ -6,7 +6,11 @@ TYPE_CHECKER := poetry run mypy
 SPHINX_APIDOC := poetry run sphinx-apidoc
 
 PROJECT_DIR := skqulacs
-CHECK_DIR := $(PROJECT_DIR) tests
+TEST_DIR := tests
+BENCHMARK_DIR := benchmarks
+CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR) $(BENCHMARK_DIR)
+
+BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
@@ -14,7 +18,7 @@ FORCE:
 
 .PHONY: test
 test:
-	$(PYTEST) -v
+	$(PYTEST) -v $(TEST_DIR)
 
 tests/%.py: FORCE
 	$(PYTEST) $@
@@ -33,6 +37,13 @@ fix:
 .PHONY: type
 type:
 	$(TYPE_CHECKER) $(PROJECT_DIR)
+
+.PHONY: benchmark
+benchmark:
+	$(PYTEST) $(BENCHMARK_DIR) $(BENCHMARK_OPT)
+
+benchmarks/%.py: FORCE
+	$(PYTEST) $@ $(BENCHMARK_OPT)
 
 .PHONY: api
 api:

@@ -5,6 +5,7 @@ from .pre_defined import (
     create_ibm_embedding_circuit,
     create_npqc_ansatz,
     create_qcl_ansatz,
+    create_qcnn_ansatz,
     create_shirai_ansatz,
     create_yzcx_ansatz,
 )
