@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from math import exp, sqrt
-from typing import Literal, Optional
+from typing import Optional
 
 import numpy as np
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
 from scipy.optimize import minimize
+from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
