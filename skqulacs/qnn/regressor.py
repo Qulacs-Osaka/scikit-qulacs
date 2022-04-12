@@ -113,9 +113,14 @@ class QNNRegressor(QNN):
             self.observables.append(observable)
 
         theta_init = self.circuit.get_parameters()
-        self.solver.setup(self.cost_func, self._cost_func_grad)
-        loss, theta_opt = self.solver.run(theta_init, x_scaled, y_scaled, maxiter)
-        return loss, theta_opt
+        return self.solver.run(
+            self.cost_func,
+            self._cost_func_grad,
+            theta_init,
+            x_scaled,
+            y_scaled,
+            maxiter,
+        )
 
     def predict(self, x_test: List[List[float]]) -> List[float]:
         """Predict outcome for each input data in `x_test`.

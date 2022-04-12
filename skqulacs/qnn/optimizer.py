@@ -11,12 +11,10 @@ Jacobian = Callable[[List[float], List[List[float]], List[int]], NDArray[np.floa
 
 class Optimizer(ABC):
     @abstractmethod
-    def setup(cost_func: CostFunc, jac: Optional[Jacobian]) -> None:
-        pass
-
-    @abstractmethod
     def run(
         self,
+        cost_func: CostFunc,
+        jac: Jacobian,
         theta: List[float],
         x: List[List[float]],
         y: List[int],
@@ -42,18 +40,17 @@ class NelderMead(Optimizer):
     ) -> None:
         super().__init__()
 
-    def setup(self, cost_func: CostFunc, jac: Optional[Jacobian]) -> None:
-        self.cost_func = cost_func
-
     def run(
         self,
+        cost_func: CostFunc,
+        jac: Jacobian,
         theta: List[float],
         x: List[List[float]],
         y: List[int],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         result = minimize(
-            self.cost_func,
+            cost_func,
             theta,
             args=(x, y),
             method="Nelder-Mead",
@@ -70,27 +67,21 @@ class Bfgs(Optimizer):
     ) -> None:
         super().__init__()
 
-    def setup(
-        self,
-        cost_func: CostFunc,
-        jac: Optional[Jacobian],
-    ) -> None:
-        self.cost_func = cost_func
-        self.jac = jac
-
     def run(
         self,
+        cost_func: CostFunc,
+        jac: Jacobian,
         theta: List[float],
         x: List[List[float]],
         y: List[int],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         result = minimize(
-            self.cost_func,
+            cost_func,
             theta,
             args=(x, y),
             method="BFGS",
-            jac=self.jac,
+            jac=jac,
             options={"maxiter": maxiter},
         )
         loss = result.fun
@@ -103,23 +94,17 @@ class Adam(Optimizer):
         self,
         callback: Optional[Callable[[List[float]], None]] = None,
         tolerance: float = 1e-4,
-        n_iter_no_change: int = 999999,
+        n_iter_no_change: Optional[int] = None,
     ) -> None:
         super().__init__()
         self.callback = callback
         self.tolerance = tolerance
         self.n_iter_no_change = n_iter_no_change
 
-    def setup(
-        self,
-        cost_func: CostFunc,
-        jac: Optional[Jacobian],
-    ) -> None:
-        self.cost_func = cost_func
-        self.jac = jac
-
     def run(
         self,
+        cost_func: CostFunc,
+        jac: Jacobian,
         theta: List[float],
         x: List[List[float]],
         y: List[int],
@@ -137,11 +122,11 @@ class Adam(Optimizer):
         vel = 0
         theta_now = theta
         maxiter *= len(x)
-        prev_cost = self.cost_func(theta_now, x, y)
+        prev_cost = cost_func(theta_now, x, y)
 
         no_change = 0
         for iter in range(0, maxiter, 5):
-            grad = self.jac(
+            grad = jac(
                 theta_now,
                 x[iter % len(x) : iter % len(x) + 5],
                 y[iter % len(y) : iter % len(y) + 5],
@@ -151,10 +136,10 @@ class Adam(Optimizer):
             Bix = Bix * pr_Bi + (1 - pr_Bi)
             Btx = Btx * pr_Bt + (1 - pr_Bt)
             theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-            if (self.n_iter_no_change < 999999) and (iter % len(x) < 5):
+            if (self.n_iter_no_change is not None) and (iter % len(x) < 5):
                 if self.callback is not None:
                     self.callback(theta_now)
-                now_cost = self.cost_func(theta_now, x, y)
+                now_cost = cost_func(theta_now, x, y)
                 if prev_cost - self.tolerance < now_cost:
                     no_change = no_change + 1
                     if no_change >= self.n_iter_no_change:
@@ -163,6 +148,6 @@ class Adam(Optimizer):
                     no_change = 0
                 prev_cost = now_cost
 
-        loss = self.cost_func(theta_now, x, y)
+        loss = cost_func(theta_now, x, y)
         theta_opt = theta_now
         return loss, theta_opt
