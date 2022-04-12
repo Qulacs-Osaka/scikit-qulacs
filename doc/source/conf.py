@@ -81,3 +81,7 @@ html_static_path = ["_static"]
 # There is no problem for now because every notebook embedded in documetation
 # is executed once at local environment and the result is committed.
 jupyter_execute_notebooks = "off"
+
+# With this variable set True, block math element surrounded by `$$` does not 
+# needs blank lines before and after the element.
+myst_dmath_double_inline = True
