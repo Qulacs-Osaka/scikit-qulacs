@@ -6,10 +6,11 @@ import numpy as np
 from qulacs import Observable
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
+from skqulacs.qnn.qnnbase import QNN
 
 
 class QNNRegressor(QNN):
@@ -35,6 +36,7 @@ class QNNRegressor(QNN):
         cost: Literal["mse"] = "mse",
         do_x_scale: bool = True,
         do_y_scale: bool = True,
+        x_norm_range=1.0,
         y_norm_range=0.7,
         callback=None,
         tol=0.0001,
@@ -48,6 +50,7 @@ class QNNRegressor(QNN):
         :param do_x_scale: Whether to scale y.
         :param y_norm_range: Normalize y in [+-y_norm_range].
         :param callback: Callback function. Available only with Adam.
+        Setting y_norm_range to 0.7 improves performance.
         :param tol: use n_iter_no_change
         :param n_iter_no_change: (cost reduce < tol) continues n_iter_no_change times -> stopping (Adam only)
 
@@ -58,10 +61,9 @@ class QNNRegressor(QNN):
         self.cost = cost
         self.do_x_scale = do_x_scale
         self.do_y_scale = do_y_scale
+        self.x_norm_range = x_norm_range
         self.y_norm_range = y_norm_range
         self.callback = callback
-        self.scale_x_param = []
-        self.scale_y_param = []
         self.observables = []
         self.tol = tol
         self.n_iter_no_change = n_iter_no_change
@@ -79,16 +81,29 @@ class QNNRegressor(QNN):
         :return: Loss after learning.
         :return: Parameter theta after learning.
         """
-        self.scale_x_param = _get_x_scale_param(x_train)
-        self.scale_y_param = self._get_y_scale_param(y_train)
+
+        x_train = np.array(x_train)
+        y_train = np.array(y_train)
+
+        if x_train.ndim == 1:
+            x_train = x_train.reshape((-1, 1))
+
+        if y_train.ndim == 1:
+            y_train = y_train.reshape((-1, 1))
 
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+            self.scale_x_scaler = MinMaxScaler(
+                feature_range=(-self.x_norm_range, self.x_norm_range)
+            )
+            x_scaled = self.scale_x_scaler.fit_transform(x_train)
         else:
             x_scaled = x_train
 
         if self.do_y_scale:
-            y_scaled = self._do_y_scale(y_train)
+            self.scale_y_scaler = MinMaxScaler(
+                feature_range=(-self.y_norm_range, self.y_norm_range)
+            )
+            y_scaled = self.scale_y_scaler.fit_transform(y_train)
         else:
             y_scaled = y_train
 
@@ -181,13 +196,18 @@ class QNNRegressor(QNN):
         Returns:
             y_pred: Predicted outcome.
         """
+        x_test = np.array(x_test)
+        if x_test.ndim == 1:
+            x_test = x_test.reshape((-1, 1))
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+            x_scaled = self.scale_x_scaler.transform(x_test)
         else:
             x_scaled = x_test
 
         if self.do_y_scale:
-            y_pred = self._rev_y_scale(self._predict_inner(x_scaled))
+            y_pred = self.scale_y_scaler.inverse_transform(
+                self._predict_inner(x_scaled)
+            )
         else:
             y_pred = self._predict_inner(x_scaled)
 
@@ -215,25 +235,6 @@ class QNNRegressor(QNN):
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
             )
-
-    def _get_y_scale_param(self, y):
-        minimum = np.min(y, axis=0)
-        maximum = np.max(y, axis=0)
-        sa = (maximum - minimum) / 2
-        minimum -= sa / self.y_norm_range - 1
-        maximum += sa / self.y_norm_range - 1
-        sa /= self.y_norm_range
-        return [minimum, maximum, sa]
-
-    def _do_y_scale(self, y):
-        # Clamp `y` in [-1,1].
-        return [((ya - self.scale_y_param[0]) / self.scale_y_param[2]) - 1 for ya in y]
-
-    def _rev_y_scale(self, y_inr):
-        # Restore `y_inr` by `self.scale_param`.
-        return [
-            (((ya + 1) * self.scale_y_param[2]) + self.scale_y_param[0]) for ya in y_inr
-        ]
 
     def _cost_func_grad(self, theta, x_scaled, y_scaled):
         self.circuit.update_parameters(theta)
