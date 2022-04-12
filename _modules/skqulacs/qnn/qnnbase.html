@@ -333,18 +333,6 @@ title="Source repository"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<span class="k">def</span> <span class="nf">_get_x_scale_param</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">sa</span> <span class="o">=</span> <span class="p">(</span><span class="n">maximum</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">,</span> <span class="n">sa</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">_min_max_scaling</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">scale_x_param</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Normalize between [-1, 1].&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[((</span><span class="n">xa</span> <span class="o">-</span> <span class="n">scale_x_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">scale_x_param</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">xa</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-
-
 <div class="viewcode-block" id="QNN"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN">[docs]</a><span class="k">class</span> <span class="nc">QNN</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <div class="viewcode-block" id="QNN.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
