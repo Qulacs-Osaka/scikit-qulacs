@@ -89,7 +89,7 @@ class QNNClassifier(QNN):
         """
 
         y_scaled = y_train
-        x_train=np.array(x_train)
+        x_train = np.array(x_train)
         if x_train.ndim == 1:
             x_train = x_train.reshape((-1, 1))
 
