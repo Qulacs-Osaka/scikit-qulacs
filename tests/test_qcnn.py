@@ -6,7 +6,7 @@ from sklearn.metrics import f1_score
 
 from skqulacs.circuit.pre_defined import create_qcnn_ansatz
 from skqulacs.qnn import QNNClassifier
-from skqulacs.qnn.optimizer import Adam, Optimizer
+from skqulacs.qnn.solver import Adam, Solver
 
 
 def generate_data(bits: int, random_seed: int = 0):
@@ -37,7 +37,7 @@ def generate_data(bits: int, random_seed: int = 0):
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [(Adam(), 20)])
-def test_qcnn(solver: Optimizer, maxiter: int):
+def test_qcnn(solver: Solver, maxiter: int):
     nqubit = 8
     random_seed = 0
     circuit = create_qcnn_ansatz(nqubit, random_seed)

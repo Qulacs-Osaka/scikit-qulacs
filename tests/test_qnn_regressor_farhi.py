@@ -11,7 +11,7 @@ from skqulacs.circuit import (
     create_farhi_neven_watle_ansatz,
 )
 from skqulacs.qnn import QNNRegressor
-from skqulacs.qnn.optimizer import Adam, Bfgs, Optimizer
+from skqulacs.qnn.solver import Adam, Bfgs, Solver
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -35,7 +35,7 @@ def generate_noisy_sine_two_vars(
     ("solver", "maxiter", "farhitype"),
     [(Bfgs(), 20, "normal"), (Adam(), 30, "normal"), (Bfgs(), 20, "watle")],
 )
-def test_noisy_sine_two_vars(solver: Optimizer, maxiter: int, farhitype: str) -> None:
+def test_noisy_sine_two_vars(solver: Solver, maxiter: int, farhitype: str) -> None:
     x_min = -0.5
     x_max = 0.5
     num_x = 70
@@ -75,7 +75,7 @@ def generate_noisy_sine(
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [(Bfgs(), 20), (Adam(), 30)])
-def test_noisy_sine(solver: Optimizer, maxiter: int) -> None:
+def test_noisy_sine(solver: Solver, maxiter: int) -> None:
     x_min = -1.0
     x_max = 1.0
     num_x = 50

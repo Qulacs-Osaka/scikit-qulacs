@@ -10,7 +10,7 @@ from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
-from skqulacs.qnn.optimizer import Optimizer
+from skqulacs.qnn.solver import Solver
 
 
 class QNNRegressor(QNN):
@@ -32,7 +32,7 @@ class QNNRegressor(QNN):
     def __init__(
         self,
         circuit: LearningCircuit,
-        solver: Optimizer,
+        solver: Solver,
         cost: Literal["mse"] = "mse",
         do_x_scale: bool = True,
         do_y_scale: bool = True,

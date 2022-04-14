@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
@@ -9,7 +10,7 @@ CostFunc = Callable[[List[float], List[List[float]], List[int]], float]
 Jacobian = Callable[[List[float], List[List[float]], List[int]], NDArray[np.float_]]
 
 
-class Optimizer(ABC):
+class Solver(ABC):
     @abstractmethod
     def run(
         self,
@@ -34,12 +35,8 @@ class Optimizer(ABC):
         pass
 
 
-class NelderMead(Optimizer):
-    def __init__(
-        self,
-    ) -> None:
-        super().__init__()
-
+@dataclass
+class NelderMead(Solver):
     def run(
         self,
         cost_func: CostFunc,
@@ -61,12 +58,8 @@ class NelderMead(Optimizer):
         return loss, theta_opt
 
 
-class Bfgs(Optimizer):
-    def __init__(
-        self,
-    ) -> None:
-        super().__init__()
-
+@dataclass
+class Bfgs(Solver):
     def run(
         self,
         cost_func: CostFunc,
@@ -89,17 +82,11 @@ class Bfgs(Optimizer):
         return loss, theta_opt
 
 
-class Adam(Optimizer):
-    def __init__(
-        self,
-        callback: Optional[Callable[[List[float]], None]] = None,
-        tolerance: float = 1e-4,
-        n_iter_no_change: Optional[int] = None,
-    ) -> None:
-        super().__init__()
-        self.callback = callback
-        self.tolerance = tolerance
-        self.n_iter_no_change = n_iter_no_change
+@dataclass
+class Adam(Solver):
+    callback: Optional[Callable[[List[float]], None]] = None
+    tolerance: float = 1e-4
+    n_iter_no_change: Optional[int] = None
 
     def run(
         self,

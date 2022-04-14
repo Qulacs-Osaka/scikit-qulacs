@@ -11,7 +11,7 @@ from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
-from skqulacs.qnn.optimizer import Optimizer
+from skqulacs.qnn.solver import Solver
 
 
 class QNNClassifier(QNN):
@@ -37,10 +37,11 @@ class QNNClassifier(QNN):
         self,
         circuit: LearningCircuit,
         num_class: int,
-        solver: Optimizer,
+        solver: Solver,
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
-        y_exp_ratio=5.0,
+        x_norm_range: float = 1.0,
+        y_exp_ratio=2.2,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
@@ -63,8 +64,6 @@ class QNNClassifier(QNN):
         self.do_x_scale = do_x_scale
         self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
-        self.scale_x_param = []
-        self.scale_y_param = []
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
@@ -96,7 +95,6 @@ class QNNClassifier(QNN):
         else:
             x_scaled = x_train
 
-        y_scaled = self.do_y_scale(y_train)
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
             self.cost_func,

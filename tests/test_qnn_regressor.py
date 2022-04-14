@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error
 
 from skqulacs.circuit import create_qcl_ansatz
 from skqulacs.qnn import QNNRegressor
-from skqulacs.qnn.optimizer import Adam, Bfgs, Optimizer
+from skqulacs.qnn.solver import Adam, Bfgs, Solver
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -29,7 +29,7 @@ def generate_noisy_sine_two_vars(
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [(Bfgs(), 20), (Adam(), 20)])
-def test_noisy_sine_two_vars(solver: Optimizer, maxiter: int) -> None:
+def test_noisy_sine_two_vars(solver: Solver, maxiter: int) -> None:
     x_min = -0.5
     x_max = 0.5
     num_x = 50
