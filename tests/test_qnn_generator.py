@@ -27,12 +27,12 @@ def test_mix_gauss_mini():
 
     for i in range(4):
         print(data_param[i], prob_list[i], data_param[i] - prob_list[i])
-        assert abs(data_param[i] - prob_list[i]) < 0.02
+        assert abs(data_param[i] - prob_list[i]) < 0.04
 
 
 def test_mix_gauss():
 
-    n_qubit = 7
+    n_qubit = 6
     depth = 10
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
     qnn = QNNGeneretor(circuit, "gauss", 4, 6)
@@ -54,7 +54,7 @@ def test_mix_gauss():
 
     datas = np.random.choice(a=range(64), size=10000, p=prob_list)
 
-    maxiter = 150
+    maxiter = 120
     qnn.fit(datas, maxiter)
 
     data_param = qnn.predict()

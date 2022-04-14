@@ -152,6 +152,21 @@ class QNNGeneretor(QNN):
         state = self.circuit.run([0])
         return state
 
+    def predict_and_inner(self):
+        aaa = self._predict_inner()
+        y_pred_in = aaa.get_vector()
+        y_pred_conj = y_pred_in.conjugate()
+
+        data_per = y_pred_in * y_pred_conj  # 2乗の和
+
+        if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
+            data_per = data_per.reshape(
+                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+            )
+            data_per = data_per.sum(axis=0)
+
+        return (data_per, aaa)
+
     def conving(self, data_diff):
         # data_diffは、現在の分布ー正しい分布
         # (data_diff) (カーネル行列) (data_diffの行ベクトル)　を計算すると、cost_funcになる。
@@ -211,15 +226,15 @@ class QNNGeneretor(QNN):
     def _cost_func_grad(self, theta, train_scaled):
         self.circuit.update_parameters(theta)
         # y-xを求める
-        data_diff = self.predict() - train_scaled
+        (pre, prein) = self.predict_and_inner()
+        data_diff = pre - train_scaled
         conv_diff = self.conving(data_diff)
 
         convconv_diff = np.tile(
             conv_diff, 2 ** (self.n_qubit - self.Fqubit)
         )  # 得られた確率ベクトルの添え字の大きい桁を無視する。
         # 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -> [0.2,-0.1,0,-0.1]
-
-        state_vec = self._predict_inner().get_vector()
+        state_vec = prein.get_vector()
         ret = QuantumState(self.n_qubit)
         ret.load(convconv_diff * state_vec * 4)
         # 各要素ごとに積を取り、4を掛けている。　4なのは、2乗だから2をかけるのと、　実際はカーネルの左と右両方にベクトルあるから2を掛ける。
