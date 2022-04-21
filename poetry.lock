@@ -256,7 +256,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "cycler"
 version = "0.11.0"
 description = "Composable style cycles"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -318,7 +318,7 @@ pyflakes = ">=2.4.0,<2.5.0"
 name = "fonttools"
 version = "4.29.1"
 description = "Tools to manipulate font files"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -718,7 +718,7 @@ python-versions = ">=3.6"
 name = "kiwisolver"
 version = "1.3.2"
 description = "A fast implementation of the Cassowary constraint solver"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -754,7 +754,7 @@ python-versions = ">=3.7"
 name = "matplotlib"
 version = "3.5.1"
 description = "Python plotting package"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -1052,7 +1052,7 @@ python-versions = ">=3.7,<3.11"
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1171,7 +1171,7 @@ python-versions = "*"
 name = "pillow"
 version = "8.4.0"
 description = "Python Imaging Library (Fork)"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1304,7 +1304,7 @@ python-versions = ">=3.5"
 name = "pyparsing"
 version = "3.0.7"
 description = "Python parsing module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1362,7 +1362,7 @@ histogram = ["pygal", "pygaljs"]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 
@@ -1417,7 +1417,7 @@ py = {version = "*", markers = "implementation_name == \"pypy\""}
 name = "qulacs"
 version = "0.3.0"
 description = "Quantum circuit simulator for research"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1433,7 +1433,7 @@ python-versions = "*"
 name = "qulacsvis"
 version = "0.2.1"
 description = "visualizers for qulacs"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7,<3.11"
 
@@ -1534,7 +1534,7 @@ win32 = ["pywin32"]
 name = "setuptools-scm"
 version = "6.4.2"
 description = "the blessed package to manage your versions by scm tags"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1550,7 +1550,7 @@ toml = ["setuptools (>=42)"]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -1758,7 +1758,7 @@ sqlcipher = ["sqlcipher3-binary"]
 name = "temp"
 version = "2020.7.2"
 description = "temp.tempdir(), temp.tempfile() functions"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1809,7 +1809,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "1.2.3"
 description = "A lil' TOML parser"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1916,7 +1916,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1,<3.11"
-content-hash = "027a8b9c41d194e79e70da8af337d6c6dfcfb38182900fa53178342f38302c54"
+content-hash = "bc15d0d059d99130b40e651accd6d3c2ba7d5d674c5b648d9e93928d31f8ba73"
 
 [metadata.files]
 alabaster = [
