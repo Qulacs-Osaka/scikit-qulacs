@@ -227,6 +227,11 @@
      </li>
     </ul>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="circuit_visualize.html">
+     Circuit visualize
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -869,16 +874,15 @@ loss 0.008518100629961275
 <div class="section" id="id4">
 <h2>用意されている量子回路<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h2>
 <p>scikit-qulacs では代表的な論文で発表されている機械学習用量子回路を手軽に使えるようにするため、量子回路の実装に努めています。機械学習用量子回路は <code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスのインスタンスとして実装されていて、<code class="docutils literal notranslate"><span class="pre">skqulacs.circuit</span></code> モジュールにある <code class="docutils literal notranslate"><span class="pre">create_...()</span></code> という関数を呼ぶことにより作成可能です。</p>
-<p>現在、</p>
+<p>代表的なansatzとして、</p>
 <ul class="simple">
-<li><p>create_qcl_ansatz(n_qubit: int, c_depth: int, time_step: float, seed=None): <a class="reference external" href="https://arxiv.org/abs/1803.00745">arXiv:1803.00745</a></p></li>
-<li><p>create_farhi_neven_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): <a class="reference external" href="https://arxiv.org/pdf/1802.06002">arXiv:1802.06002</a></p></li>
-<li><p>create_farhi_neven_watle_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): 上記回路を &#64;WA_TLE さんが改良したもの。</p></li>
-<li><p>create_ibm_embedding_circuit(n_qubit: int): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a></p></li>
-<li><p>create_shirai_ansatz(n_qubit: int, c_depth: int = 5, seed: int = 9): <a class="reference external" href="http://arxiv.org/abs/2111.02951">aeXiv:2111.02951</a>
-注:微妙に細部が異なる可能性あり</p></li>
+<li><p>create_farhi_neven_ansatz(n_qubit: int, c_depth: int, seed: Optional[int] = None): <a class="reference external" href="https://arxiv.org/pdf/1802.06002">arXiv:1802.06002</a>
+<img alt="farhi_neven_ansatz" src="../_images/farhi_neven_ansatz.png" /></p></li>
+<li><p>create_ibm_embedding_circuit(n_qubit: int): <a class="reference external" href="https://arxiv.org/abs/1804.11326">arXiv:1804.11326</a>
+<img alt="ibm_embedding_circuit" src="../_images/ibm_embedding_circuit.png" /></p></li>
 </ul>
 <p>が用意されています。</p>
+<p>他に利用可能な量子回路のリストについては<a class="reference internal" href="circuit_visualize.html"><span class="doc std std-doc">このページ</span></a>をご覧ください。</p>
 <p>基本的には <code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code> などの引数として与えることを推奨しますが、自前で新たなアルゴリズムを作りたいときなど、これらの量子回路を直接扱いたいときもあると思います。以下に使用例を掲載します。</p>
 <p>以下のコードで QCL ansatz を作成します。</p>
 <div class="cell docutils container">

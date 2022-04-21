@@ -6,3 +6,4 @@ Notebooks
    
    0_tutorial
    paper_reproduction
+   circuit_visualize
