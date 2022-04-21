@@ -17,7 +17,7 @@ def preprocess_input(x: np.ndarray) -> np.ndarray:
     x_pad = np.c_[np.c_[x, padding], np.zeros((len(x), 1))]
 
     # normalize each input
-    normalization = np.sqrt(np.sum(x_pad ** 2, -1))
+    normalization = np.sqrt(np.sum(x_pad**2, -1))
     x_norm = (x_pad.T / normalization).T
 
     # angles for state preparation are new features

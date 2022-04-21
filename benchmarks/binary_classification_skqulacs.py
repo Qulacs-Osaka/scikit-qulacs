@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn import QNNClassifier
+from skqulacs.qnn.solver import Adam
 
 
 def load_iris_skqulacs() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -92,7 +93,7 @@ def binary_classification_skqulacs(
 
     num_class = 2
     circuit = create_circuit(6)
-    qcl = QNNClassifier(circuit, num_class, "Adam", do_x_scale=False)
+    qcl = QNNClassifier(circuit, num_class, Adam(), do_x_scale=False)
     qcl.fit(x_train, y_train, 50)
     y_pred = qcl.predict(x_test)
     f1_score(y_test, y_pred) > 0.95

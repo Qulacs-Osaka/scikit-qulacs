@@ -4,13 +4,13 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 from qulacs import Observable
-from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
+from skqulacs.qnn.solver import Solver
 
 
 class QNNRegressor(QNN):
@@ -32,15 +32,12 @@ class QNNRegressor(QNN):
     def __init__(
         self,
         circuit: LearningCircuit,
-        solver: Literal["Adam", "BFGS", "Nelder-Mead"] = "BFGS",
+        solver: Solver,
         cost: Literal["mse"] = "mse",
         do_x_scale: bool = True,
         do_y_scale: bool = True,
         x_norm_range=1.0,
         y_norm_range=0.7,
-        callback=None,
-        tol=0.0001,
-        n_iter_no_change=999999,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
@@ -63,10 +60,7 @@ class QNNRegressor(QNN):
         self.do_y_scale = do_y_scale
         self.x_norm_range = x_norm_range
         self.y_norm_range = y_norm_range
-        self.callback = callback
         self.observables = []
-        self.tol = tol
-        self.n_iter_no_change = n_iter_no_change
 
     def fit(
         self,
@@ -119,73 +113,14 @@ class QNNRegressor(QNN):
             self.observables.append(observable)
 
         theta_init = self.circuit.get_parameters()
-        if self.solver == "Nelder-Mead":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "BFGS":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                jac=self._cost_func_grad,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "Adam":
-            pr_A = 0.02
-            pr_Bi = 0.8
-            pr_Bt = 0.995
-            pr_ips = 0.0000001
-            # Above is hyper parameters.
-            Bix = 0
-            Btx = 0
-
-            moment = np.zeros(len(theta_init))
-            vel = 0
-            theta_now = theta_init
-            maxiter *= len(x_scaled)
-            prev_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-
-            nochan = 0
-            for iter in range(0, maxiter, 5):
-                grad = self._cost_func_grad(
-                    theta_now,
-                    x_scaled[iter % len(x_scaled) : iter % len(x_scaled) + 5],
-                    y_scaled[iter % len(y_scaled) : iter % len(y_scaled) + 5],
-                )
-                moment = moment * pr_Bi + (1 - pr_Bi) * grad
-                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
-                Bix = Bix * pr_Bi + (1 - pr_Bi)
-                Btx = Btx * pr_Bt + (1 - pr_Bt)
-                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if (self.n_iter_no_change < 999999) and (iter % len(x_scaled) < 5):
-                    if self.callback is not None:
-                        self.callback(theta_now)
-                    now_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-                    if prev_cost - self.tol < now_cost:
-                        nochan = nochan + 1
-                        if nochan >= self.n_iter_no_change:
-                            break
-                    else:
-                        nochan = 0
-                    prev_cost = now_cost
-
-            loss = self.cost_func(theta_now, x_scaled, y_scaled)
-            theta_opt = theta_now
-
-        else:
-            raise NotImplementedError
-
-        return loss, theta_opt
+        return self.solver.run(
+            self.cost_func,
+            self._cost_func_grad,
+            theta_init,
+            x_scaled,
+            y_scaled,
+            maxiter,
+        )
 
     def predict(self, x_test: List[List[float]]) -> List[float]:
         """Predict outcome for each input data in `x_test`.
@@ -224,7 +159,7 @@ class QNNRegressor(QNN):
             res.append(r)
         return np.array(res)
 
-    def cost_func(self, theta, x_scaled, y_scaled):
+    def cost_func(self, theta, x_scaled, y_scaled) -> float:
         if self.cost == "mse":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
