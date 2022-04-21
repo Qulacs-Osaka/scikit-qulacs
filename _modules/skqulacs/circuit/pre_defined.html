@@ -158,6 +158,11 @@
          skqulacs.qnn.regressor module
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -421,7 +426,7 @@ title="Source repository"
         <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">X_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
     <span class="n">Z_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
-    <span class="n">ham</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubit</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+    <span class="n">ham</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="n">n_qubit</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">n_qubit</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">):</span>
         <span class="n">Jx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">ham</span> <span class="o">+=</span> <span class="n">Jx</span> <span class="o">*</span> <span class="n">_make_fullgate</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span> <span class="n">X_mat</span><span class="p">]],</span> <span class="n">n_qubit</span><span class="p">)</span>

@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>scikit-qulacs チュートリアル &#8212; scikit-qulacs  documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -160,6 +161,11 @@
        <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.qnn.regressor.html">
          skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
         </a>
        </li>
       </ul>
@@ -585,27 +591,27 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="scikit-qulacs">
+  <section class="tex2jax_ignore mathjax_ignore" id="scikit-qulacs">
 <h1>scikit-qulacs チュートリアル<a class="headerlink" href="#scikit-qulacs" title="Permalink to this headline">#</a></h1>
-<div class="section" id="id1">
+<section id="id1">
 <h2>scikit-qulacs とは<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
 <p>量子回路シミュレータ <a class="reference external" href="https://github.com/Qulacs-Osaka/qulacs-osaka">Qulacs-Osaka</a> (<a class="reference external" href="https://github.com/qulacs/qulacs">Qulacs</a> の大阪大学バージョン) をバックエンドとした量子機械学習アルゴリズムのシミュレータです。scikit-learn の名前をもじっています。</p>
-</div>
-<div class="section" id="id2">
+</section>
+<section id="id2">
 <h2>インストール<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
 <p>PyPI からインストールできます。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">skqulacs</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="quantum-neural-network">
+</section>
+<section id="quantum-neural-network">
 <h2>Quantum neural network<a class="headerlink" href="#quantum-neural-network" title="Permalink to this headline">#</a></h2>
 <p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> に対して、学習パラメータ <span class="math notranslate nohighlight">\({\boldsymbol \theta}\)</span> を使って
 <div class="math notranslate nohighlight">
 \[y_{{\boldsymbol \theta}}({\boldsymbol x}) = \langle 0|U^\dagger({\boldsymbol \theta}, {\boldsymbol x}) O U({\boldsymbol \theta}, {\boldsymbol x})|0\rangle\]</div>
 
 の形でモデル <span class="math notranslate nohighlight">\(y_{{\boldsymbol \theta}}({\boldsymbol x})\)</span> を構築する手法を量子ニューラルネットワークと呼びます。scikit-qulacs では <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn</span></code> モジュールに実装されています。分類問題をとく <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.classifier</span></code> と回帰問題を解く <code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.regressor</span></code> の２つがあります。</p>
-<div class="section" id="skqulacs-qnn-qnnclassifier">
+<section id="skqulacs-qnn-qnnclassifier">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.QNNClassifier</span></code> の使い方<a class="headerlink" href="#skqulacs-qnn-qnnclassifier" title="Permalink to this headline">#</a></h3>
 <p>例として、有名な <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを分類する量子ニューラルネットワークを組んでみます。まず、以下のコードによって <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> から <code class="docutils literal notranslate"><span class="pre">iris</span></code> データセットを取り出し、訓練データとテストデータに分けます。</p>
 <div class="cell docutils container">
@@ -684,8 +690,8 @@ loss 0.0860431460366711
 </div>
 </div>
 <p>うまく分類できていることがわかります。</p>
-</div>
-<div class="section" id="skqulacs-qnn-qnnregressor">
+</section>
+<section id="skqulacs-qnn-qnnregressor">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.QNNRegressor</span></code> の使い方<a class="headerlink" href="#skqulacs-qnn-qnnregressor" title="Permalink to this headline">#</a></h3>
 <p>回帰問題を解くには <code class="docutils literal notranslate"><span class="pre">QNNRegressor</span></code> を使います。ここでは <span class="math notranslate nohighlight">\(y=\sin(\pi x)\)</span> を学習させてみます。まずデータセットを作ります。</p>
 <div class="cell docutils container">
@@ -771,16 +777,16 @@ loss 0.008518100629961275
 </div>
 </div>
 <p>よく学習できていることがわかります。</p>
-</div>
-</div>
-<div class="section" id="id3">
+</section>
+</section>
+<section id="id3">
 <h2>量子カーネル法<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
 <p>入力データ <span class="math notranslate nohighlight">\({\boldsymbol x}\)</span> を量子状態 <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> にマップし、この量子状態間の内積で定義されるカーネル関数
 <div class="math notranslate nohighlight">
 \[K({\boldsymbol x},{\boldsymbol x}')=|\langle \psi({\boldsymbol x})| \psi({\boldsymbol x}')\rangle|^2\]</div>
 
 を使ったカーネル法を量子カーネル法と呼びます。scikit-qulacs には、support vector classifier <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> と support vector regressor <code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の2つが実装されています。</p>
-<div class="section" id="skqulacs-qsvm-qsvc">
+<section id="skqulacs-qsvm-qsvc">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVC</span></code> の使い方<a class="headerlink" href="#skqulacs-qsvm-qsvc" title="Permalink to this headline">#</a></h3>
 <p>ここでは IBM のグループが論文 <a class="reference external" href="https://www.nature.com/articles/s41586-019-0980-2">Supervised learning with quantum-enhanced feature spaces</a> で提案した <span class="math notranslate nohighlight">\(|\psi({\boldsymbol x})\rangle\)</span> を使った分類を行います。この状態を作る量子回路は <code class="docutils literal notranslate"><span class="pre">skqulacs.circuit.create_ibm_embedding_circuit</span></code> によって作り出せます。</p>
 <p>まずデータセットを準備します。</p>
@@ -826,8 +832,8 @@ loss 0.008518100629961275
 </div>
 </div>
 <p>qnn よりも悪い結果となりました。回路形がこのデータセットに適していないからだと考えられます。</p>
-</div>
-<div class="section" id="skqulacs-qsvm-qsvr">
+</section>
+<section id="skqulacs-qsvm-qsvr">
 <h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qsvm.QSVR</span></code> の使い方<a class="headerlink" href="#skqulacs-qsvm-qsvr" title="Permalink to this headline">#</a></h3>
 <p>同様の回路を使い、回帰を行ってみます。QNN の場合と同様に、<span class="math notranslate nohighlight">\(\sin(\pi x)\)</span> を学習します。まずデータセットを作ります。</p>
 <div class="cell docutils container">
@@ -869,9 +875,9 @@ loss 0.008518100629961275
 </div>
 </div>
 <p>うまく学習できています。</p>
-</div>
-</div>
-<div class="section" id="id4">
+</section>
+</section>
+<section id="id4">
 <h2>用意されている量子回路<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h2>
 <p>scikit-qulacs では代表的な論文で発表されている機械学習用量子回路を手軽に使えるようにするため、量子回路の実装に努めています。機械学習用量子回路は <code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスのインスタンスとして実装されていて、<code class="docutils literal notranslate"><span class="pre">skqulacs.circuit</span></code> モジュールにある <code class="docutils literal notranslate"><span class="pre">create_...()</span></code> という関数を呼ぶことにより作成可能です。</p>
 <p>代表的なansatzとして、</p>
@@ -943,8 +949,8 @@ loss 0.008518100629961275
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="id5">
+</section>
+<section id="id5">
 <h2>ユーザー定義の量子回路を学習に利用する<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h2>
 <p>ここでは自分でオリジナルの量子回路を定義し、それを学習に利用する方法を説明します。scikit-qulacs では、<code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスによって量子回路を表現しています。これは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のラッパーとなっていて、入力データと訓練される回路パラメータを一元管理し、それらをすべて qulacs の parametric gate で扱えるようにしたものです。</p>
 <p><code class="docutils literal notranslate"><span class="pre">LearningCircuit</span></code> クラスは qulacs の <code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> のうちの主要な <code class="docutils literal notranslate"><span class="pre">add_.._gate()</span></code> 系のメソッドを機能そのままにラップしています。それに加えて、<code class="docutils literal notranslate"><span class="pre">ParametricQuantumCircuit</span></code> を拡張する機能として、以下のメソッドが追加されています。</p>
@@ -1000,8 +1006,8 @@ loss 0.008518100629961275
 </div>
 </div>
 <p>予想どおりの出力が得られることが確認できます。</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

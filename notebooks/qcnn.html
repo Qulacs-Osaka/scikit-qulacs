@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Quantum Convolutional Neural Network with scikit-qulacs &#8212; scikit-qulacs  documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -158,6 +159,11 @@
        <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.qnn.regressor.html">
          skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
         </a>
        </li>
       </ul>
@@ -485,10 +491,10 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="quantum-convolutional-neural-network-with-scikit-qulacs">
+  <section class="tex2jax_ignore mathjax_ignore" id="quantum-convolutional-neural-network-with-scikit-qulacs">
 <h1>Quantum Convolutional Neural Network with scikit-qulacs<a class="headerlink" href="#quantum-convolutional-neural-network-with-scikit-qulacs" title="Permalink to this headline">#</a></h1>
 <p><a class="reference external" href="https://arxiv.org/abs/1810.03787">Quantum Convolutional Neural Networks</a>をTensorFlow Quantum（以降TFQ）で実装したチュートリアルの<a class="reference external" href="https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en">Quantum Convolutional Neural Network</a>（以降QCNN）のscikit-qulacs実装例です。</p>
-<div class="section" id="id1">
+<section id="id1">
 <h2>インポート<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">scikit-qulacs</span></code>の<code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code>と<code class="docutils literal notranslate"><span class="pre">create_qcnn_ansatz</span></code>をインポートします。<code class="docutils literal notranslate"><span class="pre">numpy</span></code>や<code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>等も併せてインポートします。</p>
 <div class="cell docutils container">
@@ -505,8 +511,8 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="id2">
+</section>
+<section id="id2">
 <h2>テストデータの生成<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
 <p>TFQ版QCNNと同様に、テストデータを生成します。
 TFQ版はデータの中に量子状態を表す回路を埋め込みテンソルに変換して持たせます。
@@ -539,8 +545,8 @@ TFQ版はデータの中に量子状態を表す回路を埋め込みテンソ�
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="qcnn">
+</section>
+<section id="qcnn">
 <h2>QCNN回路の作成<a class="headerlink" href="#qcnn" title="Permalink to this headline">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">create_qcnn_ansatz()</span></code>を呼び出して回路を作成してください。<br />
 第一引数に量子ビットを指定します。現在は固定の8ビットに対応しています。<br />
@@ -554,8 +560,8 @@ TFQ版はデータの中に量子状態を表す回路を埋め込みテンソ�
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="qnnclassifier">
+</section>
+<section id="qnnclassifier">
 <h2>QNNClassifierクラスの作成<a class="headerlink" href="#qnnclassifier" title="Permalink to this headline">#</a></h2>
 <p>作成した回路を<code class="docutils literal notranslate"><span class="pre">QNNClassifierクラス</span></code>に指定してください。<br />
 第一引数に回路を指定します。第二引数に分類数を指定します。ここでは二値問題のため2を指定してください。<br />
@@ -569,8 +575,8 @@ TFQ版はデータの中に量子状態を表す回路を埋め込みテンソ�
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="id3">
+</section>
+<section id="id3">
 <h2>実行<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">generate_data()</span></code>を呼び出してテストデータを生成し、<code class="docutils literal notranslate"><span class="pre">qcl.fit()</span></code>を実行し学習を行います。<br />
 <code class="docutils literal notranslate"><span class="pre">opt_params</span></code>に学習されたパラメータが入ります。<br />
@@ -611,8 +617,8 @@ f1_score:  0.9375814155449413
 </div>
 </div>
 <p>0.9以上の正解率となります。</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

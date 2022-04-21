@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Reproducing arXiv:2108.01039 with scikit-qulacs &#8212; scikit-qulacs  documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -158,6 +159,11 @@
        <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.qnn.regressor.html">
          skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
         </a>
        </li>
       </ul>
@@ -485,7 +491,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="reproducing-arxiv-2108-01039-with-scikit-qulacs">
+  <section class="tex2jax_ignore mathjax_ignore" id="reproducing-arxiv-2108-01039-with-scikit-qulacs">
 <h1>Reproducing arXiv:2108.01039 with scikit-qulacs<a class="headerlink" href="#reproducing-arxiv-2108-01039-with-scikit-qulacs" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -512,7 +518,7 @@ title="Print to PDF"
 <img alt="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_1_0.png" src="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_1_0.png" />
 </div>
 </div>
-<div class="section" id="prepare-dataset">
+<section id="prepare-dataset">
 <h2>Prepare dataset<a class="headerlink" href="#prepare-dataset" title="Permalink to this headline">#</a></h2>
 <p>Flatten images to make them 1-dimenstional vectors and split the dataset into test and trainign</p>
 <div class="cell docutils container">
@@ -528,8 +534,8 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="prepare-an-npqc-ansatz">
+</section>
+<section id="prepare-an-npqc-ansatz">
 <h2>Prepare an NPQC ansatz<a class="headerlink" href="#prepare-an-npqc-ansatz" title="Permalink to this headline">#</a></h2>
 <p>Create circuit from pre-defined set. scikit-qulacs can create the ansatz called NPQC ansatz in arXiv:2108.01039.</p>
 <div class="cell docutils container">
@@ -545,8 +551,8 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="kernel-svm-using-the-ansatz">
+</section>
+<section id="kernel-svm-using-the-ansatz">
 <h2>Kernel SVM using the ansatz<a class="headerlink" href="#kernel-svm-using-the-ansatz" title="Permalink to this headline">#</a></h2>
 <p>Train the kernel support vector machine and make prediction</p>
 <div class="cell docutils container">
@@ -574,8 +580,8 @@ title="Print to PDF"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="showing-results">
+</section>
+<section id="showing-results">
 <h2>Showing results<a class="headerlink" href="#showing-results" title="Permalink to this headline">#</a></h2>
 <p>See image and prediction for some of the test data</p>
 <div class="cell docutils container">
@@ -606,8 +612,8 @@ title="Print to PDF"
 <img alt="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_12_0.png" src="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_12_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="reproduce-fig-4-a-of-arxiv-2108-01039">
+</section>
+<section id="reproduce-fig-4-a-of-arxiv-2108-01039">
 <h2>Reproduce Fig. 4(a) of arXiv:2108.01039<a class="headerlink" href="#reproduce-fig-4-a-of-arxiv-2108-01039" title="Permalink to this headline">#</a></h2>
 <p>We vary the training dataset size and see how the test accuracy changes. The code below takes some time to execute.</p>
 <div class="cell docutils container">
@@ -645,8 +651,8 @@ title="Print to PDF"
 <img alt="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_14_0.png" src="../_images/arxiv_2108_01039_large_scale_quantum_machine_learning_14_0.png" />
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

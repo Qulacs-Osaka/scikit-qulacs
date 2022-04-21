@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Circuit visualize &#8212; scikit-qulacs  documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
@@ -157,6 +158,11 @@
        <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.qnn.regressor.html">
          skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
         </a>
        </li>
       </ul>
@@ -514,7 +520,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="circuit-visualize">
+  <section class="tex2jax_ignore mathjax_ignore" id="circuit-visualize">
 <h1>Circuit visualize<a class="headerlink" href="#circuit-visualize" title="Permalink to this headline">#</a></h1>
 <p>このドキュメントでは scikit-qulacs に用意されている量子回路を可視化します。
 scikitqulacsには現在、以下のような量子回路を用意しています。</p>
@@ -534,7 +540,7 @@ qulacs-visualizerはpipを使ってインストールできます。</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install qulacsvis
 </pre></div>
 </div>
-<div class="section" id="qcl-ansatz">
+<section id="qcl-ansatz">
 <h2>qcl_ansatz<a class="headerlink" href="#qcl-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_qcl_ansatz(
 n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
@@ -557,8 +563,8 @@ n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
 <img alt="../_images/circuit_visualize_3_0.png" src="../_images/circuit_visualize_3_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="farhi-neven-ansatz">
+</section>
+<section id="farhi-neven-ansatz">
 <h2>farhi_neven_ansatz<a class="headerlink" href="#farhi-neven-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_farhi_neven_ansatz(
 n_qubit: int, c_depth: int, seed: Optional[int] = None
@@ -579,8 +585,8 @@ n_qubit: int, c_depth: int, seed: Optional[int] = None
 <img alt="../_images/circuit_visualize_5_0.png" src="../_images/circuit_visualize_5_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="farhi-neven-watle-ansatz">
+</section>
+<section id="farhi-neven-watle-ansatz">
 <h2>farhi_neven_watle_ansatz<a class="headerlink" href="#farhi-neven-watle-ansatz" title="Permalink to this headline">#</a></h2>
 <p>farhi_neven_ansatzを &#64;WATLE さんが改良したもの</p>
 <p>create_farhi_neven_watle_ansatz(
@@ -601,8 +607,8 @@ n_qubit: int, c_depth: int, seed: Optional[int] = None
 <img alt="../_images/circuit_visualize_7_0.png" src="../_images/circuit_visualize_7_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="ibm-embedding-circuit">
+</section>
+<section id="ibm-embedding-circuit">
 <h2>ibm_embedding_circuit<a class="headerlink" href="#ibm-embedding-circuit" title="Permalink to this headline">#</a></h2>
 <p>create_ibm_embedding_circuit(n_qubit: int)</p>
 <p><a class="reference external" href="https://arxiv.org/abs/1802.06002">arXiv:1802.06002</a></p>
@@ -620,8 +626,8 @@ n_qubit: int, c_depth: int, seed: Optional[int] = None
 <img alt="../_images/circuit_visualize_9_0.png" src="../_images/circuit_visualize_9_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="shirai-ansatz">
+</section>
+<section id="shirai-ansatz">
 <h2>shirai_ansatz<a class="headerlink" href="#shirai-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_shirai_ansatz(
 n_qubit: int, c_depth: int = 5, seed: int = 0
@@ -642,8 +648,8 @@ n_qubit: int, c_depth: int = 5, seed: int = 0
 <img alt="../_images/circuit_visualize_11_0.png" src="../_images/circuit_visualize_11_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="npqcd-ansatz">
+</section>
+<section id="npqcd-ansatz">
 <h2>npqcd_ansatz<a class="headerlink" href="#npqcd-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_npqcd_ansatz(
 n_qubit: int, c_depth: int, c: float = 0.1
@@ -664,8 +670,8 @@ n_qubit: int, c_depth: int, c: float = 0.1
 <img alt="../_images/circuit_visualize_13_0.png" src="../_images/circuit_visualize_13_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="yzcx-ansatz">
+</section>
+<section id="yzcx-ansatz">
 <h2>yzcx_ansatz<a class="headerlink" href="#yzcx-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_yzcx_ansatz(
 n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
@@ -686,8 +692,8 @@ n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
 <img alt="../_images/circuit_visualize_15_0.png" src="../_images/circuit_visualize_15_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="qcnn-ansatz">
+</section>
+<section id="qcnn-ansatz">
 <h2>qcnn_ansatz<a class="headerlink" href="#qcnn-ansatz" title="Permalink to this headline">#</a></h2>
 <p>create_qcnn_ansatz(n_qubit: int, seed: int = 0)</p>
 <p>Creates circuit used in https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en, Section 1.</p>
@@ -705,8 +711,8 @@ n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
 <img alt="../_images/circuit_visualize_17_0.png" src="../_images/circuit_visualize_17_0.png" />
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

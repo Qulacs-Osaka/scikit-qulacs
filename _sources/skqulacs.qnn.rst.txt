@@ -10,6 +10,7 @@ Submodules
    skqulacs.qnn.classifier
    skqulacs.qnn.qnnbase
    skqulacs.qnn.regressor
+   skqulacs.qnn.solver
 
 Module contents
 ---------------
