@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 import numpy as np
+from numpy.typing import NDArray
 from qulacs import Observable
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
@@ -64,10 +65,10 @@ class QNNRegressor(QNN):
 
     def fit(
         self,
-        x_train: List[List[float]],
-        y_train: List[float],
+        x_train: NDArray[np.float_],
+        y_train: NDArray[np.int_],
         maxiter: Optional[int] = None,
-    ) -> Tuple[float, np.ndarray]:
+    ) -> Tuple[float, List[float]]:
         """
         :param x_list: List of x to fit.
         :param y_list: List of y to fit.
@@ -122,7 +123,7 @@ class QNNRegressor(QNN):
             maxiter,
         )
 
-    def predict(self, x_test: List[List[float]]) -> List[float]:
+    def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.int_]:
         """Predict outcome for each input data in `x_test`.
 
         Arguments:
@@ -148,7 +149,7 @@ class QNNRegressor(QNN):
 
         return y_pred
 
-    def _predict_inner(self, x_scaled):
+    def _predict_inner(self, x_scaled: NDArray[np.float_]) -> NDArray[np.float_]:
         res = []
         for x in x_scaled:
             state = self.circuit.run(x)
@@ -159,7 +160,12 @@ class QNNRegressor(QNN):
             res.append(r)
         return np.array(res)
 
-    def cost_func(self, theta, x_scaled, y_scaled) -> float:
+    def cost_func(
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+        y_scaled: NDArray[np.int_],
+    ) -> float:
         if self.cost == "mse":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
@@ -171,7 +177,12 @@ class QNNRegressor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def _cost_func_grad(self, theta, x_scaled, y_scaled):
+    def _cost_func_grad(
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+        y_scaled: NDArray[np.int_],
+    ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
 
         mto = self._predict_inner(x_scaled).copy()

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
+from numpy.typing import NDArray
 from qulacs import Observable
 from scipy.special import softmax
 from sklearn.metrics import log_loss
@@ -70,14 +71,14 @@ class QNNClassifier(QNN):
 
     def fit(
         self,
-        x_train: List[List[float]],
-        y_train: List[int],
+        x_train: NDArray[np.float_],
+        y_train: NDArray[np.int_],
         maxiter: Optional[int] = None,
-    ):
+    ) -> Tuple[float, List[float]]:
         """
-        :param x_list: List of training data inputs.
-        :param y_list: List of labels to fit. ;Labels must be represented as integers.
-        :param maxiter: The number of iterations to pass scipy.optimize.minimize
+        :param x_train: List of training data inputs whose shape is (n_sample, n_features).
+        :param y_train: List of labels to fit. Labels must be represented as integers. Shape is (n_samples,)
+        :param maxiter: The number of maximum iterations to pass scipy.optimize.minimize
         :return: Loss after learning.
         :return: Parameter theta after learning.
         """
@@ -105,14 +106,14 @@ class QNNClassifier(QNN):
             maxiter,
         )
 
-    def predict(self, x_test: List[List[float]]):
+    def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.int_]:
         """Predict outcome for each input data in `x_test`.
 
         Arguments:
             x_test: Input data whose shape is (n_samples, n_features).
 
         Returns:
-            y_pred: Predicted outcome.
+            y_pred: Predicted outcome whose shape is (n_samples,).
         """
         x_test = np.array(x_test)
         if x_test.ndim == 1:
@@ -122,10 +123,10 @@ class QNNClassifier(QNN):
         else:
             x_scaled = x_test
 
-        y_pred = self._predict_inner(x_scaled).argmax(axis=1)
+        y_pred: NDArray[np.int_] = self._predict_inner(x_scaled).argmax(axis=1)
         return y_pred
 
-    def _predict_inner(self, x_list):
+    def _predict_inner(self, x_list: NDArray[np.float_]) -> NDArray[np.float_]:
         res = np.zeros((len(x_list), self.num_class))
         for i in range(len(x_list)):
             state = self.circuit.run(x_list[i])
@@ -136,7 +137,12 @@ class QNNClassifier(QNN):
         return res
 
     # TODO: Extract cost function to outer class to accept other type of ones.
-    def cost_func(self, theta, x_scaled, y_scaled):
+    def cost_func(
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+        y_scaled: NDArray[np.int_],
+    ) -> float:
         if self.cost == "log_loss":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
@@ -147,7 +153,12 @@ class QNNClassifier(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def _cost_func_grad(self, theta, x_scaled, y_scaled):
+    def _cost_func_grad(
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+        y_scaled: NDArray[np.int_],
+    ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
 
         y_pred = self._predict_inner(x_scaled)
