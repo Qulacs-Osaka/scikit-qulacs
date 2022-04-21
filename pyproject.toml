@@ -41,6 +41,7 @@ myst-nb = "^0.13.1"
 pytest-benchmark = "^3.4.1"
 typing-extensions = "^4.1.1"
 PennyLane = "^0.22.2"
+qulacsvis = "^0.2.1"
 
 [tool.isort]
 default_section = "THIRDPARTY"
