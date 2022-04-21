@@ -4,11 +4,14 @@ from typing import List, Optional
 
 import numpy as np
 from qulacs import Observable
-from scipy.optimize import minimize
+from scipy.special import softmax
+from sklearn.metrics import log_loss
+from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN, _get_x_scale_param, _min_max_scaling
+from skqulacs.qnn.qnnbase import QNN
+from skqulacs.qnn.solver import Solver
 
 
 class QNNClassifier(QNN):
@@ -34,17 +37,15 @@ class QNNClassifier(QNN):
         self,
         circuit: LearningCircuit,
         num_class: int,
-        solver: Literal["BFGS", "Nelder-Mead", "Adam"] = "BFGS",
+        solver: Solver,
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
-        y_exp_ratio=5.0,
-        callback=None,
-        tol=1e-4,
-        n_iter_no_change=999999,
+        x_norm_range: float = 1.0,
+        y_exp_ratio=2.2,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
-        :param num_class: The number of classes; the number of qubits to measure.
+        :param num_class: The number of classes; the number of qubits to measure. must be n_qubits >= num_class .
         :param solver: Solver to use(Nelder-Mead is not recommended).
         :param cost: Cost function. log_loss only for now.
         :param do_x_scale: Whether to scale x.
@@ -61,12 +62,8 @@ class QNNClassifier(QNN):
         self.solver = solver
         self.cost = cost
         self.do_x_scale = do_x_scale
+        self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
-        self.callback = callback
-        self.scale_x_param = []
-        self.scale_y_param = []
-        self.tol = tol
-        self.n_iter_no_change = n_iter_no_change
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
@@ -84,83 +81,29 @@ class QNNClassifier(QNN):
         :return: Loss after learning.
         :return: Parameter theta after learning.
         """
-        self.scale_x_param = _get_x_scale_param(x_train)
-        self.scale_y_param = self.get_y_scale_param(y_train)
+
+        y_scaled = y_train
+        x_train = np.array(x_train)
+        if x_train.ndim == 1:
+            x_train = x_train.reshape((-1, 1))
 
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_train, self.scale_x_param)
+            self.scale_x_scaler = MinMaxScaler(
+                feature_range=(-self.x_norm_range, self.x_norm_range)
+            )
+            x_scaled = self.scale_x_scaler.fit_transform(x_train)
         else:
             x_scaled = x_train
 
-        y_scaled = self.do_y_scale(y_train)
-
-        # TODO: Extract solvers if the same one is used for classifier and regressor.
         theta_init = self.circuit.get_parameters()
-        if self.solver == "Nelder-Mead":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "BFGS":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=(x_scaled, y_scaled),
-                method=self.solver,
-                jac=self._cost_func_grad,
-                options={"maxiter": maxiter},
-            )
-            loss = result.fun
-            theta_opt = result.x
-        elif self.solver == "Adam":
-            pr_A = 0.02
-            pr_Bi = 0.8
-            pr_Bt = 0.995
-            pr_ips = 0.0000001
-            # Above is hyper parameters.
-            Bix = 0
-            Btx = 0
-
-            moment = np.zeros(len(theta_init))
-            vel = 0
-            theta_now = theta_init
-            maxiter *= len(x_train)
-            prev_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-
-            nochan = 0
-            for iter in range(0, maxiter, 5):
-                grad = self._cost_func_grad(
-                    theta_now,
-                    x_scaled[iter % len(x_train) : iter % len(x_train) + 5],
-                    y_scaled[iter % len(y_train) : iter % len(y_train) + 5],
-                )
-                moment = moment * pr_Bi + (1 - pr_Bi) * grad
-                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
-                Bix = Bix * pr_Bi + (1 - pr_Bi)
-                Btx = Btx * pr_Bt + (1 - pr_Bt)
-                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                if (self.n_iter_no_change < 999999) and (iter % len(x_scaled) < 5):
-                    if self.callback is not None:
-                        self.callback(theta_now)
-                    now_cost = self.cost_func(theta_now, x_scaled, y_scaled)
-                    if prev_cost - self.tol < now_cost:
-                        nochan = nochan + 1
-                        if nochan >= self.n_iter_no_change:
-                            break
-                    else:
-                        nochan = 0
-                    prev_cost = now_cost
-
-            loss = self.cost_func(theta_now, x_train, y_train)
-            theta_opt = theta_now
-        else:
-            raise NotImplementedError
-        return loss, theta_opt
+        return self.solver.run(
+            self.cost_func,
+            self._cost_func_grad,
+            theta_init,
+            x_scaled,
+            y_scaled,
+            maxiter,
+        )
 
     def predict(self, x_test: List[List[float]]):
         """Predict outcome for each input data in `x_test`.
@@ -171,114 +114,57 @@ class QNNClassifier(QNN):
         Returns:
             y_pred: Predicted outcome.
         """
+        x_test = np.array(x_test)
+        if x_test.ndim == 1:
+            x_test = x_test.reshape((-1, 1))
         if self.do_x_scale:
-            x_scaled = _min_max_scaling(x_test, self.scale_x_param)
+            x_scaled = self.scale_x_scaler.transform(x_test)
         else:
             x_scaled = x_test
 
-        y_pred = self.rev_y_scale(self._predict_inner(x_scaled))
+        y_pred = self._predict_inner(x_scaled).argmax(axis=1)
         return y_pred
 
     def _predict_inner(self, x_list):
-        res = []
-        for x in x_list:
-            state = self.circuit.run(x)
-            r = [
-                self.observables[i].get_expectation_value(state)
-                for i in range(self.n_qubit)
-            ]
-            res.append(r)
-        return np.array(res)
+        res = np.zeros((len(x_list), self.num_class))
+        for i in range(len(x_list)):
+            state = self.circuit.run(x_list[i])
+            for j in range(self.num_class):
+                res[i][j] = (
+                    self.observables[j].get_expectation_value(state) * self.y_exp_ratio
+                )
+        return res
 
     # TODO: Extract cost function to outer class to accept other type of ones.
     def cost_func(self, theta, x_scaled, y_scaled):
         if self.cost == "log_loss":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
-            ypf = []
-            for i in range(len(y_pred)):
-                for j in range(len(self.scale_y_param[0])):
-                    hid = self.scale_y_param[1][j]
-                    wa = 0
-                    for k in range(self.scale_y_param[0][j]):
-                        wa += np.exp(self.y_exp_ratio * y_pred[i][hid + k])
-                    for k in range(self.scale_y_param[0][j]):
-                        ypf.append(np.exp(self.y_exp_ratio * y_pred[i][hid + k]) / wa)
-            ysf = y_scaled.ravel()
-            cost = 0
-            for i in range(len(ysf)):
-                if ysf[i] == 1:
-                    cost -= np.log(ypf[i])
-                else:
-                    cost -= np.log(1 - ypf[i])
-            cost /= len(ysf)
-            return cost
+            y_pred_sm = softmax(y_pred, axis=1)
+            return log_loss(y_scaled, y_pred_sm)
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    # TODO: Extract following scaling operation as other class to change several scaling method.
-    def get_y_scale_param(self, y):
-        # Hold `y`'s maximum value.
-        syurui = np.max(y, axis=0)
-        syurui = syurui.astype(int)
-        syurui = syurui + 1
-        if not isinstance(syurui, np.ndarray):
-            eee = syurui
-            syurui = np.zeros(1, dtype=int)
-            syurui[0] = eee
-        rui = np.concatenate((np.zeros(1, dtype=int), syurui.cumsum()))
-        return [syurui, rui]
-
-    def do_y_scale(self, y):
-        # Represent y as one-hot vector.
-        # And handle multiple inputs.
-        clsnum = int(self.scale_y_param[1][-1])
-        res = np.zeros((len(y), clsnum), dtype=int)
-        for i in range(len(y)):
-            if y.ndim == 1:
-                res[i][y[i]] = 1
-            else:
-                for j in range(len(y[i])):
-                    res[i][y[i][j] + self.scale_y_param[1][j]] = 1
-        return res
-
-    def rev_y_scale(self, y_inr):
-        res = np.zeros((len(y_inr), len(self.scale_y_param[0])), dtype=int)
-        for i in range(len(y_inr)):
-            for j in range(len(self.scale_y_param[0])):
-                hid = self.scale_y_param[1][j]
-                sai = -9999
-                arg = 0
-                for k in range(self.scale_y_param[0][j]):
-                    if sai < y_inr[i][hid + k]:
-                        sai = y_inr[i][hid + k]
-                        arg = k
-                res[i][j] = arg
-        return res
-
     def _cost_func_grad(self, theta, x_scaled, y_scaled):
         self.circuit.update_parameters(theta)
 
-        mto = self._predict_inner(x_scaled).copy()
+        y_pred = self._predict_inner(x_scaled)
+        y_pred_sm = softmax(y_pred, axis=1)
         grad = np.zeros(len(theta))
-        for h in range(len(x_scaled)):
-            for j in range(len(self.scale_y_param[0])):
-                hid = self.scale_y_param[1][j]
-                wa = 0
-                for k in range(self.scale_y_param[0][j]):
-                    wa += np.exp(self.y_exp_ratio * mto[h][hid + k])
-                for k in range(self.scale_y_param[0][j]):
-                    mto[h][hid + k] = np.exp(self.y_exp_ratio * mto[h][hid + k]) / wa
+        for sample_index in range(len(x_scaled)):
             backobs = Observable(self.n_qubit)
-
-            for i in range(len(y_scaled[0])):
-                if y_scaled[h][i] == 0:
-                    backobs.add_operator(1.0 / (1.0 - mto[h][i]), f"Z {i}")
-                else:
-                    backobs.add_operator(-1.0 / (mto[h][i]), f"Z {i}")
-            grad += self.circuit.backprop(x_scaled[h], backobs)
+            for current_class in range(self.num_class):
+                expected = 0.0
+                if current_class == y_scaled[sample_index]:
+                    expected = 1.0
+                backobs.add_operator(
+                    (-expected + y_pred_sm[sample_index][current_class])
+                    * self.y_exp_ratio,
+                    f"Z {current_class}",
+                )
+            grad += self.circuit.backprop(x_scaled[sample_index], backobs)
 
         self.circuit.update_parameters(theta)
         grad /= len(x_scaled)

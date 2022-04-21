@@ -87,7 +87,7 @@ def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
         rng = default_rng(seed)
     X_mat = np.array([[0, 1], [1, 0]])
     Z_mat = np.array([[1, 0], [0, -1]])
-    ham = np.zeros((2 ** n_qubit, 2 ** n_qubit), dtype=complex)
+    ham = np.zeros((2**n_qubit, 2**n_qubit), dtype=complex)
     for i in range(n_qubit):
         Jx = rng.uniform(-1.0, 1.0)
         ham += Jx * _make_fullgate([[i, X_mat]], n_qubit)

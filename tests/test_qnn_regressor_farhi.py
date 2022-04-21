@@ -11,6 +11,7 @@ from skqulacs.circuit import (
     create_farhi_neven_watle_ansatz,
 )
 from skqulacs.qnn import QNNRegressor
+from skqulacs.qnn.solver import Adam, Bfgs, Solver
 
 
 def sine_two_vars(x: List[float]) -> float:
@@ -32,9 +33,9 @@ def generate_noisy_sine_two_vars(
 
 @pytest.mark.parametrize(
     ("solver", "maxiter", "farhitype"),
-    [("BFGS", 20, "normal"), ("Adam", 30, "normal"), ("BFGS", 20, "watle")],
+    [(Bfgs(), 20, "normal"), (Adam(), 30, "normal"), (Bfgs(), 20, "watle")],
 )
-def test_noisy_sine_two_vars(solver: str, maxiter: int, farhitype: str):
+def test_noisy_sine_two_vars(solver: Solver, maxiter: int, farhitype: str) -> None:
     x_min = -0.5
     x_max = 0.5
     num_x = 70
@@ -73,8 +74,8 @@ def generate_noisy_sine(
     return x_train, y_train
 
 
-@pytest.mark.parametrize(("solver", "maxiter"), [("BFGS", 20), ("Adam", 30)])
-def test_noisy_sine(solver: str, maxiter: int):
+@pytest.mark.parametrize(("solver", "maxiter"), [(Bfgs(), 20), (Adam(), 30)])
+def test_noisy_sine(solver: Solver, maxiter: int) -> None:
     x_min = -1.0
     x_max = 1.0
     num_x = 50
@@ -94,8 +95,8 @@ def test_noisy_sine(solver: str, maxiter: int):
     return x_test, y_test, y_pred
 
 
-def main():
-    x_test, y_test, y_pred = test_noisy_sine("BFGS", 50)
+def main() -> None:
+    x_test, y_test, y_pred = test_noisy_sine(Bfgs(), 50)
     plt.plot(x_test, y_test, "o", label="Test")
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()
