@@ -37,8 +37,8 @@ class QNNRegressor(QNN):
         cost: Literal["mse"] = "mse",
         do_x_scale: bool = True,
         do_y_scale: bool = True,
-        x_norm_range=1.0,
-        y_norm_range=0.7,
+        x_norm_range: float = 1.0,
+        y_norm_range: float = 0.7,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.

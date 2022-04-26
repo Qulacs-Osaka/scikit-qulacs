@@ -42,7 +42,7 @@ class QNNClassifier(QNN):
         cost: Literal["log_loss"] = "log_loss",
         do_x_scale: bool = True,
         x_norm_range: float = 1.0,
-        y_exp_ratio=2.2,
+        y_exp_ratio: float = 2.2,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.

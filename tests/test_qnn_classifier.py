@@ -32,7 +32,5 @@ def test_classify_iris(solver: Solver, maxiter: int) -> None:
 
     qcl.fit(x_train, y_train, maxiter)
     y_pred = qcl.predict(x_test)
-    print(y_pred)
-    assert False
 
     assert f1_score(y_test, y_pred, average="weighted") > 0.94
