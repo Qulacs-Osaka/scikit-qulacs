@@ -4,6 +4,7 @@ import random
 from typing import List, Optional
 
 import numpy as np
+from numpy.random import default_rng
 from qulacs import Observable, QuantumState
 from qulacs.gate import RX, RZ
 from sklearn.linear_model import LinearRegression
@@ -38,11 +39,26 @@ class QRCRegressor:
         self.x_scaler.fit(x_train)
         x_train_scaled = self.x_scaler.transform(x_train)
 
-        if generate_observables:
-            self.observables = self.__create_observables()
-        if generate_circuit:
-            self.circuit = self.__create_random_circuit(n_qubit, circuit_depth)
+        rng = default_rng(0)
+        seeds = rng.integers(0, 2 ** 32, size=maxiter)
+        best_score = -1
+        best_seed = -1
+        for seed in seeds:
+            if generate_observables:
+                self.observables = self.__create_observables(seed)
+            if generate_circuit:
+                self.circuit = self.__create_random_circuit(n_qubit, circuit_depth, seed)
 
+            observation_results = self.__get_observation_results(x_train_scaled)
+            self.regression = LinearRegression()
+            self.regression.fit(observation_results, y_train)
+            if self.regression.score(observation_results, y_train) > best_score:
+                best_score = self.regression.score(observation_results, y_train)
+                best_seed = seed
+        if generate_observables:
+                self.observables = self.__create_observables(best_seed)
+        if generate_circuit:
+            self.circuit = self.__create_random_circuit(n_qubit, circuit_depth, best_seed)
         observation_results = self.__get_observation_results(x_train_scaled)
         self.regression = LinearRegression()
         self.regression.fit(observation_results, y_train)
@@ -59,11 +75,12 @@ class QRCRegressor:
         ret_val: float = self.regression.score(observation_results, y_test)
         return ret_val
 
-    def __create_observables(self) -> List[Observable]:
+    def __create_observables(self,seed: int = 0) -> List[Observable]:
         observables = list()
+        rng = default_rng(seed)
         for _ in range(80):
             observable = Observable(self.n_qubit)
-            observable.add_random_operator(random.randint(2, 10))
+            observable.add_random_operator(rng.integers(2,10), seed=0)
             observables.append(observable)
         return observables
 
@@ -90,6 +107,6 @@ class QRCRegressor:
 
         return observation_results
 
-    def __create_random_circuit(self, n_qubit: int, c_depth: int) -> LearningCircuit:
-        circuit = create_qcl_ansatz(n_qubit, c_depth, seed=0)
+    def __create_random_circuit(self, n_qubit: int, c_depth: int, seed: int = 0) -> LearningCircuit:
+        circuit = create_qcl_ansatz(n_qubit, c_depth, seed)
         return circuit
