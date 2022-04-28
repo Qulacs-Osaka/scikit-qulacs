@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Callable, List, Optional, Union
 
+import numpy as np
+from numpy.typing import NDArray
 from qulacs import ParametricQuantumCircuit, QuantumState
 
 
@@ -14,10 +16,10 @@ class _Axis(Enum):
 
 
 # Depends on x
-InputFunc = Callable[[List[float]], float]
+InputFunc = Callable[[NDArray[np.float_]], float]
 
 # Depends on theta, x
-InputFuncWithParam = Callable[[float, List[float]], float]
+InputFuncWithParam = Callable[[float, NDArray[np.float_]], float]
 
 
 @dataclass
@@ -127,7 +129,7 @@ class LearningCircuit:
         theta_list = [p.value for p in self._learning_parameter_list]
         return theta_list
 
-    def _set_input(self, x: List[float]) -> None:
+    def _set_input(self, x: NDArray[np.float_]) -> None:
         for parameter in self._input_parameter_list:
             # Input parameter is updated here, not update_parameters(),
             # because input parameter is determined with the input data `x`.
