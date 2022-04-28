@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
+from numpy.typing import NDArray
 from sklearn.metrics import mean_squared_error
 
 from skqulacs.circuit import (
@@ -20,12 +21,12 @@ def sine_two_vars(x: List[float]) -> float:
 
 def generate_noisy_sine_two_vars(
     x_min: float, x_max: float, num_x: int
-) -> Tuple[List[List[float]], List[float]]:
+) -> Tuple[NDArray[np.float_], NDArray[np.float_]]:
     rng = default_rng(0)
-    x_train = [
-        [rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)
-    ]
-    y_train = [sine_two_vars(x) for x in x_train]
+    x_train = np.array(
+        [[rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)]
+    )
+    y_train = np.array([sine_two_vars(x) for x in x_train])
     mag_noise = 0.01
     y_train += mag_noise * rng.random(num_x)
     return x_train, y_train
@@ -65,10 +66,10 @@ def sine(x: float) -> float:
 
 def generate_noisy_sine(
     x_min: float, x_max: float, num_x: int
-) -> Tuple[List[List[float]], List[float]]:
+) -> Tuple[NDArray[np.float_], NDArray[np.float_]]:
     rng = default_rng(0)
-    x_train = [[rng.uniform(x_min, x_max)] for _ in range(num_x)]
-    y_train = [sine(x[0]) for x in x_train]
+    x_train = np.array([[rng.uniform(x_min, x_max)] for _ in range(num_x)])
+    y_train = np.array([sine(x[0]) for x in x_train])
     mag_noise = 0.01
     y_train += mag_noise * rng.random(num_x)
     return x_train, y_train

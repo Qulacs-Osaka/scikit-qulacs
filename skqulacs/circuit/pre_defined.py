@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator, default_rng
+from numpy.typing import NDArray
 from qulacs.gate import CZ, DenseMatrix
 
 from .circuit import LearningCircuit
@@ -25,7 +26,7 @@ def create_qcl_ansatz(
         >>> qnn.fit(x_train, y_train)
     """
 
-    def preprocess_x(x: List[float], index: int):
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
         return min(1, max(-1, xa))
 
@@ -126,7 +127,7 @@ def create_farhi_neven_ansatz(
         seed: random seed determining the shuffling of the qubits between layers
     """
 
-    def preprocess_x(x: List[float], index: int):
+    def preprocess_x(x: NDArray[np.float_], index: int):
         xa = x[index % len(x)]
         return min(1, max(-1, xa))
 
@@ -181,7 +182,7 @@ def create_farhi_neven_watle_ansatz(
                         i - k
                     ] * ((-1) ** (i + j + k))
 
-    def preprocess_x(x: List[float], index: int):
+    def preprocess_x(x: NDArray[np.float_], index: int):
         dex = index % len(x)
         qubits_per_bit = ((n_qubit - dex) - 1) // len(x) + 1
         xa = (min(1, max(-1, x[dex])) + 1) / 2
@@ -233,7 +234,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
         n_qubits: number of qubits
     """
 
-    def preprocess_x(x: List[float], index: int) -> float:
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
         return xa
 
@@ -280,7 +281,7 @@ def create_shirai_ansatz(
         seed: random seed for initial parameter values
     """
 
-    def preprocess_x(x: List[float], index: int) -> float:
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
         return xa
 
@@ -362,7 +363,7 @@ def create_npqc_ansatz(
             + str(n_qubit)
         )
 
-    def preprocess_x(x: List[float], index: int) -> float:
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
         return xa
 
@@ -411,7 +412,7 @@ def create_yzcx_ansatz(
         c: hyperparameter of the circuit. Defined in Eq. (2) of the paper.
     """
 
-    def preprocess_x(x: List[float], index: int) -> float:
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
         return xa
 

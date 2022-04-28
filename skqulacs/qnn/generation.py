@@ -30,10 +30,10 @@ class QNNGeneretor(QNN):
     def __init__(
         self,
         circuit: LearningCircuit,
+        solver: Solver,
         karnel_type: Literal["gauss", "exp_hamming", "same"],
         gauss_sigma: float,
         fitting_qubit: int,
-        solver: Literal["Adam", "BFGS"] = "BFGS",
     ) -> None:
         """
         :param circuit: 回路そのもの
@@ -81,49 +81,14 @@ class QNNGeneretor(QNN):
 
     def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None):
         theta_init = self.circuit.get_parameters()
-        if self.solver == "Adam":
-            pr_A = 0.03
-            pr_Bi = 0.8
-            pr_Bt = 0.995
-            pr_ips = 0.0000001
-            # ここまでがハイパーパラメータ
-            Bix = 0
-            Btx = 0
-
-            moment = np.zeros(len(theta_init))
-            vel = 0
-            theta_now = theta_init
-            # print(train_scaled)
-            if maxiter is None:
-                maxiter = 50
-            for iter in range(0, maxiter):
-                grad = self._cost_func_grad(theta_now, train_scaled)
-
-                moment = moment * pr_Bi + (1 - pr_Bi) * grad
-                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
-                Bix = Bix * pr_Bi + (1 - pr_Bi)
-                Btx = Btx * pr_Bt + (1 - pr_Bt)
-                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                # if iter % len(x_train) < 5:
-                # self.cost_func(theta_now, x_train, y_train)
-
-            loss = self.cost_func(theta_now, train_scaled)
-            theta_opt = theta_now
-        elif self.solver == "BFGS":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=train_scaled,
-                method=self.solver,
-                jac=self._cost_func_grad,
-                options={"maxiter": maxiter},
-            )
-            # print(self._cost_func_grad(result.x, x_scaled, y_scaled))
-            loss = result.fun
-            theta_opt = result.x
-        else:
-            raise NotImplementedError
-        return loss, theta_opt
+        return self.solver.run(
+            self.cost_func,
+            self._cost_func_grad,
+            theta_init,
+            train_scaled,
+            [],
+            maxiter,
+        )
 
     def predict(self):
         """
@@ -216,14 +181,14 @@ class QNNGeneretor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def cost_func(self, theta, train_scaled):
+    def cost_func(self, theta, train_scaled,gomi=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
         conv_diff = self.conving(data_diff)
         return np.dot(data_diff, conv_diff)
 
-    def _cost_func_grad(self, theta, train_scaled):
+    def _cost_func_grad(self, theta, train_scaled,gomi=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         (pre, prein) = self.predict_and_inner()

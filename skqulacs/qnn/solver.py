@@ -6,8 +6,10 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 
-CostFunc = Callable[[List[float], List[List[float]], List[int]], float]
-Jacobian = Callable[[List[float], List[List[float]], List[int]], NDArray[np.float_]]
+CostFunc = Callable[[List[float], NDArray[np.float_], NDArray[np.float_]], float]
+Jacobian = Callable[
+    [List[float], NDArray[np.float_], NDArray[np.float_]], NDArray[np.float_]
+]
 
 
 class Solver(ABC):
@@ -17,8 +19,8 @@ class Solver(ABC):
         cost_func: CostFunc,
         jac: Jacobian,
         theta: List[float],
-        x: List[List[float]],
-        y: List[int],
+        x: NDArray[np.float_],
+        y: NDArray[np.float_],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         """Run optimizer for given initial parameters and data.
@@ -42,8 +44,8 @@ class NelderMead(Solver):
         cost_func: CostFunc,
         jac: Jacobian,
         theta: List[float],
-        x: List[List[float]],
-        y: List[int],
+        x: NDArray[np.float_],
+        y: NDArray[np.float_],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         result = minimize(
@@ -65,8 +67,8 @@ class Bfgs(Solver):
         cost_func: CostFunc,
         jac: Jacobian,
         theta: List[float],
-        x: List[List[float]],
-        y: List[int],
+        x: NDArray[np.float_],
+        y: NDArray[np.float_],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         result = minimize(
@@ -93,8 +95,8 @@ class Adam(Solver):
         cost_func: CostFunc,
         jac: Jacobian,
         theta: List[float],
-        x: List[List[float]],
-        y: List[int],
+        x: NDArray[np.float_],
+        y: NDArray[np.float_],
         maxiter: Optional[int],
     ) -> Tuple[float, List[float]]:
         pr_A = 0.02

@@ -4,14 +4,14 @@ import numpy as np
 
 from skqulacs.circuit import create_farhi_neven_ansatz
 from skqulacs.qnn import QNNGeneretor
-
+from skqulacs.qnn.solver import Adam, Bfgs, Solver
 
 def test_mix_gauss_mini():
 
     n_qubit = 4
     depth = 10
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
-    qnn = QNNGeneretor(circuit, "gauss", 0.2, 2)
+    qnn = QNNGeneretor(circuit, Bfgs(),"gauss", 0.2, 2)
 
     # 100000個のデータを作る
     prob_list = np.zeros(4)
@@ -35,8 +35,7 @@ def test_mix_gauss():
     n_qubit = 6
     depth = 10
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
-    qnn = QNNGeneretor(circuit, "gauss", 4, 6)
-
+    qnn = QNNGeneretor(circuit, Bfgs(),"gauss", 4.0, 6)
     # 100000個のデータを作る
     prob_list = np.zeros(64)
     ua = 64 * 2 / 7
@@ -72,6 +71,7 @@ def test_mix_gauss():
 test_bar_stripeは短時間でまともな成果を得られないのでテストから外された
 80%程度の正解率は出る。
 
+@pytest.mark.skip("This test takes too long time to finish")
 def test_bar_stripe():
 
     n_qubit = 9
@@ -105,7 +105,7 @@ def test_bar_stripe():
             print(i, data_param[i])
     assert gosa < 0.4
 
-
+@pytest.mark.skip("This test takes too long time to finish")
 def test_bar_stripe_hamming():
 
     n_qubit = 9

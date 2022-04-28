@@ -1,6 +1,5 @@
-from typing import List
-
 import numpy as np
+from numpy.typing import NDArray
 from qulacs.state import inner_product
 from sklearn import svm
 
@@ -19,7 +18,7 @@ class QSVC:
         self.data_states = []
         self.n_qubit = 0
 
-    def fit(self, x: List[List[float]], y: List[int]):
+    def fit(self, x: NDArray[np.float_], y: NDArray[np.int_]):
         """
         train the machine.
         :param x: training inputs
@@ -39,7 +38,7 @@ class QSVC:
 
         self.svc.fit(kar, y)
 
-    def predict(self, xs: List[List[float]]):
+    def predict(self, xs: NDArray[np.float_]):
         """
         predict labels of given data
         :param xs: inputs to predict labels
