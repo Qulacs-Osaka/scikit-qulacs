@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    skqulacs.qnn.classifier
-   skqulacs.qnn.cost_function
    skqulacs.qnn.qnnbase
    skqulacs.qnn.regressor
 
