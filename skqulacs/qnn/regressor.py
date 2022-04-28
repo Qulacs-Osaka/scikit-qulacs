@@ -66,7 +66,7 @@ class QNNRegressor(QNN):
     def fit(
         self,
         x_train: NDArray[np.float_],
-        y_train: NDArray[np.int_],
+        y_train: NDArray[np.float_],
         maxiter: Optional[int] = None,
     ) -> Tuple[float, List[float]]:
         """
@@ -132,7 +132,6 @@ class QNNRegressor(QNN):
         Returns:
             y_pred: Predicted outcome.
         """
-        x_test = np.array(x_test)
         if x_test.ndim == 1:
             x_test = x_test.reshape((-1, 1))
         if self.do_x_scale:

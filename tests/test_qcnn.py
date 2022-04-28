@@ -15,13 +15,14 @@ def generate_data(bits: int, random_seed: int = 0):
     n_rounds = 20  # Produces n_rounds * bits datapoints.
     excitations = []
     labels = []
-    for n in range(n_rounds):
-        for bit in range(bits):
+    for _ in range(n_rounds):
+        for _ in range(bits):
             r = rng.uniform(-np.pi, np.pi)
             excitations.append(r)
             labels.append(1 if (-np.pi / 2) <= r <= (np.pi / 2) else 0)
 
-    split_ind = int(len(excitations) * 0.7)
+    train_ratio = 0.7
+    split_ind = int(len(excitations) * train_ratio)
     train_excitations = excitations[:split_ind]
     test_excitations = excitations[split_ind:]
 
@@ -29,23 +30,23 @@ def generate_data(bits: int, random_seed: int = 0):
     test_labels = labels[split_ind:]
 
     return (
-        train_excitations,
+        np.array(train_excitations),
         np.array(train_labels),
-        test_excitations,
+        np.array(test_excitations),
         np.array(test_labels),
     )
 
 
 @pytest.mark.parametrize(("solver", "maxiter"), [(Adam(), 20)])
 def test_qcnn(solver: Solver, maxiter: int):
-    nqubit = 8
+    n_qubit = 8
     random_seed = 0
-    circuit = create_qcnn_ansatz(nqubit, random_seed)
+    circuit = create_qcnn_ansatz(n_qubit, random_seed)
 
     num_class = 2
     qcl = QNNClassifier(circuit, num_class, solver)
 
-    x_train, y_train, x_test, y_test = generate_data(nqubit)
+    x_train, y_train, x_test, y_test = generate_data(n_qubit)
     qcl.fit(x_train, y_train, maxiter)
     y_pred = qcl.predict(x_test)
     score = f1_score(y_test, y_pred, average="weighted")
