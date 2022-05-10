@@ -4,14 +4,15 @@ import numpy as np
 
 from skqulacs.circuit import create_farhi_neven_ansatz
 from skqulacs.qnn import QNNGeneretor
-from skqulacs.qnn.solver import Adam, Bfgs, Solver
+from skqulacs.qnn.solver import Bfgs
+
 
 def test_mix_gauss_mini():
 
     n_qubit = 4
     depth = 10
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
-    qnn = QNNGeneretor(circuit, Bfgs(),"gauss", 0.2, 2)
+    qnn = QNNGeneretor(circuit, Bfgs(), "gauss", 0.2, 2)
 
     # 100000個のデータを作る
     prob_list = np.zeros(4)
@@ -35,7 +36,7 @@ def test_mix_gauss():
     n_qubit = 6
     depth = 10
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
-    qnn = QNNGeneretor(circuit, Bfgs(),"gauss", 4.0, 6)
+    qnn = QNNGeneretor(circuit, Bfgs(), "gauss", 4.0, 6)
     # 100000個のデータを作る
     prob_list = np.zeros(64)
     ua = 64 * 2 / 7

@@ -6,11 +6,11 @@ from typing import Optional
 import numpy as np
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
-from scipy.optimize import minimize
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
+from skqulacs.qnn.solver import Solver
 
 
 class QNNGeneretor(QNN):
@@ -74,7 +74,7 @@ class QNNGeneretor(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-        train_scaled = np.zeros(2 ** self.Fqubit)
+        train_scaled = np.zeros(2**self.Fqubit)
         for aaa in train_data:
             train_scaled[aaa] += 1 / len(train_data)
         return self.fit_direct_distribution(train_scaled, maxiter)
@@ -105,7 +105,7 @@ class QNNGeneretor(QNN):
 
         if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+                (2 ** (self.n_qubit - self.Fqubit), 2**self.Fqubit)
             )
             data_per = data_per.sum(axis=0)
 
@@ -126,7 +126,7 @@ class QNNGeneretor(QNN):
 
         if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+                (2 ** (self.n_qubit - self.Fqubit), 2**self.Fqubit)
             )
             data_per = data_per.sum(axis=0)
 
@@ -146,7 +146,7 @@ class QNNGeneretor(QNN):
             for i in range(miru + miru + 1):
                 conv_aite[i] = exp((i - miru) * (i - miru) * beta)
 
-            if miru + miru + 1 <= 2 ** self.Fqubit:
+            if miru + miru + 1 <= 2**self.Fqubit:
                 conv_diff = np.convolve(data_diff, conv_aite, mode="same")
             else:
                 # convの行列のほうが長いので、sameがバグった。
@@ -181,14 +181,14 @@ class QNNGeneretor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def cost_func(self, theta, train_scaled,gomi=[]):
+    def cost_func(self, theta, train_scaled, gomi=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
         conv_diff = self.conving(data_diff)
         return np.dot(data_diff, conv_diff)
 
-    def _cost_func_grad(self, theta, train_scaled,gomi=[]):
+    def _cost_func_grad(self, theta, train_scaled, gomi=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         (pre, prein) = self.predict_and_inner()
