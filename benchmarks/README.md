@@ -3,19 +3,19 @@
 ## Running benchmarks
 To run benchmarks, run following command at the project root.
 ```bash
-make benchmarks
+make benchmark
 ```
 Then benchmark statistics are displayed and you will find a JSON file at `.benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json`.
 This is the summary of the benchmark runs.
 
-You can plot the result by `benchmarks/plot_result.py` with the generated JSON file.
+You can plot the result by `benchmarks/plot_results.py` with the generated JSON file.
 ```bash
-python benchmarks/plot_result.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json
+python benchmarks/plot_results.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json
 ```
 The rendered image is exported at `.benchmarks/outputs`.
 You can specify the directory wherever you like by `-o`(`--output_dir`) option.
 ```bash
-python benchmarks/plot_result.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json -o doc/source/figures
+python benchmarks/plot_results.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json -o doc/source/figures
 ```
 
 ## Add benchmarks
@@ -62,14 +62,14 @@ This is the summary of the benchmark runs.
 
 ## Plot
 ### Generate plotted images
-You can plot the result by `benchmarks/plot_result.py` with the generated JSON file.
+You can plot the result by `benchmarks/plot_results.py` with the generated JSON file.
 ```bash
-python benchmarks/plot_result.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json
+python benchmarks/plot_results.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json
 ```
 The rendered image is exported at `.benchmarks/outputs`.
 You can specify the directory wherever you like by `-o`(`--output_dir`) option.
 ```bash
-python benchmarks/plot_result.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json -o doc/source/figures
+python benchmarks/plot_results.py .benchmarks/<SYSTEM_SPECIFIC_DIR>/*.json -o doc/source/figures
 ```
 
 ### Write a plot
