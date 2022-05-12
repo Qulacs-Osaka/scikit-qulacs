@@ -177,4 +177,4 @@ def binary_classification_pennylane(
 ) -> None:
     weights, bias = train(x_train, x_val, y_train, y_val, rng)
     y_pred = [np.sign(variational_classifier(weights, bias, x)) for x in x_test]
-    f1_score(y_test, y_pred) > 0.95
+    assert f1_score(y_test, y_pred) > 0.95
