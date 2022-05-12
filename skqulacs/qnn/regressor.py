@@ -123,7 +123,7 @@ class QNNRegressor(QNN):
             maxiter,
         )
 
-    def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.int_]:
+    def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.float_]:
         """Predict outcome for each input data in `x_test`.
 
         Arguments:
@@ -163,7 +163,7 @@ class QNNRegressor(QNN):
         self,
         theta: List[float],
         x_scaled: NDArray[np.float_],
-        y_scaled: NDArray[np.int_],
+        y_scaled: NDArray[np.float_],
     ) -> float:
         if self.cost == "mse":
             self.circuit.update_parameters(theta)
@@ -180,7 +180,7 @@ class QNNRegressor(QNN):
         self,
         theta: List[float],
         x_scaled: NDArray[np.float_],
-        y_scaled: NDArray[np.int_],
+        y_scaled: NDArray[np.float_],
     ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
 
