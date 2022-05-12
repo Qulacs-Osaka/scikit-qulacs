@@ -181,14 +181,14 @@ class QNNGeneretor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def cost_func(self, theta, train_scaled, gomi=[]):
+    def cost_func(self, theta, train_scaled, _unuse=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
         conv_diff = self.conving(data_diff)
         return np.dot(data_diff, conv_diff)
 
-    def _cost_func_grad(self, theta, train_scaled, gomi=[]):
+    def _cost_func_grad(self, theta, train_scaled, _unuse=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         (pre, prein) = self.predict_and_inner()
