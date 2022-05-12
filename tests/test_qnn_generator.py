@@ -1,6 +1,7 @@
 from math import exp
 
 import numpy as np
+import pytest
 
 from skqulacs.circuit import create_farhi_neven_ansatz
 from skqulacs.qnn import QNNGeneretor
@@ -68,9 +69,9 @@ def test_mix_gauss():
     assert gosa / 2 < 0.08
 
 
-"""
-test_bar_stripeは短時間でまともな成果を得られないのでテストから外された
-80%程度の正解率は出る。
+# test_bar_stripeは短時間でまともな成果を得られないのでテストから外された
+# 80%程度の正解率は出る。
+
 
 @pytest.mark.skip("This test takes too long time to finish")
 def test_bar_stripe():
@@ -106,33 +107,33 @@ def test_bar_stripe():
             print(i, data_param[i])
     assert gosa < 0.4
 
+
 @pytest.mark.skip("This test takes too long time to finish")
 def test_bar_stripe_hamming():
 
     n_qubit = 9
     depth = 13
     circuit = create_farhi_neven_ansatz(n_qubit, depth)
-    qnn = QNNGeneretor(circuit,"exp_hamming",0.07,9)
+    qnn = QNNGeneretor(circuit, "exp_hamming", 0.07, 9)
 
     prob_list = np.zeros(512)
     for i in range(8):
-        prob_list[i*73]+=0.0625
-        uuu=0
-        if (i&4)>0:
-           uuu+=64
-        if (i&2)>0:
-           uuu+=8
-        if (i&1)>0:
-           uuu+=1
-        prob_list[uuu*7]+=0.0625
-    datas=np.random.choice(a=range(512), size=100000, p=prob_list)
-    maxiter=500
+        prob_list[i * 73] += 0.0625
+        uuu = 0
+        if (i & 4) > 0:
+            uuu += 64
+        if (i & 2) > 0:
+            uuu += 8
+        if (i & 1) > 0:
+            uuu += 1
+        prob_list[uuu * 7] += 0.0625
+    datas = np.random.choice(a=range(512), size=100000, p=prob_list)
+    maxiter = 500
     qnn.fit(datas, maxiter)
-    data_param=qnn.predict()
-    gosa=0
+    data_param = qnn.predict()
+    gosa = 0
     for i in range(512):
-        gosa+=abs(data_param[i]-prob_list[i])
-        if(prob_list[i]>0.001):
-            print(i,data_param[i])
-    assert gosa<0.2
-"""
+        gosa += abs(data_param[i] - prob_list[i])
+        if prob_list[i] > 0.001:
+            print(i, data_param[i])
+    assert gosa < 0.2
