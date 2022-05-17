@@ -34,9 +34,6 @@ make check
 make test
 ```
 
-Code format and some lint errors can be fixed by `make fix`.
-Rest of lint errors should be fixed by hand along error messages.
-
 6. Commit and push modified files.
 ```bash
 git add MODIFIED_FILE
