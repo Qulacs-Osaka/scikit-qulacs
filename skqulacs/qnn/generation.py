@@ -4,10 +4,10 @@ from math import exp, sqrt
 from typing import List, Optional, Tuple
 
 import numpy as np
+from numpy.typing import NDArray
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
 from typing_extensions import Literal
-from numpy.typing import NDArray
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
@@ -67,7 +67,9 @@ class QNNGeneretor(QNN):
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
-    def fit(self, train_data, maxiter: Optional[int] = None) -> Tuple[float, List[float]]:
+    def fit(
+        self, train_data, maxiter: Optional[int] = None
+    ) -> Tuple[float, List[float]]:
         """
         :param train_scaled: trainの確率分布を入力
 
@@ -80,7 +82,9 @@ class QNNGeneretor(QNN):
             train_scaled[i] += 1 / len(train_data)
         return self.fit_direct_distribution(train_scaled, maxiter)
 
-    def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None) -> Tuple[float, List[float]]:
+    def fit_direct_distribution(
+        self, train_scaled, maxiter: Optional[int] = None
+    ) -> Tuple[float, List[float]]:
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
             self.cost_func,
@@ -117,6 +121,22 @@ class QNNGeneretor(QNN):
         # 出力状態計算 & 観測
         state = self.circuit.run([0])
         return state
+
+    def _predict_and_inner(self) -> Tuple[NDArray[np.float_], QuantumState]:
+        # Necessary because `cost_func_grad` needs a state created in prediction.
+        state = self._predict_inner()
+        y_pred_in = state.get_vector()
+        y_pred_conj = y_pred_in.conjugate()
+
+        data_per = y_pred_in * y_pred_conj  # 2乗の和
+
+        if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
+            data_per = data_per.reshape(
+                (2 ** (self.n_qubit - self.fitting_qubit), 2**self.fitting_qubit)
+            )
+            data_per = data_per.sum(axis=0)
+
+        return (data_per, state)
 
     def conving(self, data_diff):
         # data_diffは、現在の分布ー正しい分布
@@ -178,7 +198,7 @@ class QNNGeneretor(QNN):
     def _cost_func_grad(self, theta, train_scaled, _unuse=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
-        (pre, prein) = self.predict_and_inner()
+        (pre, prein) = self._predict_and_inner()
         data_diff = pre - train_scaled
         conv_diff = self.conving(data_diff)
 
