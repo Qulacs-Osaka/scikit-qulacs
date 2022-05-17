@@ -19,7 +19,6 @@ def test_generator_func_same():
     qcl = QNNGeneretor(circuit, Bfgs(), "same", 0, 2)
 
     pre_per = qcl.predict()
-    print(pre_per)
     assert abs(pre_per[0] - 0.5) < 0.001
     assert abs(pre_per[1] - 0.5) < 0.001
     assert abs(pre_per[2] - 0.0) < 0.001
@@ -79,7 +78,4 @@ def test_generator_grad_true_same():
         [1.005, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0.1, 0.2, 0.3, 0.4]
     )
 
-    print(gencost)
-    print(atocost)
-    print(gradcost)
     assert abs(gencost + gradcost[0] * 0.01 - atocost) < 0.0000004

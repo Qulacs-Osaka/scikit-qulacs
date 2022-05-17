@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from math import exp, sqrt
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
 from typing_extensions import Literal
+from numpy.typing import NDArray
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
@@ -57,7 +58,7 @@ class QNNGeneretor(QNN):
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
-        self.Fqubit = fitting_qubit
+        self.fitting_qubit = fitting_qubit
         self.karnel_type = karnel_type
         self.gauss_sigma = gauss_sigma
         self.solver = solver
@@ -66,7 +67,7 @@ class QNNGeneretor(QNN):
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
-    def fit(self, train_data, maxiter: Optional[int] = None):
+    def fit(self, train_data, maxiter: Optional[int] = None) -> Tuple[float, List[float]]:
         """
         :param train_scaled: trainの確率分布を入力
 
@@ -74,12 +75,12 @@ class QNNGeneretor(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-        train_scaled = np.zeros(2**self.Fqubit)
-        for aaa in train_data:
-            train_scaled[aaa] += 1 / len(train_data)
+        train_scaled = np.zeros(2**self.fitting_qubit)
+        for i in train_data:
+            train_scaled[i] += 1 / len(train_data)
         return self.fit_direct_distribution(train_scaled, maxiter)
 
-    def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None):
+    def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None) -> Tuple[float, List[float]]:
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
             self.cost_func,
@@ -90,7 +91,7 @@ class QNNGeneretor(QNN):
             maxiter,
         )
 
-    def predict(self):
+    def predict(self) -> NDArray[np.float_]:
         """
         予想される確率分布を、np.ndarray[float]の形で返す。
 
@@ -103,34 +104,19 @@ class QNNGeneretor(QNN):
 
         data_per = y_pred_in * y_pred_conj  # 2乗の和
 
-        if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
+        if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2**self.Fqubit)
+                (2 ** (self.n_qubit - self.fitting_qubit), 2**self.fitting_qubit)
             )
             data_per = data_per.sum(axis=0)
 
         return data_per
 
-    def _predict_inner(self):
+    def _predict_inner(self) -> QuantumState:
         # 入力xに関して、量子回路を通した生のデータを表示
         # 出力状態計算 & 観測
         state = self.circuit.run([0])
         return state
-
-    def predict_and_inner(self):
-        aaa = self._predict_inner()
-        y_pred_in = aaa.get_vector()
-        y_pred_conj = y_pred_in.conjugate()
-
-        data_per = y_pred_in * y_pred_conj  # 2乗の和
-
-        if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
-            data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2**self.Fqubit)
-            )
-            data_per = data_per.sum(axis=0)
-
-        return (data_per, aaa)
 
     def conving(self, data_diff):
         # data_diffは、現在の分布ー正しい分布
@@ -141,17 +127,18 @@ class QNNGeneretor(QNN):
             # 高速化として、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。
             beta = -0.5 / self.gauss_sigma
 
-            miru = int(4 * sqrt(self.gauss_sigma))
-            conv_aite = np.zeros(miru + miru + 1)
-            for i in range(miru + miru + 1):
-                conv_aite[i] = exp((i - miru) * (i - miru) * beta)
+            width = int(4 * sqrt(self.gauss_sigma))
+            conv_len = width * 2 + 1
+            conv_target = np.zeros(conv_len)
+            for i in range(conv_len):
+                conv_target[i] = exp((i - width) * (i - width) * beta)
 
-            if miru + miru + 1 <= 2**self.Fqubit:
-                conv_diff = np.convolve(data_diff, conv_aite, mode="same")
+            if conv_len <= 2**self.fitting_qubit:
+                conv_diff = np.convolve(data_diff, conv_target, mode="same")
             else:
                 # convの行列のほうが長いので、sameがバグった。
                 # だから、わざわざfullのを取って、スライスしている。
-                conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
+                conv_diff = np.convolve(data_diff, conv_target)[width:-width]
 
             return conv_diff
 
@@ -165,9 +152,9 @@ class QNNGeneretor(QNN):
             # 注意！ユニタリ的な量子演算ではありません！
             # この演算をすることで高速にできる。
 
-            diff_state = QuantumState(self.Fqubit)
+            diff_state = QuantumState(self.fitting_qubit)
             diff_state.load(data_diff)
-            for i in range(self.Fqubit):
+            for i in range(self.fitting_qubit):
                 batafly_gate = DenseMatrix(i, [[1, swap_pena], [swap_pena, 1]])
                 batafly_gate.update_quantum_state(diff_state)
 
@@ -196,7 +183,7 @@ class QNNGeneretor(QNN):
         conv_diff = self.conving(data_diff)
 
         convconv_diff = np.tile(
-            conv_diff, 2 ** (self.n_qubit - self.Fqubit)
+            conv_diff, 2 ** (self.n_qubit - self.fitting_qubit)
         )  # 得られた確率ベクトルの添え字の大きい桁を無視する。
         # 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -> [0.2,-0.1,0,-0.1]
         state_vec = prein.get_vector()
