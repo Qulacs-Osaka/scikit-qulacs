@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from math import exp, sqrt
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
+from numpy.typing import NDArray
 from qulacs import Observable, QuantumState
 from qulacs.gate import DenseMatrix
-from scipy.optimize import minimize
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.qnnbase import QNN
+from skqulacs.qnn.solver import Solver
 
 
 class QNNGeneretor(QNN):
@@ -30,10 +31,10 @@ class QNNGeneretor(QNN):
     def __init__(
         self,
         circuit: LearningCircuit,
+        solver: Solver,
         karnel_type: Literal["gauss", "exp_hamming", "same"],
         gauss_sigma: float,
         fitting_qubit: int,
-        solver: Literal["Adam", "BFGS"] = "BFGS",
     ) -> None:
         """
         :param circuit: 回路そのもの
@@ -57,7 +58,7 @@ class QNNGeneretor(QNN):
         """
         self.n_qubit = circuit.n_qubit
         self.circuit = circuit
-        self.Fqubit = fitting_qubit
+        self.fitting_qubit = fitting_qubit
         self.karnel_type = karnel_type
         self.gauss_sigma = gauss_sigma
         self.solver = solver
@@ -66,7 +67,9 @@ class QNNGeneretor(QNN):
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
 
-    def fit(self, train_data, maxiter: Optional[int] = None):
+    def fit(
+        self, train_data, maxiter: Optional[int] = None
+    ) -> Tuple[float, List[float]]:
         """
         :param train_scaled: trainの確率分布を入力
 
@@ -74,58 +77,25 @@ class QNNGeneretor(QNN):
         :return: 学習後のロス関数の値
         :return: 学習後のパラメータthetaの値
         """
-        train_scaled = np.zeros(2 ** self.Fqubit)
-        for aaa in train_data:
-            train_scaled[aaa] += 1 / len(train_data)
+        train_scaled = np.zeros(2**self.fitting_qubit)
+        for i in train_data:
+            train_scaled[i] += 1 / len(train_data)
         return self.fit_direct_distribution(train_scaled, maxiter)
 
-    def fit_direct_distribution(self, train_scaled, maxiter: Optional[int] = None):
+    def fit_direct_distribution(
+        self, train_scaled, maxiter: Optional[int] = None
+    ) -> Tuple[float, List[float]]:
         theta_init = self.circuit.get_parameters()
-        if self.solver == "Adam":
-            pr_A = 0.03
-            pr_Bi = 0.8
-            pr_Bt = 0.995
-            pr_ips = 0.0000001
-            # ここまでがハイパーパラメータ
-            Bix = 0
-            Btx = 0
+        return self.solver.run(
+            self.cost_func,
+            self._cost_func_grad,
+            theta_init,
+            train_scaled,
+            [],
+            maxiter,
+        )
 
-            moment = np.zeros(len(theta_init))
-            vel = 0
-            theta_now = theta_init
-            # print(train_scaled)
-            if maxiter is None:
-                maxiter = 50
-            for iter in range(0, maxiter):
-                grad = self._cost_func_grad(theta_now, train_scaled)
-
-                moment = moment * pr_Bi + (1 - pr_Bi) * grad
-                vel = vel * pr_Bt + (1 - pr_Bt) * np.dot(grad, grad)
-                Bix = Bix * pr_Bi + (1 - pr_Bi)
-                Btx = Btx * pr_Bt + (1 - pr_Bt)
-                theta_now -= pr_A / (((vel / Btx) ** 0.5) + pr_ips) * (moment / Bix)
-                # if iter % len(x_train) < 5:
-                # self.cost_func(theta_now, x_train, y_train)
-
-            loss = self.cost_func(theta_now, train_scaled)
-            theta_opt = theta_now
-        elif self.solver == "BFGS":
-            result = minimize(
-                self.cost_func,
-                theta_init,
-                args=train_scaled,
-                method=self.solver,
-                jac=self._cost_func_grad,
-                options={"maxiter": maxiter},
-            )
-            # print(self._cost_func_grad(result.x, x_scaled, y_scaled))
-            loss = result.fun
-            theta_opt = result.x
-        else:
-            raise NotImplementedError
-        return loss, theta_opt
-
-    def predict(self):
+    def predict(self) -> NDArray[np.float_]:
         """
         予想される確率分布を、np.ndarray[float]の形で返す。
 
@@ -138,34 +108,35 @@ class QNNGeneretor(QNN):
 
         data_per = y_pred_in * y_pred_conj  # 2乗の和
 
-        if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
+        if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+                (2 ** (self.n_qubit - self.fitting_qubit), 2**self.fitting_qubit)
             )
             data_per = data_per.sum(axis=0)
 
         return data_per
 
-    def _predict_inner(self):
+    def _predict_inner(self) -> QuantumState:
         # 入力xに関して、量子回路を通した生のデータを表示
         # 出力状態計算 & 観測
         state = self.circuit.run([0])
         return state
 
-    def predict_and_inner(self):
-        aaa = self._predict_inner()
-        y_pred_in = aaa.get_vector()
+    def _predict_and_inner(self) -> Tuple[NDArray[np.float_], QuantumState]:
+        # Necessary because `cost_func_grad` needs a state created in prediction.
+        state = self._predict_inner()
+        y_pred_in = state.get_vector()
         y_pred_conj = y_pred_in.conjugate()
 
         data_per = y_pred_in * y_pred_conj  # 2乗の和
 
-        if self.n_qubit != self.Fqubit:  # いくつかのビットを捨てる
+        if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
-                (2 ** (self.n_qubit - self.Fqubit), 2 ** self.Fqubit)
+                (2 ** (self.n_qubit - self.fitting_qubit), 2**self.fitting_qubit)
             )
             data_per = data_per.sum(axis=0)
 
-        return (data_per, aaa)
+        return (data_per, state)
 
     def conving(self, data_diff):
         # data_diffは、現在の分布ー正しい分布
@@ -176,17 +147,18 @@ class QNNGeneretor(QNN):
             # 高速化として、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。
             beta = -0.5 / self.gauss_sigma
 
-            miru = int(4 * sqrt(self.gauss_sigma))
-            conv_aite = np.zeros(miru + miru + 1)
-            for i in range(miru + miru + 1):
-                conv_aite[i] = exp((i - miru) * (i - miru) * beta)
+            width = int(4 * sqrt(self.gauss_sigma))
+            conv_len = width * 2 + 1
+            conv_target = np.zeros(conv_len)
+            for i in range(conv_len):
+                conv_target[i] = exp((i - width) * (i - width) * beta)
 
-            if miru + miru + 1 <= 2 ** self.Fqubit:
-                conv_diff = np.convolve(data_diff, conv_aite, mode="same")
+            if conv_len <= 2**self.fitting_qubit:
+                conv_diff = np.convolve(data_diff, conv_target, mode="same")
             else:
                 # convの行列のほうが長いので、sameがバグった。
                 # だから、わざわざfullのを取って、スライスしている。
-                conv_diff = np.convolve(data_diff, conv_aite)[miru:-miru]
+                conv_diff = np.convolve(data_diff, conv_target)[width:-width]
 
             return conv_diff
 
@@ -200,9 +172,9 @@ class QNNGeneretor(QNN):
             # 注意！ユニタリ的な量子演算ではありません！
             # この演算をすることで高速にできる。
 
-            diff_state = QuantumState(self.Fqubit)
+            diff_state = QuantumState(self.fitting_qubit)
             diff_state.load(data_diff)
-            for i in range(self.Fqubit):
+            for i in range(self.fitting_qubit):
                 batafly_gate = DenseMatrix(i, [[1, swap_pena], [swap_pena, 1]])
                 batafly_gate.update_quantum_state(diff_state)
 
@@ -216,22 +188,22 @@ class QNNGeneretor(QNN):
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def cost_func(self, theta, train_scaled):
+    def cost_func(self, theta, train_scaled, _unuse=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
         conv_diff = self.conving(data_diff)
         return np.dot(data_diff, conv_diff)
 
-    def _cost_func_grad(self, theta, train_scaled):
+    def _cost_func_grad(self, theta, train_scaled, _unuse=[]):
         self.circuit.update_parameters(theta)
         # y-xを求める
-        (pre, prein) = self.predict_and_inner()
+        (pre, prein) = self._predict_and_inner()
         data_diff = pre - train_scaled
         conv_diff = self.conving(data_diff)
 
         convconv_diff = np.tile(
-            conv_diff, 2 ** (self.n_qubit - self.Fqubit)
+            conv_diff, 2 ** (self.n_qubit - self.fitting_qubit)
         )  # 得られた確率ベクトルの添え字の大きい桁を無視する。
         # 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -> [0.2,-0.1,0,-0.1]
         state_vec = prein.get_vector()
