@@ -74,14 +74,14 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-# Some cells which requires longer time to finish raises `KeyboardInterrupt`.
-# They are seemed to be interrupted by Sphinx.
-# It is troublesome to annotate cells which spends more time, so turn off
-# execution of jupyter notebook on documentation build.
-# There is no problem for now because every notebook embedded in documetation
-# is executed once at local environment and the result is committed.
-jupyter_execute_notebooks = "off"
+# Since myst_nb==0.14.0, 'jupyter_execute_notebooks' is deprecated for 'nb_execution_mode'
+# c.f. https://myst-nb.readthedocs.io/en/latest/computation/execute.html#notebook-execution-modes
+nb_execution_mode = "off"
 
-# With this variable set True, block math element surrounded by `$$` does not 
+# Since myst_nb==0.14.0, the dollarmath syntax extension is no longer included by default.
+# So enable here explicitly.
+myst_enable_extensions = ["dollarmath"]
+
+# With this variable set True, block math element surrounded by `$$` does not
 # needs blank lines before and after the element.
 myst_dmath_double_inline = True
