@@ -448,21 +448,26 @@ def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
 
     rng = default_rng(seed)
 
-    def _innser_conv_circuit1(circuit: LearningCircuit, src: int, dest: int):
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(src, angle)
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(dest, angle)
-        circuit.add_CNOT_gate(src, dest)
-        return circuit
+    # def _innser_conv_circuit1(circuit: LearningCircuit, src: int, dest: int):
+    #     angle = rng.uniform(-np.pi, np.pi)
+    #     circuit.add_parametric_RY_gate(src, angle)
+    #     angle = rng.uniform(-np.pi, np.pi)
+    #     circuit.add_parametric_RY_gate(dest, angle)
+    #     circuit.add_CNOT_gate(src, dest)
+    #     return circuit
 
     def one_qubit_unitary(circuit: LearningCircuit, index: int):
+        ids = []
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_RX_gate(index, angle)
+        ids.append(circuit.get_parameter_count())
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_RY_gate(index, angle)
+        ids.append(circuit.get_parameter_count())
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_RZ_gate(index, angle)
+        ids.append(circuit.get_parameter_count())
+        return ids
 
     def two_qubit_unitary(
         circuit: LearningCircuit, target: List[int], pauli_ids: List[int]
@@ -490,14 +495,24 @@ def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
         # return _innser_conv_circuit1(circuit, src, dest)
         return _innser_conv_circuit2(circuit, src, dest)
 
+    # def pooling_circuit(circuit: LearningCircuit, src: int, dest: int):
+    #     angle = rng.uniform(-np.pi, np.pi)
+    #     circuit.add_parametric_RZ_gate(src, angle)
+    #     circuit.add_CNOT_gate(src, dest)
+    #     angle = rng.uniform(-np.pi, np.pi)
+    #     circuit.add_parametric_RX_gate(dest, angle)
+    #     circuit.add_X_gate(src)
+    #     circuit.add_CNOT_gate(src, dest)
+    #     return circuit
+
     def pooling_circuit(circuit: LearningCircuit, src: int, dest: int):
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RZ_gate(src, angle)
+        ids = one_qubit_unitary(circuit, dest)
+        one_qubit_unitary(circuit, src)
         circuit.add_CNOT_gate(src, dest)
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RX_gate(dest, angle)
-        circuit.add_X_gate(src)
-        circuit.add_CNOT_gate(src, dest)
+        circuit.add_parametric_RZ_gate(dest, angle, share_with=ids[2])
+        circuit.add_parametric_RY_gate(dest, angle, share_with=ids[1])
+        circuit.add_parametric_RX_gate(dest, angle, share_with=ids[0])
         return circuit
 
     circuit = LearningCircuit(n_qubit)
