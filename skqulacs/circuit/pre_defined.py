@@ -459,14 +459,14 @@ def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
     def one_qubit_unitary(circuit: LearningCircuit, index: int):
         ids = []
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RX_gate(index, angle)
-        ids.append(circuit.get_parameter_count())
+        id = circuit.add_parametric_RX_gate(index, angle)
+        ids.append(id)
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(index, angle)
-        ids.append(circuit.get_parameter_count())
+        id = circuit.add_parametric_RY_gate(index, angle)
+        ids.append(id)
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RZ_gate(index, angle)
-        ids.append(circuit.get_parameter_count())
+        id = circuit.add_parametric_RZ_gate(index, angle)
+        ids.append(id)
         return ids
 
     def two_qubit_unitary(
