@@ -332,7 +332,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         share_with: Optional[int] = None,
-        share_with_coef: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
@@ -352,7 +352,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         share_with: Optional[int] = None,
-        share_with_coef: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
@@ -372,7 +372,7 @@ class LearningCircuit:
         index: int,
         parameter: float,
         share_with: Optional[int] = None,
-        share_with_coef: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
