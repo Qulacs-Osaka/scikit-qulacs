@@ -10,7 +10,7 @@ TEST_DIR := tests
 BENCHMARK_DIR := benchmarks
 CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR) $(BENCHMARK_DIR)
 
-COVERAGE_OPT := --cov skqulacs --cov-report html --cov-branch
+COVERAGE_OPT := --cov skqulacs --cov-branch
 BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000
 
@@ -42,7 +42,11 @@ format_check:
 
 .PHONY: cov
 cov:
-	$(PYTEST) $(COVERAGE_OPT) $(TEST_DIR)
+	$(PYTEST) $(COVERAGE_OPT) --cov-report html $(TEST_DIR)
+
+.PHONY: cov_ci
+cov_ci:
+	$(PYTEST) $(COVERAGE_OPT) --cov-report xml $(TEST_DIR)
 
 .PHONY: serve_cov
 serve_cov: cov
