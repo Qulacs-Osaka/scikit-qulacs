@@ -54,5 +54,4 @@ jobs:
         make benchmark
 
     - name: Upload coverage report
-      if: ${{ github.event_name	== 'pull_request' }}
       uses: codecov/codecov-action@v3
