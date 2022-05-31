@@ -645,12 +645,13 @@ title="Print to PDF"
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.circuit.pre_defined</span> <span class="kn">import</span> <span class="n">create_qcl_ansatz</span>
 <span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNClassifier</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.solver</span> <span class="kn">import</span> <span class="n">Bfgs</span>
 
 <span class="n">nqubit</span> <span class="o">=</span> <span class="mi">5</span>                      <span class="c1"># qubitの数。必要とする入力、出力の次元数以上が必要である。</span>
 <span class="n">c_depth</span> <span class="o">=</span> <span class="mi">3</span>                     <span class="c1"># circuitの深さ。ニューラルネットワークでの隠れ層に対応する。</span>
 <span class="n">time_step</span> <span class="o">=</span> <span class="mf">1.</span>                  <span class="c1"># qcl_ansatz に必要となるパラメータ。横磁場イジングモデルによって発展させる時間を決める。</span>
 <span class="n">num_class</span> <span class="o">=</span> <span class="mi">3</span>                   <span class="c1"># 分類数（ここでは3つの品種に分類）</span>
-<span class="n">solver</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span>                   <span class="c1"># アルゴリズム。ほかには、&quot;Adam&quot; が使える。</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">Bfgs</span><span class="p">()</span>                   <span class="c1"># アルゴリズム。ほかには、`Adam()` や `NelderMead()` が使える。</span>
 <span class="n">maxiter</span> <span class="o">=</span> <span class="mi">20</span>                    <span class="c1"># ループの最大。これが多いほど、正確になるが、時間がかかる。</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">nqubit</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">)</span>     <span class="c1"># LearningCircuitを作る</span>
 <span class="n">qcl</span> <span class="o">=</span> <span class="n">QNNClassifier</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">num_class</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>     <span class="c1"># モデル構築を行う</span>
@@ -661,15 +662,15 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 1.85410272  3.75676148  2.21646191  2.52509231  2.1647195   2.43798985
-  1.50367222  0.04751448  2.54785017  2.13940606  4.98429799  4.14497582
-  5.47831644  4.83193472  1.52245352  4.56050188  2.51816388  1.40210201
-  3.95273519  1.34362204  0.89885804  4.01058809  2.8836804   1.50820136
-  5.51325943  0.47711481  3.44328084  3.65547664 -0.55173648  6.3383248
-  0.66032895  5.16735433 -1.04875626  6.14244395  6.99287629  1.31751974
-  0.19759514  4.00321349  3.90846605  1.9431826   0.53312599  3.28469292
-  6.0037434   4.20836194  1.83071748]
-loss 0.0860431460366711
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [0.97300102 4.7946057  1.35324745 4.60159679 0.84295957 5.56893232
+ 2.97127584 3.52436879 2.66614812 3.95883123 5.70926506 1.43514818
+ 1.30129673 4.21197406 0.11398426 3.88219833 3.42516568 4.40926617
+ 3.12730264 6.37394772 4.07034292 0.89179287 4.3552535  1.66574795
+ 5.21039097 0.71562215 3.10967854 3.05110192 3.20220236 4.85778961
+ 3.30073192 4.73812554 5.19581744 2.3490641  5.56608874 4.56623562
+ 1.50201101 2.46122035 0.33688698 3.34948834 1.21640588 2.56967473
+ 0.71806182 2.1133044  0.58354405]
+loss 0.32948758938501604
 </pre></div>
 </div>
 </div>
@@ -684,7 +685,7 @@ loss 0.0860431460366711
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
 </pre></div>
 </div>
 </div>
@@ -705,7 +706,7 @@ loss 0.0860431460366711
     <span class="n">y_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_train</span><span class="p">]</span>
     <span class="n">mag_noise</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">y_train</span> <span class="o">+=</span> <span class="n">mag_noise</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">num_x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
   
 <span class="n">x_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 <span class="n">x_max</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -724,7 +725,7 @@ loss 0.0860431460366711
 <span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">solver</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">Bfgs</span><span class="p">()</span>
 <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
@@ -735,27 +736,15 @@ loss 0.0860431460366711
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-2.52118172e-03  1.19277020e-03  3.10128326e-04 -6.42683364e-04
-  8.35436474e-04 -5.24981892e-04 -7.52008036e-04 -4.07462371e-04
- -5.74044155e-04  1.50774930e-03  6.30109294e-05 -8.19459615e-04
-  1.42078707e-03  2.09110696e-03 -3.36846534e-04  4.88690753e-04
-  7.46908451e-05 -2.22482857e-04 -9.25977438e-04 -9.12545452e-05
-  1.04324965e-03 -5.63038944e-04 -4.62934646e-04 -3.62787336e-04
- -8.51174859e-04  2.90978510e-03  1.96177705e-03  6.80510436e-05
-  1.69540322e-04  3.45813053e-04  3.20652348e-04 -2.24440888e-04
- -5.65850928e-05 -7.10191967e-04  5.10276819e-04  7.51022395e-04
-  1.50621087e-03 -1.01846464e-03 -8.74319743e-04  3.54710895e-17
-  3.59299055e-17  3.59218882e-17  3.58373194e-17  3.59945889e-17
-  3.55306677e-17  3.67906416e-17  3.59392206e-17  3.58473687e-17]
-trained parameters [ 4.76002724  1.92362022 -0.48900136  0.35047068  4.82948963  6.46225974
-  3.40609952  5.00474857  3.37636039  6.31050608  5.49376378  0.139052
-  5.47590209  0.64912218  4.67870237  1.41841969  5.53849844  3.7883166
-  1.84668854  2.68946397  0.04043366  0.96776472  4.49352776  3.60008095
-  3.88877639  2.58504726  6.23553393  6.16278554  4.24511007  3.92287119
-  4.33309344  2.56906654  0.6973149   4.8681623   3.38829756  1.61272237
-  3.30808541  5.46822145  5.94478902  2.24809352  3.59102784  2.02236503
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 4.80281211  1.93928838 -0.5205007   0.36683164  4.82276275  6.47811525
+  3.38919905  5.02087438  3.3718359   6.32019833  5.49131488  0.14543509
+  5.4754958   0.66461726  4.68233889  1.42410867  5.53990554  3.79548094
+  1.84638698  2.68947621  0.03457702  0.94699584  4.49461489  3.60827377
+  3.89882872  2.59470479  6.22981776  6.1633591   4.24396167  3.91849499
+  4.33407504  2.57338267  0.69187344  4.87367468  3.40637054  1.60695639
+  3.30741867  5.46553484  5.94186833  2.24809352  3.59102784  2.02236503
   3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
-loss 0.008518100629961275
+loss 0.00850908606711705
 </pre></div>
 </div>
 </div>
@@ -764,6 +753,7 @@ loss 0.008518100629961275
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Prediction&quot;</span><span class="p">)</span>
@@ -773,7 +763,7 @@ loss 0.008518100629961275
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/2f82601e92cdabee56024b3ba131d97f9f0481847856c9cc8a647e804050ae03.png" src="../_images/2f82601e92cdabee56024b3ba131d97f9f0481847856c9cc8a647e804050ae03.png" />
+<img alt="../_images/3f4dccd369bff983f1b3ccb2d61f4389617a121f700ddf7cc5c005e74992eaa4.png" src="../_images/3f4dccd369bff983f1b3ccb2d61f4389617a121f700ddf7cc5c005e74992eaa4.png" />
 </div>
 </div>
 <p>よく学習できていることがわかります。</p>
@@ -871,7 +861,7 @@ loss 0.008518100629961275
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/855f22e308268815f76c2f5f6e1c1444374ffbc8a0f670ec56a11645e03e02aa.png" src="../_images/855f22e308268815f76c2f5f6e1c1444374ffbc8a0f670ec56a11645e03e02aa.png" />
+<img alt="../_images/880ffe114c99d4dd4e5a10f6391db33d20912414da61c5b2dcf47667f01ed7b2.png" src="../_images/880ffe114c99d4dd4e5a10f6391db33d20912414da61c5b2dcf47667f01ed7b2.png" />
 </div>
 </div>
 <p>うまく学習できています。</p>
@@ -910,7 +900,7 @@ loss 0.008518100629961275
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [0.7238575654756965, 4.521772018945494, 5.300166829620294, 2.4396786706992875, 3.372497641445515, 0.0691143830945458, 2.4305919508432194, 0.897581496914585, 0.8153164989629146, 4.19580716083789, 4.614797622397918, 2.951713965321396, 2.449149087341643, 2.4619419636304105, 1.0029754525418129, 2.334478387370933, 2.5589036813723762, 4.50591651911791, 4.486222509952132, 1.559585289816079, 6.164351024607971, 1.47322926380012, 2.0729721326039914, 2.275646680431729, 2.9195023453638385, 2.7015553984398526, 5.814853292230643, 5.161654841481886, 0.7527848104233957, 1.728308187107492, 5.360006969176836, 5.201498343709625, 0.42675480228093243, 1.967788806417369, 1.7897854085117577, 5.321631318940725, 5.6122834079775785, 5.437876706508988, 2.4878547042811134, 3.796733572414534, 0.9677624343101473, 1.8208670050419042, 0.4657427370080585, 5.820313505901443, 1.2863802672251754, 2.4653914032427604, 0.3882421258541333, 1.4073421893586033]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>48 [2.9646519753472966, 2.4054163630603496, 5.8984153363073375, 2.512801032804015, 5.964913519260788, 3.8936080016830195, 5.923572589632018, 4.9481732525951205, 1.568563629432675, 5.554018967676112, 0.028389796241806445, 2.897527605841249, 5.267355240624224, 3.735313799160573, 2.2661746616128897, 3.5452804132198086, 0.43246053635497056, 2.5730108963703193, 1.974663878510053, 1.9654655970918322, 3.967587987184092, 0.8120259125764905, 6.047592885353966, 0.5745413307337336, 0.9710274726615847, 0.4695106940105736, 2.341674095381348, 0.802699963876766, 0.8310916316734924, 5.012384620423008, 0.018233484756863608, 4.2472370241118345, 5.1721310224316355, 5.021016841850289, 3.1032612340282735, 6.090572550277523, 4.484895234385721, 2.0890853870812838, 1.8127693347262788, 3.7158089135425, 3.7028938225792483, 3.3726572966673407, 2.699611657167366, 1.6621937249934382, 1.1061035348895243, 1.5957931515488104, 0.26282289161037825, 2.4484720212561286]
 </pre></div>
 </div>
 </div>
