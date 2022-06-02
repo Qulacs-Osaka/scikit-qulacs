@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Callable, List, Optional, Union
@@ -487,3 +488,23 @@ class LearningCircuit:
         self._circuit.add_parametric_multi_Pauli_rotation_gate(
             target, pauli_id, initial_angle
         )
+
+    def merge_circuit(self, other: "LearningCircuit") -> None:
+        """
+        Merge another circuit into this circuit.
+
+        Args:
+            other: The circuit to be merged.
+        """
+        self._circuit.merge_circuit(other._circuit)
+
+        # merge learning parameters (position, id)
+        self_parameter_count = self._new_parameter_position()
+        for other_learning_parameter in other._learning_parameter_list:
+            merged_parameter = deepcopy(other_learning_parameter)
+            for i in range(len(merged_parameter.positions_in_circuit)):
+                merged_parameter.positions_in_circuit[i] += self_parameter_count
+            merged_parameter.parameter_id = self._learning_parameter_list.__len__()
+            
+            self._learning_parameter_list.append(merged_parameter)
+        
