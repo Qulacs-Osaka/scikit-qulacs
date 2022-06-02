@@ -10,6 +10,7 @@ TEST_DIR := tests
 BENCHMARK_DIR := benchmarks
 CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR) $(BENCHMARK_DIR)
 
+COVERAGE_OPT := --cov skqulacs --cov-branch
 BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000
 
@@ -38,6 +39,18 @@ format:
 format_check:
 	$(FORMATTER) $(CHECK_DIR) --check --diff
 	$(IMPORT_SORTER) $(CHECK_DIR) --check --diff
+
+.PHONY: cov
+cov:
+	$(PYTEST) $(COVERAGE_OPT) --cov-report html $(TEST_DIR)
+
+.PHONY: cov_ci
+cov_ci:
+	$(PYTEST) $(COVERAGE_OPT) --cov-report xml $(TEST_DIR)
+
+.PHONY: serve_cov
+serve_cov: cov
+	poetry run python -m http.server --directory htmlcov $(PORT)
 
 .PHONY: lint
 lint:
