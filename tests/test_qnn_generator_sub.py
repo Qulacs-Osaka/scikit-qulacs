@@ -31,7 +31,7 @@ def test_generator_func_same():
 def test_generator_func_gauss():
     circuit = LearningCircuit(2)
     circuit.add_X_gate(0)
-    # circuitの確率は、[0,1,0,0] カーネルを考えると、スコアは1.264241　になるはず
+    # circuitの確率は、[0,1,0,0] カーネルを考えると、スコアは1.264241になるはず
     qcl = QNNGeneretor(circuit, Bfgs(), "gauss", 0.5, 2)
     diff_score = qcl.cost_func([], np.array([0, 0, 1, 0]))
     assert abs(diff_score - 1.264241) < 0.001
@@ -39,7 +39,7 @@ def test_generator_func_gauss():
 
 def test_generator_func_hamming():
     circuit = LearningCircuit(2)
-    # circuitの確率は、[1,0,0,0] カーネルを考えると、スコアは1.264241　になるはず
+    # circuitの確率は、[1,0,0,0] カーネルを考えると、スコアは1.264241になるはず
     qcl = QNNGeneretor(circuit, Bfgs(), "exp_hamming", 0.5, 2)
     diff_score = qcl.cost_func([], np.array([0, 0, 1, 0]))
     assert abs(diff_score - 1.264241) < 0.001
@@ -48,7 +48,7 @@ def test_generator_func_hamming():
 def test_generator_func_gauss2():
     circuit = LearningCircuit(2)
 
-    # circuitの確率は、[1,0,0,0] カーネルを考えると、スコアは1.9633687　になるはず
+    # circuitの確率は、[1,0,0,0] カーネルを考えると、スコアは1.9633687になるはず
     qcl = QNNGeneretor(circuit, Bfgs(), "gauss", 0.5, 2)
     diff_score = qcl.cost_func([], np.array([0, 0, 1, 0]))
     assert abs(diff_score - 1.9633687) < 0.001
@@ -57,7 +57,7 @@ def test_generator_func_gauss2():
 def test_generator_func_hamming2():
     circuit = LearningCircuit(2)
     circuit.add_X_gate(0)
-    # circuitの確率は、[0,1,0,0] カーネルを考えると、スコアは1.7293294335267746　になるはず
+    # circuitの確率は、[0,1,0,0] カーネルを考えると、スコアは1.7293294335267746になるはず
     qcl = QNNGeneretor(circuit, Bfgs(), "exp_hamming", 0.5, 2)
     diff_score = qcl.cost_func([], np.array([0, 0, 1, 0]))
     assert abs(diff_score - 1.7293294335267746) < 0.001

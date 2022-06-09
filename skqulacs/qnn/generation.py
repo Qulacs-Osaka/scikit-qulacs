@@ -140,9 +140,9 @@ class QNNGeneretor(QNN):
 
     def conving(self, data_diff):
         # data_diffは、現在の分布ー正しい分布
-        # (data_diff) (カーネル行列) (data_diffの行ベクトル)　を計算すると、cost_funcになる。
+        # (data_diff) (カーネル行列) (data_diffの行ベクトル)を計算すると、cost_funcになる。
         # ここでは、(data_diff) (カーネル行列)  のベクトルを求める。
-        # 　つまり、確率差ベクトルにカーネル行列を掛ける。
+        # つまり、確率差ベクトルにカーネル行列を掛ける。
         if self.karnel_type == "gauss":
             # 高速化として、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。
             beta = -0.5 / self.gauss_sigma
@@ -209,5 +209,5 @@ class QNNGeneretor(QNN):
         state_vec = prein.get_vector()
         ret = QuantumState(self.n_qubit)
         ret.load(convconv_diff * state_vec * 4)
-        # 各要素ごとに積を取り、4を掛けている。　4なのは、2乗だから2をかけるのと、　実際はカーネルの左と右両方にベクトルあるから2を掛ける。
+        # 各要素ごとに積を取り、4を掛けている。4なのは、2乗だから2をかけるのと、実際はカーネルの左と右両方にベクトルあるから2を掛ける。
         return np.array(self.circuit.backprop_inner_product([0], ret))
