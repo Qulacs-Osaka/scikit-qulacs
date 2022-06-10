@@ -41,7 +41,7 @@ myst-nb = "^0.15.0"
 pytest-benchmark = "^3.4.1"
 pytest-cov = "^3.0.0"
 typing-extensions = "^4.1.1"
-PennyLane = "^0.22.2"
+PennyLane = "^0.23.0"
 qulacsvis = "^0.2.2"
 
 [tool.isort]
