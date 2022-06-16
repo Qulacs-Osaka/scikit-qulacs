@@ -1180,7 +1180,7 @@ python-versions = "*"
 
 [[package]]
 name = "qulacs-osaka"
-version = "0.3.1"
+version = "0.4.0"
 description = "Quantum circuit simulator for research"
 category = "main"
 optional = false
@@ -1596,7 +1596,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1,<3.11"
-content-hash = "8233d9aab5655b123a84c958636b6805036377bed8d8ab73808047cbe8d0e820"
+content-hash = "fc6f5cf65083a178b434613c7ccf2dada2a1894d3d4006753a20afb988024720"
 
 [metadata.files]
 alabaster = [
@@ -2560,21 +2560,21 @@ qulacs = [
     {file = "Qulacs-0.3.0.tar.gz", hash = "sha256:b371bd8e791bc0cbc7a40bdd662d3d26bbc46248048634b2632c0382a83e987c"},
 ]
 qulacs-osaka = [
-    {file = "qulacs_osaka-0.3.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f1374e8d4cc250096e316dde408d0ce76cb9ec1c1c799d599e57628059fc86c1"},
-    {file = "qulacs_osaka-0.3.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e7cbaab6f67ec8d17d42ccd784e194ba8466409b2bcfab4f846cc6493ff69601"},
-    {file = "qulacs_osaka-0.3.1-cp310-cp310-win_amd64.whl", hash = "sha256:a4d0c926e82df048238fa95108570d98bd036d00a559a8f80ff21ed22410273a"},
-    {file = "qulacs_osaka-0.3.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:93dd88295eb5b3af48406897bccd700cde2667f7b4b628ce1f887f1ae55bc77e"},
-    {file = "qulacs_osaka-0.3.1-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a969859f4f3d60da60c47faf1c8bcde4ffc2b8510a1ff66a84683b09049d113e"},
-    {file = "qulacs_osaka-0.3.1-cp36-cp36m-win_amd64.whl", hash = "sha256:fbf6ccbc85907db37e9e1488bdb29f7fed5e430aa4757248cd5e868e71d14cba"},
-    {file = "qulacs_osaka-0.3.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2745e56b66160256bb661e7e81d9ae47b536f3a96de261fb382c2f54731e7c60"},
-    {file = "qulacs_osaka-0.3.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bec5ca9d588a4b1432784d25bc68ca5b0f6716f6eddae8c3fbd1dd53d2f41391"},
-    {file = "qulacs_osaka-0.3.1-cp37-cp37m-win_amd64.whl", hash = "sha256:db44b377f6d2ccb8244dc79d106c7e2ae910aa01397ee1c4d15bc2f30c1f9109"},
-    {file = "qulacs_osaka-0.3.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:fbb3874cf27817012261f05256498a8e82791279b0f5bb33741029757618b2f2"},
-    {file = "qulacs_osaka-0.3.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a05ae3dace9959f479d9c7b01ff236430b8ac543981dfacee8762425ea405510"},
-    {file = "qulacs_osaka-0.3.1-cp38-cp38-win_amd64.whl", hash = "sha256:01212a948e10f0425daa101f2e593061e5eb65d94126fc26078bcb8cba6e0db1"},
-    {file = "qulacs_osaka-0.3.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:afe269b2f7482c9242a883e6e9600326e5b43b55a5aee462c810b303525a45ba"},
-    {file = "qulacs_osaka-0.3.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eaf339d9add4029b6bb7e3245f9e1d55cb6fd62bc25341f7188dd51461d576df"},
-    {file = "qulacs_osaka-0.3.1-cp39-cp39-win_amd64.whl", hash = "sha256:b9cdb01c36b8eef4eb553f2c92b7113b226423e2dfcb0add986a3f4b95be5e8c"},
+    {file = "qulacs_osaka-0.4.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:369b032af913d83fdd00adac170145ca790ad546922888a29fe3bc8ada97c963"},
+    {file = "qulacs_osaka-0.4.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef484b7257557f10b2f7b3f932de581a26894f481c1401ec4e1c2d4dee37e8ce"},
+    {file = "qulacs_osaka-0.4.0-cp310-cp310-win_amd64.whl", hash = "sha256:6f3908c1134502ad4f6ba7063364fbf9d983e93f4e0b73ac5ff7da429c065625"},
+    {file = "qulacs_osaka-0.4.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:016001a6c44fa08ba4d388e0ae8e77663869ad3e9b09d4608d9c29441e0ec82f"},
+    {file = "qulacs_osaka-0.4.0-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:235caede6830526c149e6df32438dbbf8cfb845c51dd0a029e52eb691ba1bbf7"},
+    {file = "qulacs_osaka-0.4.0-cp36-cp36m-win_amd64.whl", hash = "sha256:a375e2a1aa07714da4c6e2f829856a6dae2134f6e742ef42e7efa25b1f0e4096"},
+    {file = "qulacs_osaka-0.4.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:806f7af95eeaebada76a94c4ce4e8290a7996410afe61fa8c1976f85f4bbbcda"},
+    {file = "qulacs_osaka-0.4.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1485885b5d608e9e1992716566ad6a55cce979a72c44f6c02b6575bc1b3f1299"},
+    {file = "qulacs_osaka-0.4.0-cp37-cp37m-win_amd64.whl", hash = "sha256:231c3eac8af4165b60d65627477a5796f9a10c82741040350db251c8b94ecfc4"},
+    {file = "qulacs_osaka-0.4.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:8be5ae2d5328dca3357f3649ecbd2ef3ca259fb34635b20a342e76a4f8e4a4ae"},
+    {file = "qulacs_osaka-0.4.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b42423339566740b1b0cc766a9eef6f61a7e939991af325f06cd17c4b344826a"},
+    {file = "qulacs_osaka-0.4.0-cp38-cp38-win_amd64.whl", hash = "sha256:f47638d221cb7b36e75dd143b3235321eb331e2ccabc5fecb004e1e36dbfd466"},
+    {file = "qulacs_osaka-0.4.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:a615170306bc66e3b45c0e207cc464364b1c102efac3462de8ec4a9bf19995c6"},
+    {file = "qulacs_osaka-0.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fe90cdab69612d5cd0c98be03bf241a0316e6f2b6cb2e32e00a7b2aa24e604f4"},
+    {file = "qulacs_osaka-0.4.0-cp39-cp39-win_amd64.whl", hash = "sha256:37ab40e8d6b25678d2006c8371f5da49bcef363b259fedb26bcb82254315ba89"},
 ]
 qulacsvis = [
     {file = "qulacsvis-0.2.2-py3-none-any.whl", hash = "sha256:61307e20b33bb1f452b1324f5b3e2c218c22b0066d2cd25feb7bdfcb00d18e5f"},
