@@ -10,11 +10,18 @@ TEST_DIR := tests
 BENCHMARK_DIR := benchmarks
 CHECK_DIR := $(PROJECT_DIR) $(TEST_DIR) $(BENCHMARK_DIR)
 
+COVERAGE_OPT := --cov skqulacs --cov-branch
 BENCHMARK_OPT := --benchmark-autosave -v
 PORT := 8000
 
 # Idiom found at https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
 FORCE:
+
+.PHONY: check
+check: format lint
+
+.PHONY: ci
+ci: format_check lint
 
 .PHONY: test
 test:
@@ -23,20 +30,35 @@ test:
 tests/%.py: FORCE
 	$(PYTEST) $@
 
-.PHONY: check
-check:
-	$(FORMATTER) $(CHECK_DIR) --check --diff
-	$(LINTER) $(CHECK_DIR)
-	$(IMPORT_SORTER) $(CHECK_DIR) --check --diff
-
-.PHONY: fix
-fix:
+.PHONY: format
+format:
 	$(FORMATTER) $(CHECK_DIR)
 	$(IMPORT_SORTER) $(CHECK_DIR)
 
+.PHONY: format_check
+format_check:
+	$(FORMATTER) $(CHECK_DIR) --check --diff
+	$(IMPORT_SORTER) $(CHECK_DIR) --check --diff
+
+.PHONY: cov
+cov:
+	$(PYTEST) $(COVERAGE_OPT) --cov-report html $(TEST_DIR)
+
+.PHONY: cov_ci
+cov_ci:
+	$(PYTEST) $(COVERAGE_OPT) --cov-report xml $(TEST_DIR)
+
+.PHONY: serve_cov
+serve_cov: cov
+	poetry run python -m http.server --directory htmlcov $(PORT)
+
+.PHONY: lint
+lint:
+	$(LINTER) $(CHECK_DIR)
+
 .PHONY: type
 type:
-	$(TYPE_CHECKER) $(PROJECT_DIR)
+	$(TYPE_CHECKER) $(CHECK_DIR)
 
 .PHONY: benchmark
 benchmark:
@@ -45,14 +67,14 @@ benchmark:
 benchmarks/%.py: FORCE
 	$(PYTEST) $@ $(BENCHMARK_OPT)
 
-.PHONY: api
-api:
-	$(SPHINX_APIDOC) -f -e -o doc/source $(PROJECT_DIR)
+.PHONY: serve
+serve: html
+	poetry run python -m http.server --directory doc/build/html $(PORT)
 
 .PHONY: doc
 html: api
 	poetry run $(MAKE) -C doc html
 
-.PHONY: serve
-serve: html
-	poetry run python -m http.server --directory doc/build/html $(PORT)
+.PHONY: api
+api:
+	$(SPHINX_APIDOC) -f -e -o doc/source $(PROJECT_DIR)
