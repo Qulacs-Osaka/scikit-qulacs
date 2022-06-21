@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>skqulacs &#8212; scikit-qulacs  documentation</title>
+    <title>skqulacs.qnn.generation module &#8212; scikit-qulacs  documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -40,8 +40,8 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="skqulacs package" href="skqulacs.html" />
-    <link rel="prev" title="Welcome to scikit-qulacs’s documentation!" href="index.html" />
+    <link rel="next" title="skqulacs.qnn.qnnbase module" href="skqulacs.qnn.qnnbase.html" />
+    <link rel="prev" title="skqulacs.qnn.classifier module" href="skqulacs.qnn.classifier.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en">
     
@@ -95,7 +95,7 @@
 </p>
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
+  <a class="reference internal" href="modules.html">
    skqulacs
   </a>
   <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -103,17 +103,17 @@
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
-   <li class="toctree-l2 has-children">
+  <ul class="current">
+   <li class="toctree-l2 current active has-children">
     <a class="reference internal" href="skqulacs.html">
      skqulacs package
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
     <label for="toctree-checkbox-2">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
+    <ul class="current">
      <li class="toctree-l3 has-children">
       <a class="reference internal" href="skqulacs.circuit.html">
        skqulacs.circuit package
@@ -136,23 +136,23 @@
        </li>
       </ul>
      </li>
-     <li class="toctree-l3 has-children">
+     <li class="toctree-l3 current active has-children">
       <a class="reference internal" href="skqulacs.qnn.html">
        skqulacs.qnn package
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
       <label for="toctree-checkbox-4">
        <i class="fas fa-chevron-down">
        </i>
       </label>
-      <ul>
+      <ul class="current">
        <li class="toctree-l4">
         <a class="reference internal" href="skqulacs.qnn.classifier.html">
          skqulacs.qnn.classifier module
         </a>
        </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="skqulacs.qnn.generation.html">
+       <li class="toctree-l4 current active">
+        <a class="current reference internal" href="#">
          skqulacs.qnn.generation module
         </a>
        </li>
@@ -329,7 +329,7 @@ title="Source repository"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/modules.rst.txt"
+        <a href="_sources/skqulacs.qnn.generation.rst.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -378,7 +378,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>skqulacs</h1>
+                <h1>skqulacs.qnn.generation module</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -390,34 +390,67 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="skqulacs">
-<h1>skqulacs<a class="headerlink" href="#skqulacs" title="Permalink to this headline">#</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="skqulacs.html">skqulacs package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="skqulacs.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="skqulacs.circuit.html">skqulacs.circuit package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.circuit.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.circuit.html#module-skqulacs.circuit">Module contents</a></li>
+  <section id="module-skqulacs.qnn.generation">
+<span id="skqulacs-qnn-generation-module"></span><h1>skqulacs.qnn.generation module<a class="headerlink" href="#module-skqulacs.qnn.generation" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.qnn.generation.</span></span><span class="sig-name descname"><span class="pre">QNNGeneretor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.qnn.solver.html#skqulacs.qnn.solver.Solver" title="skqulacs.qnn.solver.Solver"><span class="pre">skqulacs.qnn.solver.Solver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">karnel_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'gauss'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'exp_hamming'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'same'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gauss_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitting_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
+<p>quantum circuit learningを用いて生成モデルをやる</p>
+<p>入力無し、出力される確率分布をテストデータの確率分布に近くするのが目的</p>
+<p>入力は、データの配列.入力はビット列を2進表記することによる整数しか受け取らない。</p>
+<p>fit_direct_distributionは、直接確率分布を入力する。</p>
+<p>出力は、予想される確率分布を返す。</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor.conving">
+<span class="sig-name descname"><span class="pre">conving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_diff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor.conving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor.conving" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor.cost_func">
+<span class="sig-name descname"><span class="pre">cost_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_unuse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor.cost_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor.fit" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_scaled</strong> – trainの確率分布を入力</p></li>
+<li><p><strong>maxiter</strong> – scipy.optimize.minimizeのイテレーション回数</p></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="skqulacs.qnn.html">skqulacs.qnn package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.qnn.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.qnn.html#module-skqulacs.qnn">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="skqulacs.qsvm.html">skqulacs.qsvm package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.qsvm.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="skqulacs.qsvm.html#module-skqulacs.qsvm">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="skqulacs.html#module-skqulacs">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>学習後のロス関数の値</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>学習後のパラメータthetaの値</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor.fit_direct_distribution">
+<span class="sig-name descname"><span class="pre">fit_direct_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor.fit_direct_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor.fit_direct_distribution" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor.predict" title="Permalink to this definition">#</a></dt>
+<dd><p>予想される確率分布を、np.ndarray[float]の形で返す。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Predicted distribution.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>data_per</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -428,17 +461,17 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="skqulacs.qnn.classifier.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Welcome to scikit-qulacs’s documentation!</p>
+            <p class="prev-next-title">skqulacs.qnn.classifier module</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="skqulacs.html" title="next page">
+    <a class='right-next' id="next-link" href="skqulacs.qnn.qnnbase.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">skqulacs package</p>
+        <p class="prev-next-title">skqulacs.qnn.qnnbase module</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

@@ -1,0 +1,592 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>skqulacs.qnn.generation &#8212; scikit-qulacs  documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">scikit-qulacs  documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../modules.html">
+   skqulacs
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../skqulacs.html">
+     skqulacs package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../skqulacs.circuit.html">
+       skqulacs.circuit package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.circuit.circuit.html">
+         skqulacs.circuit.circuit module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.circuit.pre_defined.html">
+         skqulacs.circuit.pre_defined module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../skqulacs.qnn.html">
+       skqulacs.qnn package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.classifier.html">
+         skqulacs.qnn.classifier module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.generation.html">
+         skqulacs.qnn.generation module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.qnnbase.html">
+         skqulacs.qnn.qnnbase module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.regressor.html">
+         skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../skqulacs.qsvm.html">
+       skqulacs.qsvm package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qsvm.qsvc.html">
+         skqulacs.qsvm.qsvc module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../skqulacs.qsvm.qsvr.html">
+         skqulacs.qsvm.qsvr module
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../notebooks/index.html">
+   Notebooks
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../notebooks/0_tutorial.html">
+     scikit-qulacs チュートリアル
+    </a>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../notebooks/paper_reproduction.html">
+     Reproducing papers
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../notebooks/arxiv_2108_01039_large_scale_quantum_machine_learning.html">
+       Reproducing arXiv:2108.01039 with scikit-qulacs
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../notebooks/qcnn.html">
+       Quantum Convolutional Neural Network with scikit-qulacs
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../notebooks/circuit_visualize.html">
+     Circuit visualize
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/Qulacs-Osaka/scikit-qulacs"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for skqulacs.qnn.generation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">QuantumState</span>
+<span class="kn">from</span> <span class="nn">qulacs.gate</span> <span class="kn">import</span> <span class="n">DenseMatrix</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">LearningCircuit</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.qnnbase</span> <span class="kn">import</span> <span class="n">QNN</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.solver</span> <span class="kn">import</span> <span class="n">Solver</span>
+
+
+<div class="viewcode-block" id="QNNGeneretor"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor">[docs]</a><span class="k">class</span> <span class="nc">QNNGeneretor</span><span class="p">(</span><span class="n">QNN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    quantum circuit learningを用いて生成モデルをやる</span>
+
+<span class="sd">    入力無し、出力される確率分布をテストデータの確率分布に近くするのが目的</span>
+
+<span class="sd">    入力は、データの配列.入力はビット列を2進表記することによる整数しか受け取らない。</span>
+
+<span class="sd">    fit_direct_distributionは、直接確率分布を入力する。</span>
+
+
+<span class="sd">    出力は、予想される確率分布を返す。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span><span class="p">,</span>
+        <span class="n">solver</span><span class="p">:</span> <span class="n">Solver</span><span class="p">,</span>
+        <span class="n">karnel_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;exp_hamming&quot;</span><span class="p">,</span> <span class="s2">&quot;same&quot;</span><span class="p">],</span>
+        <span class="n">gauss_sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">fitting_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param circuit: 回路そのもの</span>
+
+<span class="sd">        :param fitting_qubit: circuitのqubitとは別で、データのqubit数を示す。</span>
+<span class="sd">        circuitがデータのビットより大きいと、隠れ層的な役割でうまくいく可能性がある。</span>
+<span class="sd">        fitting_qubitがcircuitのqubitより大きい場合、出力のビット番号が大きい側は無視される。</span>
+<span class="sd">        fitting_qubitがcircuitのqubitより小さい場合、多分バグる。</span>
+
+
+<span class="sd">        :param kernel_type 2つの出力がどのくらい似ているかのカーネルっぽいものを指定します。(うまく説明できない)</span>
+<span class="sd">        gauss_sigmaで詳しく説明します。</span>
+
+<span class="sd">        :param gauss_sigma カーネルはガウシアン関数で測られるが、そのシグマ値。</span>
+<span class="sd">        sameの場合、数字はなんでもいい。</span>
+
+<span class="sd">        gaussの場合、k(x,y)= exp((-1/2σ)  (x-y)^2)</span>
+<span class="sd">        exp_hammingの場合、k(x,y)= exp((-1/2σ)  (xとyのハミング距離))</span>
+<span class="sd">        sameを指定した場合、k(x,y)= if(x==y):1 else 0</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">n_qubit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span> <span class="o">=</span> <span class="n">fitting_qubit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">karnel_type</span> <span class="o">=</span> <span class="n">karnel_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span> <span class="o">=</span> <span class="n">gauss_sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QNNGeneretor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param train_scaled: trainの確率分布を入力</span>
+
+<span class="sd">        :param maxiter: scipy.optimize.minimizeのイテレーション回数</span>
+<span class="sd">        :return: 学習後のロス関数の値</span>
+<span class="sd">        :return: 学習後のパラメータthetaの値</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">train_scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_data</span><span class="p">:</span>
+            <span class="n">train_scaled</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_direct_distribution</span><span class="p">(</span><span class="n">train_scaled</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QNNGeneretor.fit_direct_distribution"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.fit_direct_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">fit_direct_distribution</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="n">theta_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cost_func_grad</span><span class="p">,</span>
+            <span class="n">theta_init</span><span class="p">,</span>
+            <span class="n">train_scaled</span><span class="p">,</span>
+            <span class="p">[],</span>
+            <span class="n">maxiter</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="QNNGeneretor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        予想される確率分布を、np.ndarray[float]の形で返す。</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            data_per: Predicted distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">y_pred_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">()</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+        <span class="n">y_pred_conj</span> <span class="o">=</span> <span class="n">y_pred_in</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+
+        <span class="n">data_per</span> <span class="o">=</span> <span class="n">y_pred_in</span> <span class="o">*</span> <span class="n">y_pred_conj</span>  <span class="c1"># 2乗の和</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">:</span>  <span class="c1"># いくつかのビットを捨てる</span>
+            <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">),</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data_per</span></div>
+
+    <span class="k">def</span> <span class="nf">_predict_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
+        <span class="c1"># 入力xに関して、量子回路を通した生のデータを表示</span>
+        <span class="c1"># 出力状態計算 &amp; 観測</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span> <span class="nf">_predict_and_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">QuantumState</span><span class="p">]:</span>
+        <span class="c1"># Necessary because `cost_func_grad` needs a state created in prediction.</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">()</span>
+        <span class="n">y_pred_in</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+        <span class="n">y_pred_conj</span> <span class="o">=</span> <span class="n">y_pred_in</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+
+        <span class="n">data_per</span> <span class="o">=</span> <span class="n">y_pred_in</span> <span class="o">*</span> <span class="n">y_pred_conj</span>  <span class="c1"># 2乗の和</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">:</span>  <span class="c1"># いくつかのビットを捨てる</span>
+            <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">),</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">data_per</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QNNGeneretor.conving"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.conving">[docs]</a>    <span class="k">def</span> <span class="nf">conving</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_diff</span><span class="p">):</span>
+        <span class="c1"># data_diffは、現在の分布ー正しい分布</span>
+        <span class="c1"># (data_diff) (カーネル行列) (data_diffの行ベクトル)を計算すると、cost_funcになる。</span>
+        <span class="c1"># ここでは、(data_diff) (カーネル行列)  のベクトルを求める。</span>
+        <span class="c1"># つまり、確率差ベクトルにカーネル行列を掛ける。</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">karnel_type</span> <span class="o">==</span> <span class="s2">&quot;gauss&quot;</span><span class="p">:</span>
+            <span class="c1"># 高速化として、|x-y|=4√σ を超える場合(つまりkがexp(-8)=0.000335以下)は打ち切る。</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span>
+
+            <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span><span class="p">))</span>
+            <span class="n">conv_len</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">conv_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conv_len</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conv_len</span><span class="p">):</span>
+                <span class="n">conv_target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">conv_len</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">:</span>
+                <span class="n">conv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">data_diff</span><span class="p">,</span> <span class="n">conv_target</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># convの行列のほうが長いので、sameがバグった。</span>
+                <span class="c1"># だから、わざわざfullのを取って、スライスしている。</span>
+                <span class="n">conv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">data_diff</span><span class="p">,</span> <span class="n">conv_target</span><span class="p">)[</span><span class="n">width</span><span class="p">:</span><span class="o">-</span><span class="n">width</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">conv_diff</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">karnel_type</span> <span class="o">==</span> <span class="s2">&quot;exp_hamming&quot;</span><span class="p">:</span>
+
+            <span class="n">beta</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gauss_sigma</span>
+            <span class="n">swap_pena</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+            <span class="c1"># ハミング距離の畳み込み演算をします。</span>
+            <span class="c1"># これはバタフライ演算でできます。</span>
+            <span class="c1"># バタフライ演算を行うのにqulacsを使います。</span>
+            <span class="c1"># 注意！ユニタリ的な量子演算ではありません！</span>
+            <span class="c1"># この演算をすることで高速にできる。</span>
+
+            <span class="n">diff_state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+            <span class="n">diff_state</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_diff</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">):</span>
+                <span class="n">batafly_gate</span> <span class="o">=</span> <span class="n">DenseMatrix</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="n">swap_pena</span><span class="p">],</span> <span class="p">[</span><span class="n">swap_pena</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+                <span class="n">batafly_gate</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">diff_state</span><span class="p">)</span>
+
+            <span class="n">conv_diff</span> <span class="o">=</span> <span class="n">diff_state</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">conv_diff</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">karnel_type</span> <span class="o">==</span> <span class="s2">&quot;same&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data_diff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="QNNGeneretor.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">_unuse</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="c1"># y-xを求める</span>
+        <span class="n">data_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span> <span class="o">-</span> <span class="n">train_scaled</span>
+        <span class="n">conv_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conving</span><span class="p">(</span><span class="n">data_diff</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data_diff</span><span class="p">,</span> <span class="n">conv_diff</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_cost_func_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">_unuse</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="c1"># y-xを求める</span>
+        <span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="n">prein</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_and_inner</span><span class="p">()</span>
+        <span class="n">data_diff</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">-</span> <span class="n">train_scaled</span>
+        <span class="n">conv_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conving</span><span class="p">(</span><span class="n">data_diff</span><span class="p">)</span>
+
+        <span class="n">convconv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+            <span class="n">conv_diff</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># 得られた確率ベクトルの添え字の大きい桁を無視する。</span>
+        <span class="c1"># 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -&gt; [0.2,-0.1,0,-0.1]</span>
+        <span class="n">state_vec</span> <span class="o">=</span> <span class="n">prein</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">convconv_diff</span> <span class="o">*</span> <span class="n">state_vec</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># 各要素ごとに積を取り、4を掛けている。4なのは、2乗だから2をかけるのと、実際はカーネルの左と右両方にベクトルあるから2を掛ける。</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop_inner_product</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">ret</span><span class="p">))</span></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Qulacs-Osaka<br/>
+  
+      &copy; Copyright 2021, Qulacs-Osaka.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

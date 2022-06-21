@@ -154,6 +154,11 @@
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.generation.html">
+         skqulacs.qnn.generation module
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../skqulacs.qnn.qnnbase.html">
          skqulacs.qnn.qnnbase module
         </a>
@@ -449,6 +454,16 @@ title="Print to PDF"
      の使い方
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qnn-generation">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.generation
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -537,6 +552,16 @@ title="Print to PDF"
      <code class="docutils literal notranslate">
       <span class="pre">
        skqulacs.qnn.QNNRegressor
+      </span>
+     </code>
+     の使い方
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skqulacs-qnn-generation">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       skqulacs.qnn.generation
       </span>
      </code>
      の使い方
@@ -662,15 +687,15 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [0.97300102 4.7946057  1.35324745 4.60159679 0.84295957 5.56893232
- 2.97127584 3.52436879 2.66614812 3.95883123 5.70926506 1.43514818
- 1.30129673 4.21197406 0.11398426 3.88219833 3.42516568 4.40926617
- 3.12730264 6.37394772 4.07034292 0.89179287 4.3552535  1.66574795
- 5.21039097 0.71562215 3.10967854 3.05110192 3.20220236 4.85778961
- 3.30073192 4.73812554 5.19581744 2.3490641  5.56608874 4.56623562
- 1.50201101 2.46122035 0.33688698 3.34948834 1.21640588 2.56967473
- 0.71806182 2.1133044  0.58354405]
-loss 0.32948758938501604
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 3.3077862   2.20610834  0.18317852  2.57427866  2.1731261   5.16437333
+  6.90379975  4.92301026  3.78621276  5.01264629  5.39612169  5.06373429
+  2.36012806  4.08739844  5.47151574  2.70898056  3.1735183   2.66824882
+  0.2683309   4.5094121   6.64751394 -0.05754961  6.58882916  4.47236961
+  1.6969534   6.44925444  0.82493735  5.89706655  0.36732051  4.13386748
+  5.63948049  2.33409167  4.17240084  0.31197252  2.18623163  0.46591338
+  0.45247138  4.11809259  0.99494374  4.61047697  6.022204    3.2083882
+  1.44504131  2.8614801   5.06963927]
+loss 0.3253091864984035
 </pre></div>
 </div>
 </div>
@@ -685,7 +710,7 @@ loss 0.32948758938501604
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9739522830846216
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9473684210526315
 </pre></div>
 </div>
 </div>
@@ -723,10 +748,10 @@ loss 0.32948758938501604
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNRegressor</span>
 
 <span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">solver</span> <span class="o">=</span> <span class="n">Bfgs</span><span class="p">()</span>
-<span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">maxiter</span><span class="o">=</span> <span class="mi">30</span>
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">create_qcl_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNRegressor</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
 <span class="n">opt_loss</span><span class="p">,</span> <span class="n">opt_params</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span>
@@ -736,15 +761,19 @@ loss 0.32948758938501604
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 4.80281211  1.93928838 -0.5205007   0.36683164  4.82276275  6.47811525
-  3.38919905  5.02087438  3.3718359   6.32019833  5.49131488  0.14543509
-  5.4754958   0.66461726  4.68233889  1.42410867  5.53990554  3.79548094
-  1.84638698  2.68947621  0.03457702  0.94699584  4.49461489  3.60827377
-  3.89882872  2.59470479  6.22981776  6.1633591   4.24396167  3.91849499
-  4.33407504  2.57338267  0.69187344  4.87367468  3.40637054  1.60695639
-  3.30741867  5.46553484  5.94186833  2.24809352  3.59102784  2.02236503
-  3.73409722  2.12315885  2.46061475  5.59375873  1.42727325  3.91560031]
-loss 0.00850908606711705
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>trained parameters [ 4.25798056  1.92999783  0.31115392  0.49212499  4.80907853  6.06343962
+  4.00173116  4.9030698   3.43327385  5.81135678  5.07675043  0.49105851
+  5.42057489 -0.14168464  4.58566892  1.36858878  5.36424976  3.55819331
+  1.73062387  2.57575324  0.13021265  1.13880549  4.24069209  3.98487665
+  3.57694613  2.3916734   6.35641985  6.29467416  4.37029016  4.04927805
+  4.49274116  2.73557408  0.63853703  4.45377244  3.03068676  2.05579799
+  3.04866402  5.44965241  5.85460933  2.23874886  3.3939702   2.04538289
+  3.79038304  1.9171457   2.36846662  5.80016494  1.49691542  4.21257824
+  0.37117935  5.12489574  4.95969291  1.41616941  5.50035696  0.29056759
+  2.13739014  0.89954726  2.93673013  5.33719954  1.33472466  0.45390472
+  2.59255057  1.20163753  0.38793178  3.64633592  1.87676315  4.22226834
+  1.25359251  5.91947125  2.29405484  0.66284639  3.95280309  5.82548387]
+loss 0.001734007213230344
 </pre></div>
 </div>
 </div>
@@ -763,10 +792,88 @@ loss 0.00850908606711705
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3f4dccd369bff983f1b3ccb2d61f4389617a121f700ddf7cc5c005e74992eaa4.png" src="../_images/3f4dccd369bff983f1b3ccb2d61f4389617a121f700ddf7cc5c005e74992eaa4.png" />
+<img alt="../_images/46b5b48546faa84faaf45862bc9e3690f3ca4a5d2c4d2616d5207210ef04c401.png" src="../_images/46b5b48546faa84faaf45862bc9e3690f3ca4a5d2c4d2616d5207210ef04c401.png" />
 </div>
 </div>
 <p>よく学習できていることがわかります。</p>
+</section>
+<section id="skqulacs-qnn-generation">
+<h3><code class="docutils literal notranslate"><span class="pre">skqulacs.qnn.generation</span></code> の使い方<a class="headerlink" href="#skqulacs-qnn-generation" title="Permalink to this headline">#</a></h3>
+<p>生成モデルを作ります。
+生成モデルとは、教師なし学習の一種で、入力データの分布を学習し、それに応じた新しいサンプルを生成するモデルです。</p>
+<p>ここでは、例として、ガウス関数の和のモデルを学習させてみます。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">create_farhi_neven_ansatz</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNGeneretor</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.solver</span> <span class="kn">import</span> <span class="n">Bfgs</span>
+<span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_farhi_neven_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span>
+
+<span class="n">qnn</span> <span class="o">=</span> <span class="n">QNNGeneretor</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">Bfgs</span><span class="p">(),</span> <span class="s2">&quot;same&quot;</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">#prob_listつまり、確率分布を生成する</span>
+<span class="n">prob_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">ua</span> <span class="o">=</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">7</span>
+<span class="n">ub</span> <span class="o">=</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">7</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span>
+<span class="n">prob_sum</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+    <span class="n">prob_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">ua</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ua</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span>
+        <span class="o">-</span><span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">v</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">prob_sum</span> <span class="o">+=</span> <span class="n">prob_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+    <span class="n">prob_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/=</span> <span class="n">prob_sum</span>
+
+<span class="c1">#prob_list が、理想的な確率分布になる。</span>
+
+<span class="c1">#prob_listの確率分布をもとに、10000個のデータを作る</span>
+<span class="n">datas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">prob_list</span><span class="p">)</span>
+
+
+<span class="n">maxiter</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">qnn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">datas</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span>
+
+<span class="n">data_param</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/watle/pros/scikit-qulacs/.venv/lib/python3.8/site-packages/scipy/optimize/linesearch.py:167: ComplexWarning: Casting complex values to real discards the imaginary part
+  stp, phi1, derphi1, task = minpack2.dcsrch(alpha1, phi1, derphi1,
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">)),</span> <span class="n">data_param</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">32</span><span class="p">)),</span> <span class="n">prob_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/watle/pros/scikit-qulacs/.venv/lib/python3.8/site-packages/matplotlib/cbook/__init__.py:1298: ComplexWarning: Casting complex values to real discards the imaginary part
+  return np.asarray(x, float)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fec5fd9fd60&gt;]
+</pre></div>
+</div>
+<img alt="../_images/c9df8c4e05899daf09da435523cac1056e1d4dfefc75c27ee996fc2729d4ff4f.png" src="../_images/c9df8c4e05899daf09da435523cac1056e1d4dfefc75c27ee996fc2729d4ff4f.png" />
+</div>
+</div>
+<p>オレンジが学習すべきものの頻度の折れ線グラフ、
+青が学習した頻度の折れ線グラフです。</p>
+<p>うまく学習できています。</p>
 </section>
 </section>
 <section id="id3">

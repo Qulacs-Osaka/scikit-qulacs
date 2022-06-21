@@ -152,6 +152,11 @@
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="skqulacs.qnn.generation.html">
+         skqulacs.qnn.generation module
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="skqulacs.qnn.qnnbase.html">
          skqulacs.qnn.qnnbase module
         </a>
@@ -673,7 +678,7 @@ This parameter transforms its input by applying the parameter’s <cite>func</ci
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.backprop">
-<span class="sig-name descname"><span class="pre">backprop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.backprop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.backprop" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">backprop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.backprop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.backprop" title="Permalink to this definition">#</a></dt>
 <dd><p>xは入力の状態で、yは出力値の微分値
 帰ってくるのは、それぞれのパラメータに関する微分値
 例えば、出力が[0,2]
@@ -683,6 +688,13 @@ c++のParametricQuantumCircuitクラスを呼び出す
 backprop(GeneralQuantumOperator* obs)</p>
 <p>-&gt;うまくやってbackpropする。
 現実だと不可能な演算も含むが、気にしない</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skqulacs.circuit.circuit.LearningCircuit.backprop_inner_product">
+<span class="sig-name descname"><span class="pre">backprop_inner_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/skqulacs/circuit/circuit.html#LearningCircuit.backprop_inner_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.circuit.circuit.LearningCircuit.backprop_inner_product" title="Permalink to this definition">#</a></dt>
+<dd><p>backprop(self, x: List[float],  state)-&gt;List[Float]</p>
+<p>inner_productでbackpropします。</p>
 </dd></dl>
 
 <dl class="py method">
