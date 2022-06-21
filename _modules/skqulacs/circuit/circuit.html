@@ -362,6 +362,19 @@ title="Source repository"
 
 
 <span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">_PositionDetail</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit.positions_in_circuit`.</span>
+<span class="sd">    This class manages indexe and coefficients (optional) of gate.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        gate_pos: Indices of a parameter in LearningCircuit._circuit.</span>
+<span class="sd">        coef: Coefficient of a parameter in LearningCircuit._circuit. It&#39;s a optional.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gate_pos</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+
+
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">_LearningParameter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit`.</span>
 <span class="sd">    This class manages index and value of parameter.</span>
@@ -373,19 +386,25 @@ title="Source repository"
 <span class="sd">    This is used by method of `LearningCircuit` which has &quot;parametric&quot; in its name.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        positions_in_circuit: Indices of a parameter in LearningCircuit._circuit.</span>
+<span class="sd">        positions_in_circuit: Indices and coefficient of a parameter in LearningCircuit._circuit.</span>
 <span class="sd">        parameter_id: Index at array of learning parameter(theta).</span>
 <span class="sd">        value: Current `parameter_id`-th parameter of LearningCircuit._circuit.</span>
 <span class="sd">        is_input: Whethter this parameter is used with a input parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">positions_in_circuit</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">positions_in_circuit</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_PositionDetail</span><span class="p">]</span>
     <span class="n">parameter_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">is_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">append_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">positions_in_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">is_input</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positions_in_circuit</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_id</span> <span class="o">=</span> <span class="n">parameter_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_input</span> <span class="o">=</span> <span class="n">is_input</span>
+
+    <span class="k">def</span> <span class="nf">append_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positions_in_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_PositionDetail</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">coef</span><span class="p">))</span>
 
 
 <span class="nd">@dataclass</span>
@@ -461,7 +480,10 @@ title="Source repository"
             <span class="n">parameter_value</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">parameter_id</span><span class="p">]</span>
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">parameter_value</span>
             <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">parameter</span><span class="o">.</span><span class="n">positions_in_circuit</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
+                    <span class="n">pos</span><span class="o">.</span><span class="n">gate_pos</span><span class="p">,</span>
+                    <span class="n">parameter_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">coef</span> <span class="ow">or</span> <span class="mf">1.0</span><span class="p">),</span>
+                <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.get_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get a list of learning parameters&#39; values.&quot;&quot;&quot;</span>
@@ -526,7 +548,7 @@ title="Source repository"
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_input</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">parameter</span><span class="o">.</span><span class="n">positions_in_circuit</span><span class="p">:</span>
-                    <span class="n">ans</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">parameter_id</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ret</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+                    <span class="n">ans</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">parameter_id</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ret</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">gate_pos</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">coef</span> <span class="ow">or</span> <span class="mf">1.0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ans</span></div>
 
@@ -641,46 +663,67 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_input_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">input_func</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_parametric_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RX_gate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
 <span class="sd">            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.</span>
+<span class="sd">            share_with_coef: Coefficients for shared parameters which is `share_with`. if &#39;share_with&#39; is none, share_with_coef is skiped.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            parameter_id which is added or updated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">share_with</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">share_with</span><span class="p">,</span> <span class="n">share_with_coef</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_parametric_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RY_gate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
 <span class="sd">            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.</span>
+<span class="sd">            share_with_coef: Coefficients for shared parameters which is `share_with`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            parameter_id which is added or updated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">share_with</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">share_with</span><span class="p">,</span> <span class="n">share_with_coef</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_parametric_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_RZ_gate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
 <span class="sd">            share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.</span>
+<span class="sd">            share_with_coef: Coefficients for shared parameters which is `share_with`. if &#39;share_with&#39; is none, share_with_coef is skiped.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            parameter_id which is added or updated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">share_with</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_R_gate_inner</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">share_with</span><span class="p">,</span> <span class="n">share_with_coef</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_parametric_input_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_input_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_input_RX_gate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -745,21 +788,22 @@ title="Source repository"
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
         <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">new_gate_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_parameter_position</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">share_with</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parameter_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">)</span>
             <span class="n">learning_parameter</span> <span class="o">=</span> <span class="n">_LearningParameter</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">new_gate_pos</span><span class="p">],</span>
                 <span class="n">parameter_id</span><span class="p">,</span>
                 <span class="n">parameter</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">learning_parameter</span><span class="o">.</span><span class="n">append_position</span><span class="p">(</span><span class="n">new_gate_pos</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">learning_parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">parameter_id</span> <span class="o">=</span> <span class="n">share_with</span>
             <span class="n">sharing_parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">[</span><span class="n">parameter_id</span><span class="p">]</span>
-            <span class="n">sharing_parameter</span><span class="o">.</span><span class="n">append_position</span><span class="p">(</span><span class="n">new_gate_pos</span><span class="p">)</span>
+            <span class="n">sharing_parameter</span><span class="o">.</span><span class="n">append_position</span><span class="p">(</span><span class="n">new_gate_pos</span><span class="p">,</span> <span class="n">share_with_coef</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RX_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
@@ -803,8 +847,9 @@ title="Source repository"
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
 
         <span class="n">learning_parameter</span> <span class="o">=</span> <span class="n">_LearningParameter</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">),</span> <span class="n">parameter</span><span class="p">,</span> <span class="kc">True</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">),</span> <span class="n">parameter</span><span class="p">,</span> <span class="kc">True</span>
         <span class="p">)</span>
+        <span class="n">learning_parameter</span><span class="o">.</span><span class="n">append_position</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">learning_parameter</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
