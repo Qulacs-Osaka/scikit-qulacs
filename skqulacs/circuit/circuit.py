@@ -335,7 +335,7 @@ class LearningCircuit:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
-            share_with_coef: Coefficients for shared parameters which is `share_with`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`. if 'share_with' is none, share_with_coef is skiped.
 
         Returns:
             parameter_id which is added or updated.
@@ -377,7 +377,7 @@ class LearningCircuit:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
-            share_with_coef: Coefficients for shared parameters which is `share_with`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`. if 'share_with' is none, share_with_coef is skiped.
 
         Returns:
             parameter_id which is added or updated.
