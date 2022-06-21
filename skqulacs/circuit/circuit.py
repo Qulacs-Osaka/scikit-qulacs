@@ -227,7 +227,7 @@ class LearningCircuit:
         for parameter in self._learning_parameter_list:
             if not parameter.is_input:
                 for pos in parameter.positions_in_circuit:
-                    ans[parameter.parameter_id] += ret[pos]
+                    ans[parameter.parameter_id] += ret[pos.gate_pos] * (pos.coef or 1.0)
 
         return ans
 
