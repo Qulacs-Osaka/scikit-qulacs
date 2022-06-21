@@ -34,10 +34,6 @@ class _PositionDetail:
     gate_pos: int
     coef: Optional[float]
 
-    def __init__(self, gate_pos: int, coef: Optional[float]) -> None:
-        self.gate_pos = gate_pos
-        self.coef = coef
-
 
 @dataclass
 class _LearningParameter:
@@ -339,6 +335,7 @@ class LearningCircuit:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`.
 
         Returns:
             parameter_id which is added or updated.
@@ -359,6 +356,7 @@ class LearningCircuit:
             index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`.
 
         Returns:
             parameter_id which is added or updated.
@@ -379,6 +377,7 @@ class LearningCircuit:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`.
 
         Returns:
             parameter_id which is added or updated.
