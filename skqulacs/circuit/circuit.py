@@ -23,6 +23,19 @@ InputFuncWithParam = Callable[[float, NDArray[np.float_]], float]
 
 
 @dataclass
+class _PositionDetail:
+    """Manage a parameter of `ParametricQuantumCircuit.positions_in_circuit`.
+    This class manages indexe and coefficients (optional) of gate.
+    Args:
+        gate_pos: Indices of a parameter in LearningCircuit._circuit.
+        coef: Coefficient of a parameter in LearningCircuit._circuit. It's a optional.
+    """
+
+    gate_pos: int
+    coef: Optional[float]
+
+
+@dataclass
 class _LearningParameter:
     """Manage a parameter of `ParametricQuantumCircuit`.
     This class manages index and value of parameter.
@@ -34,19 +47,25 @@ class _LearningParameter:
     This is used by method of `LearningCircuit` which has "parametric" in its name.
 
     Args:
-        positions_in_circuit: Indices of a parameter in LearningCircuit._circuit.
+        positions_in_circuit: Indices and coefficient of a parameter in LearningCircuit._circuit.
         parameter_id: Index at array of learning parameter(theta).
         value: Current `parameter_id`-th parameter of LearningCircuit._circuit.
         is_input: Whethter this parameter is used with a input parameter.
     """
 
-    positions_in_circuit: List[int]
+    positions_in_circuit: List[_PositionDetail]
     parameter_id: int
     value: float
     is_input: bool = field(default=False)
 
-    def append_position(self, position: int) -> None:
-        self.positions_in_circuit.append(position)
+    def __init__(self, parameter_id, value, is_input=False) -> None:
+        self.positions_in_circuit = []
+        self.parameter_id = parameter_id
+        self.value = value
+        self.is_input = is_input
+
+    def append_position(self, position: int, coef: Optional[float]) -> None:
+        self.positions_in_circuit.append(_PositionDetail(position, coef))
 
 
 @dataclass
@@ -122,7 +141,10 @@ class LearningCircuit:
             parameter_value = theta[parameter.parameter_id]
             parameter.value = parameter_value
             for pos in parameter.positions_in_circuit:
-                self._circuit.set_parameter(pos, parameter_value)
+                self._circuit.set_parameter(
+                    pos.gate_pos,
+                    parameter_value * (pos.coef or 1.0),
+                )
 
     def get_parameters(self) -> List[float]:
         """Get a list of learning parameters' values."""
@@ -169,6 +191,8 @@ class LearningCircuit:
 
     def backprop(self, x: List[float], obs) -> List[float]:
         """
+        backprop(self, x: List[float], obs)->List[Float]
+
         xは入力の状態で、yは出力値の微分値
         帰ってくるのは、それぞれのパラメータに関する微分値
         例えば、出力が[0,2]
@@ -187,7 +211,23 @@ class LearningCircuit:
         for parameter in self._learning_parameter_list:
             if not parameter.is_input:
                 for pos in parameter.positions_in_circuit:
-                    ans[parameter.parameter_id] += ret[pos]
+                    ans[parameter.parameter_id] += ret[pos.gate_pos] * (pos.coef or 1.0)
+
+        return ans
+
+    def backprop_inner_product(self, x: List[float], state) -> List[float]:
+        """
+        backprop(self, x: List[float],  state)->List[Float]
+
+        inner_productでbackpropします。
+        """
+        self._set_input(x)
+        ret = self._circuit.backprop_inner_product(state)
+        ans = [0.0] * len(self._learning_parameter_list)
+        for parameter in self._learning_parameter_list:
+            if not parameter.is_input:
+                for pos in parameter.positions_in_circuit:
+                    ans[parameter.parameter_id] += ret[pos.gate_pos] * (pos.coef or 1.0)
 
         return ans
 
@@ -302,46 +342,67 @@ class LearningCircuit:
         self._add_input_R_gate_inner(index, _Axis.Z, input_func)
 
     def add_parametric_RX_gate(
-        self, index: int, parameter: float, share_with: Optional[int] = None
+        self,
+        index: int,
+        parameter: float,
+        share_with: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
             index: Index of qubit to add RX gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`. if 'share_with' is none, share_with_coef is skiped.
 
         Returns:
             parameter_id which is added or updated.
         """
-        return self._add_parametric_R_gate_inner(index, parameter, _Axis.X, share_with)
+        return self._add_parametric_R_gate_inner(
+            index, parameter, _Axis.X, share_with, share_with_coef
+        )
 
     def add_parametric_RY_gate(
-        self, index: int, parameter: float, share_with: Optional[int] = None
+        self,
+        index: int,
+        parameter: float,
+        share_with: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
             index: Index of qubit to add RY gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`.
 
         Returns:
             parameter_id which is added or updated.
         """
-        return self._add_parametric_R_gate_inner(index, parameter, _Axis.Y, share_with)
+        return self._add_parametric_R_gate_inner(
+            index, parameter, _Axis.Y, share_with, share_with_coef
+        )
 
     def add_parametric_RZ_gate(
-        self, index: int, parameter: float, share_with: Optional[int] = None
+        self,
+        index: int,
+        parameter: float,
+        share_with: Optional[int] = None,
+        share_with_coef: Optional[float] = None,
     ) -> int:
         """
         Args:
             index: Index of qubit to add RZ gate.
             parameter: Initial parameter of this gate.
             share_with: parameter_id to share the parameter in `ParametricQuantumCircuit`.
+            share_with_coef: Coefficients for shared parameters which is `share_with`. if 'share_with' is none, share_with_coef is skiped.
 
         Returns:
             parameter_id which is added or updated.
         """
-        return self._add_parametric_R_gate_inner(index, parameter, _Axis.Z, share_with)
+        return self._add_parametric_R_gate_inner(
+            index, parameter, _Axis.Z, share_with, share_with_coef
+        )
 
     def add_parametric_input_RX_gate(
         self,
@@ -406,21 +467,22 @@ class LearningCircuit:
         parameter: float,
         target: _Axis,
         share_with: Optional[int],
+        share_with_coef: Optional[float],
     ) -> int:
         new_gate_pos = self._new_parameter_position()
 
         if share_with is None:
             parameter_id = len(self._learning_parameter_list)
             learning_parameter = _LearningParameter(
-                [new_gate_pos],
                 parameter_id,
                 parameter,
             )
+            learning_parameter.append_position(new_gate_pos, None)
             self._learning_parameter_list.append(learning_parameter)
         else:
             parameter_id = share_with
             sharing_parameter = self._learning_parameter_list[parameter_id]
-            sharing_parameter.append_position(new_gate_pos)
+            sharing_parameter.append_position(new_gate_pos, share_with_coef)
 
         if target == _Axis.X:
             self._circuit.add_parametric_RX_gate(index, parameter)
@@ -464,8 +526,9 @@ class LearningCircuit:
         pos = self._circuit.get_parameter_count()
 
         learning_parameter = _LearningParameter(
-            [pos], len(self._learning_parameter_list), parameter, True
+            len(self._learning_parameter_list), parameter, True
         )
+        learning_parameter.append_position(pos, None)
         self._learning_parameter_list.append(learning_parameter)
 
         self._input_parameter_list.append(
