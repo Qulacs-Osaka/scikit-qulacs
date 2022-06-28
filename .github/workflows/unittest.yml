@@ -10,11 +10,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -40,11 +40,11 @@ jobs:
 
     - name: Check format and lint
       run: |
-        make check
+        make ci
 
-    - name: Test with pytest
+    - name: Test with pytest and collect coverage
       run: |
-        make test
+        make cov_ci
 
       # CI environment is not stable enough for accurate benchmark, so just check
       # benchmark works without error.
@@ -52,3 +52,6 @@ jobs:
       if: ${{ github.event_name	== 'pull_request' }}
       run: |
         make benchmark
+
+    - name: Upload coverage report
+      uses: codecov/codecov-action@v3
