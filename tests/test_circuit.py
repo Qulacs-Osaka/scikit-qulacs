@@ -84,9 +84,7 @@ def test_share_coef_input_learning_parameter():
     # パラメータとしては共有しているため2個だけ返る
     res = circuit.get_parameters()
     assert 2 == len(res)
-    # print("res:", res)
     state = circuit.run([])
-    # print("state:", state)
 
     circuit_without_share = LearningCircuit(2)
     circuit_without_share.add_parametric_RX_gate(0, 0.0)
@@ -95,6 +93,5 @@ def test_share_coef_input_learning_parameter():
     # 共有せずに2個目のパラメータを係数を考慮した値にすると一致する
     circuit_without_share.update_parameters([0.1, 0.2, 0.4])
     state_without_share = circuit_without_share.run([])
-    # print("state_without_share:", state_without_share)
     for v, w in zip(state.get_vector(), state_without_share.get_vector()):
         assert v == w
