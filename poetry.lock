@@ -1210,15 +1210,15 @@ python-versions = "*"
 
 [[package]]
 name = "qulacsvis"
-version = "0.2.2"
+version = "0.3.0"
 description = "visualizers for qulacs"
 category = "dev"
 optional = false
-python-versions = ">=3.7,<3.11"
+python-versions = ">=3.8,<3.11"
 
 [package.dependencies]
 matplotlib = ">=3.4.3,<4.0.0"
-numpy = ">=1.21.2,<2.0.0"
+numpy = ">=1.22.0,<2.0.0"
 Pillow = ">=9.1.0,<10.0.0"
 Qulacs = ">=0.3.0,<0.4.0"
 temp = ">=2020.7.2,<2021.0.0"
@@ -1627,7 +1627,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "55aa90e52776933fddafa203011619b06233832cb6c9b357396d0ec21f7e1a6c"
+content-hash = "6fdf6f70dee5e80df43333c18f7305d81617ad73e2224a5522c8729096930f7d"
 
 [metadata.files]
 alabaster = [
@@ -2644,8 +2644,8 @@ qulacs-osaka = [
     {file = "qulacs_osaka-0.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:6410d6276efab5d5f0a8c22149a3517a4502c338a7cb818cd2e855418cc98dbc"},
 ]
 qulacsvis = [
-    {file = "qulacsvis-0.2.2-py3-none-any.whl", hash = "sha256:61307e20b33bb1f452b1324f5b3e2c218c22b0066d2cd25feb7bdfcb00d18e5f"},
-    {file = "qulacsvis-0.2.2.tar.gz", hash = "sha256:d5f00f1488b126dbd93e8d8308aab053859a62a0ee66dc13bed334c36ac1cfc0"},
+    {file = "qulacsvis-0.3.0-py3-none-any.whl", hash = "sha256:1f24c7b86238145c8511b9226ca8a2240aaf6048a32b8a405bfe412e7827e0ec"},
+    {file = "qulacsvis-0.3.0.tar.gz", hash = "sha256:1f74f762fff7c1df05c373512c7e20e44d2101a41581788eb7269c9bf3b1a407"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
