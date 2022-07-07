@@ -9,26 +9,8 @@ from qulacs.gate import CZ
 
 from skqulacs.qnn.classifier import QNNClassifier
 from skqulacs.qnn.solver import Adam
+from skqulacs.circuit.pre_defined import create_dqn_cl
 
-
-def cl_qnn_binary_classification(n_qubit: int, n_inputs: int, n_layers: int, locality: int) -> LearningCircuit:
-    def add_one_layer(circuit: LearningCircuit, locality: int) -> None:
-        for i in range(circuit.n_qubit):
-            circuit.add_gate(CZ(i, (i + 1) % circuit.n_qubit))
-
-        for i in range(circuit.n_qubit):
-            circuit.add_parametric_RX_gate(i, 0.0)
-            circuit.add_parametric_RY_gate(i, 0.0)
-            circuit.add_parametric_RX_gate(i, 0.0)
-
-    circuit = LearningCircuit(n_qubit)
-    for i in range(n_inputs):
-        circuit.add_input_RY_gate(i)
-
-    for _ in range(n_layers):
-        add_one_layer(circuit, locality)
-
-    return circuit
 
 
 # Use wine dataset retrieved from: https://archive-beta.ics.uci.edu/ml/datasets/wine
@@ -60,7 +42,7 @@ def load_dataset(file_path: str, ignore_kind: int, test_ratio: float) -> Tuple[n
 # This is the same as the number of qubits here.
 n_features = 13
 locality = 2
-circuit = cl_qnn_binary_classification(n_features, n_features, 2, locality)
+circuit = create_dqn_cl(n_features,  c_depth=2)
 
 # Observables are hard-coded in QNNClassifier, so overwrite here.
 classifier = QNNClassifier(circuit, 2, Adam())
@@ -72,6 +54,20 @@ for i in range(n_features):
         classifier.observables[i].add_operator(1.0, f"I {i}")
 
 x_train, x_test, y_train, y_test = load_dataset("wine.data", 3, 0.5)
+
+for i in range(len(y_train)):
+    y_train[i]-=1 
+for i in range(len(y_test)):
+    y_test[i]-=1 
 classifier.fit(np.array(x_train), np.array(y_train), 100)
 y_pred = classifier.predict(np.array(x_test))
-print(classification_report(y_test, y_pred, labels=[1, 2]))
+
+
+
+print(classification_report(y_test, y_pred, labels=[0, 1]))
+
+print(x_train)
+print(y_train)
+
+print(y_test)
+print(y_pred)
