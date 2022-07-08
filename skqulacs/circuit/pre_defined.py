@@ -11,7 +11,7 @@ from .circuit import LearningCircuit
 
 
 def create_qcl_ansatz(
-    n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = None
+    n_qubit: int, c_depth: int, time_step: float = 0.5, seed: Optional[int] = 0
 ) -> LearningCircuit:
     """Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html
     Args:
@@ -55,7 +55,7 @@ def create_qcl_ansatz(
 
 
 def _create_time_evol_gate(
-    n_qubit, time_step=0.77, rng: Generator = None, seed: int = 0
+    n_qubit, time_step=0.77, rng: Generator = None, seed: Optional[int] = 0
 ):
     """create a hamiltonian dynamics with transverse field ising model with random interaction and random magnetic field
     Args:
@@ -83,7 +83,7 @@ def _create_time_evol_gate(
     return time_evol_gate
 
 
-def _make_hamiltonian(n_qubit, rng: Generator = None, seed: int = 0):
+def _make_hamiltonian(n_qubit, rng: Generator = None, seed: Optional[int] = 0):
     if rng is None:
         rng = default_rng(seed)
     X_mat = np.array([[0, 1], [1, 0]])
@@ -118,7 +118,7 @@ def _make_fullgate(list_SiteAndOperator, n_qubit):
 
 
 def create_farhi_neven_ansatz(
-    n_qubit: int, c_depth: int, seed: Optional[int] = None
+    n_qubit: int, c_depth: int, seed: Optional[int] = 0
 ) -> LearningCircuit:
     """create circuit proposed in https://arxiv.org/abs/1802.06002.
     Args:
@@ -158,7 +158,7 @@ def create_farhi_neven_ansatz(
 
 
 def create_farhi_neven_watle_ansatz(
-    n_qubit: int, c_depth: int, seed: Optional[int] = None
+    n_qubit: int, c_depth: int, seed: Optional[int] = 0
 ) -> LearningCircuit:
     """create modified version of circuit proposed in https://arxiv.org/abs/1802.06002.
     made by WA_TLE.
@@ -272,7 +272,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
 
 
 def create_shirai_ansatz(
-    n_qubit: int, c_depth: int = 5, seed: int = 0
+    n_qubit: int, c_depth: int = 5, seed: Optional[int] = 0
 ) -> LearningCircuit:
     """create circuit proposed in http://arxiv.org/abs/2111.02951.
     Args:
@@ -287,7 +287,7 @@ def create_shirai_ansatz(
 
     rng = default_rng(seed)
     circuit = LearningCircuit(n_qubit)
-    for c_kai in range(c_depth):
+    for _ in range(c_depth):
         # input embedding layer
         for i in range(n_qubit):
             circuit.add_input_RZ_gate(i, lambda x, i=i: np.arcsin(preprocess_x(x, i)))
@@ -402,7 +402,7 @@ def create_npqc_ansatz(
 
 
 def create_yzcx_ansatz(
-    n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: int = 9
+    n_qubit: int, c_depth: int = 4, c: float = 0.1, seed: Optional[int] = 0
 ) -> LearningCircuit:
     """
     Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(c).
@@ -438,7 +438,7 @@ def create_yzcx_ansatz(
     return circuit
 
 
-def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
+def create_qcnn_ansatz(n_qubit: int, seed: Optional[int] = 0) -> LearningCircuit:
     """
     Creates circuit used in https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en, Section 1.
     Args:
@@ -509,7 +509,6 @@ def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
         circuit.add_H_gate(i)
     for this_bit in range(n_qubit):
         next_bit = this_bit + 1 if this_bit < n_qubit - 1 else 0
-        # print(f"this_bit: {this_bit} next_bit: {next_bit}")
         circuit.add_CNOT_gate(this_bit, next_bit)
         circuit.add_Z_gate(next_bit)
 

@@ -29,7 +29,6 @@ def test_mix_gauss_mini():
     data_param = qnn.predict()
 
     for i in range(4):
-        print(data_param[i], prob_list[i], data_param[i] - prob_list[i])
         assert abs(data_param[i] - prob_list[i]) < 0.04
 
 
@@ -103,11 +102,9 @@ def test_bar_stripe():
 
     data_param = qnn.predict()
 
-    gosa = 0
+    gosa = 0.0
     for i in range(512):
         gosa += abs(data_param[i] - prob_list[i])
-        if prob_list[i] > 0.001:
-            print(i, data_param[i])
     assert gosa < 0.4
 
 
@@ -136,9 +133,8 @@ def test_bar_stripe_hamming():
     maxiter = 500
     qnn.fit(datas, maxiter)
     data_param = qnn.predict()
-    gosa = 0
+
+    gosa = 0.0
     for i in range(512):
         gosa += abs(data_param[i] - prob_list[i])
-        if prob_list[i] > 0.001:
-            print(i, data_param[i])
     assert gosa < 0.2
