@@ -12,6 +12,44 @@ from skqulacs.qnn import QNNRegressor
 from skqulacs.qnn.solver import Adam, Bfgs, Solver
 
 
+def two_vars_two_outputs(x: NDArray[np.float_]) -> NDArray[np.float_]:
+    return np.array([2.0 * x[0] + x[1], 1.5 * x[0] - 3.0 * x[1]])
+
+
+def generate_noisy_two_vars_two_outputs(
+    x_min: float, x_max: float, num_x: int
+) -> Tuple[NDArray[np.float_], NDArray[np.float_]]:
+    rng = default_rng(0)
+    x_train = np.array(
+        [[rng.uniform(x_min, x_max), rng.uniform(x_min, x_max)] for _ in range(num_x)]
+    )
+    y_train = np.array([two_vars_two_outputs(x) for x in x_train])
+    mag_noise = 0.001
+    y_train += mag_noise * rng.random((num_x, 2))
+    return x_train, y_train
+
+
+@pytest.mark.parametrize(("solver", "maxiter"), [(Adam(), 20)])
+def test_noisy_two_vars_two_outputs(solver: Solver, maxiter: int) -> None:
+    x_min = -0.5
+    x_max = 0.5
+    num_x = 50
+    x_train, y_train = generate_noisy_two_vars_two_outputs(x_min, x_max, num_x)
+
+    n_qubit = 4
+    depth = 3
+    time_step = 0.5
+    circuit = create_qcl_ansatz(n_qubit, depth, time_step, 0)
+    qnn = QNNRegressor(circuit, solver)
+    qnn.fit(x_train, y_train, maxiter)
+
+    x_test, y_test = generate_noisy_two_vars_two_outputs(x_min, x_max, num_x)
+    y_pred = qnn.predict(x_test)
+    loss = mean_squared_error(y_pred, y_test)
+    assert loss < 0.1
+    return x_test, y_test, y_pred
+
+
 def sine_two_vars(x: List[float]) -> float:
     return np.sin(np.pi * x[0] * x[1])
 
