@@ -11,11 +11,10 @@ from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN
 from skqulacs.qnn.solver import Solver
 
 
-class QNNClassifier(QNN):
+class QNNClassifier:
     """Class to solve classification problems by quantum neural networks
     The prediction is made by making a vector which predicts one-hot encoding of labels.
     The prediction is made by
