@@ -448,56 +448,61 @@ def create_qcnn_ansatz(n_qubit: int, seed: Optional[int] = 0) -> LearningCircuit
 
     rng = default_rng(seed)
 
-    def _innser_conv_circuit1(circuit: LearningCircuit, src: int, dest: int):
+    def one_qubit_unitary(circuit: LearningCircuit, index: int) -> List[int]:
+        ids = []
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(src, angle)
+        id = circuit.add_parametric_RX_gate(index, angle)
+        ids.append(id)
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(dest, angle)
-        circuit.add_CNOT_gate(src, dest)
-        return circuit
+        id = circuit.add_parametric_RY_gate(index, angle)
+        ids.append(id)
+        angle = rng.uniform(-np.pi, np.pi)
+        id = circuit.add_parametric_RZ_gate(index, angle)
+        ids.append(id)
+        return ids
 
-    def one_qubit_unitary(circuit: LearningCircuit, index: int):
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RX_gate(index, angle)
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RY_gate(index, angle)
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RZ_gate(index, angle)
-
-    def two_qubit_unitary(
+    def _two_qubit_unitary(
         circuit: LearningCircuit, target: List[int], pauli_ids: List[int]
-    ):
+    ) -> LearningCircuit:
         angle = rng.uniform(-np.pi, np.pi)
         circuit.add_parametric_multi_Pauli_rotation_gate(target, pauli_ids, angle)
+        return circuit
 
-    def _innser_conv_circuit2(circuit: LearningCircuit, src: int, dest: int):
+    def two_qubit_unitary(
+        circuit: LearningCircuit, src: int, dest: int
+    ) -> LearningCircuit:
         one_qubit_unitary(circuit, src)
         one_qubit_unitary(circuit, dest)
-
         target = [src, dest]
         pauli_xx_ids = [1, 1]
-        two_qubit_unitary(circuit, target, pauli_xx_ids)
+        circuit = _two_qubit_unitary(circuit, target, pauli_xx_ids)
         pauli_yy_ids = [2, 2]
-        two_qubit_unitary(circuit, target, pauli_yy_ids)
+        circuit = _two_qubit_unitary(circuit, target, pauli_yy_ids)
         pauli_zz_ids = [3, 3]
-        two_qubit_unitary(circuit, target, pauli_zz_ids)
-
+        circuit = _two_qubit_unitary(circuit, target, pauli_zz_ids)
         one_qubit_unitary(circuit, src)
         one_qubit_unitary(circuit, dest)
         return circuit
 
-    def conv_circuit(circuit: LearningCircuit, src: int, dest: int):
-        # return _innser_conv_circuit1(circuit, src, dest)
-        return _innser_conv_circuit2(circuit, src, dest)
+    def conv_circuit(circuit: LearningCircuit, src: int, dest: int) -> LearningCircuit:
+        return two_qubit_unitary(circuit, src, dest)
 
-    def pooling_circuit(circuit: LearningCircuit, src: int, dest: int):
-        angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RZ_gate(src, angle)
+    def pooling_circuit(
+        circuit: LearningCircuit, src: int, dest: int
+    ) -> LearningCircuit:
+        ids = one_qubit_unitary(circuit, dest)
+        one_qubit_unitary(circuit, src)
         circuit.add_CNOT_gate(src, dest)
         angle = rng.uniform(-np.pi, np.pi)
-        circuit.add_parametric_RX_gate(dest, angle)
-        circuit.add_X_gate(src)
-        circuit.add_CNOT_gate(src, dest)
+        circuit.add_parametric_RZ_gate(
+            dest, angle, share_with=ids[2], share_with_coef=-1
+        )
+        circuit.add_parametric_RY_gate(
+            dest, angle, share_with=ids[1], share_with_coef=-1
+        )
+        circuit.add_parametric_RX_gate(
+            dest, angle, share_with=ids[0], share_with_coef=-1
+        )
         return circuit
 
     circuit = LearningCircuit(n_qubit)
@@ -512,45 +517,31 @@ def create_qcnn_ansatz(n_qubit: int, seed: Optional[int] = 0) -> LearningCircuit
         circuit.add_CNOT_gate(this_bit, next_bit)
         circuit.add_Z_gate(next_bit)
 
-    # depth 1 (0, 1)
-    circuit = conv_circuit(circuit, 0, 1)
-    circuit = pooling_circuit(circuit, 0, 1)
-    circuit = conv_circuit(circuit, 2, 3)
-    circuit = pooling_circuit(circuit, 2, 3)
-    circuit = conv_circuit(circuit, 4, 5)
-    circuit = pooling_circuit(circuit, 4, 5)
-    circuit = conv_circuit(circuit, 6, 7)
-    circuit = pooling_circuit(circuit, 6, 7)
+    targets = []
 
-    # depth 2 (1, 3)
-    circuit = conv_circuit(circuit, 1, 3)
-    circuit = pooling_circuit(circuit, 1, 3)
-    circuit = conv_circuit(circuit, 5, 7)
-    circuit = pooling_circuit(circuit, 5, 7)
+    # 0始まりの数字のリストを受け取り
+    # 二分木でペアを作ります
+    # [0,1,2,3,4,5,6,7]を指定した場合
+    # [[0, 1], [2, 3], [1, 3], [4, 5], [6, 7], [5, 7], [3, 7]] になります。
+    # [0, 1],[2, 3],[4, 5],[6, 7]が枝となり、
+    # 次の階層の[1, 3],[5, 7]となります。階層の数字は下の層の通し番号が大きい方がペアになります。
+    # 最終的に[3, 7]の一番上の層が作られます。
+    # ツリー構造ですが、データはフラットな2次元配列になります。
+    def tree(ns):
+        n = len(ns)
+        if n <= 0:
+            return
+        node = {}
+        node["ns"] = ns
+        left = tree(ns[: n // 2])
+        right = tree(ns[n - (n // 2) :])
+        if left is not None and right is not None:
+            targets.append([max(left["ns"]), max(right["ns"])])
+        return node
 
-    # depth 3 (3, 7)
-    circuit = conv_circuit(circuit, 3, 7)
-    circuit = pooling_circuit(circuit, 3, 7)
-
-    # # 二分木を作成してペアを作る
-    # # 枝から幅優先で二分木を作らないと精度が悪くなる。。
-    # targets = []
-
-    # def tree(ns):
-    #     n = len(ns)
-    #     if n <= 0:
-    #         return
-    #     node = {}
-    #     node["ns"] = ns
-    #     left = tree(ns[:n // 2])
-    #     right = tree(ns[n - (n // 2):])
-    #     if left is not None and right is not None:
-    #         targets.append([max(left["ns"]), max(right["ns"])])
-    #     return node
-
-    # tree([x for x in range(n_qubit)])
-    # for t in targets:
-    #     circuit = conv_circuit(circuit, t[0], t[1])
-    #     circuit = pooling_circuit(circuit, t[0], t[1])
+    tree([x for x in range(n_qubit)])
+    for t in targets:
+        circuit = conv_circuit(circuit, t[0], t[1])
+        circuit = pooling_circuit(circuit, t[0], t[1])
 
     return circuit
