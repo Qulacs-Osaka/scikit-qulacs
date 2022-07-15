@@ -42,7 +42,7 @@ pytest-benchmark = "^3.4.1"
 pytest-cov = "^3.0.0"
 typing-extensions = "^4.1.1"
 PennyLane = "^0.24.0"
-qulacsvis = "^0.2.2"
+qulacsvis = "^0.3.0"
 
 [tool.isort]
 default_section = "THIRDPARTY"
