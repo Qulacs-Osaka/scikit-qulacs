@@ -25,11 +25,11 @@ def generate_noisy_two_vars_two_outputs(
     )
     y_train = np.array([two_vars_two_outputs(x) for x in x_train])
     mag_noise = 0.001
-    y_train += mag_noise * rng.random((num_x, 2))
+    y_train += mag_noise * rng.random(y_train.shape)
     return x_train, y_train
 
 
-@pytest.mark.parametrize(("solver", "maxiter"), [(Adam(), 20)])
+@pytest.mark.parametrize(("solver", "maxiter"), [(Bfgs(), 30), (Adam(), 30)])
 def test_noisy_two_vars_two_outputs(solver: Solver, maxiter: int) -> None:
     x_min = -0.5
     x_max = 0.5
@@ -46,7 +46,7 @@ def test_noisy_two_vars_two_outputs(solver: Solver, maxiter: int) -> None:
     x_test, y_test = generate_noisy_two_vars_two_outputs(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
-    assert loss < 0.1
+    assert loss < 0.11
     return x_test, y_test, y_pred
 
 

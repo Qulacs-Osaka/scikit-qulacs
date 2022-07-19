@@ -193,7 +193,7 @@ class QNNRegressor(QNN):
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
                     backobs.add_operator(
-                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs, "Z {i}"
+                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs, f"Z {i}"
                     )
             else:
                 backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
