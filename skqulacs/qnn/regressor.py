@@ -199,6 +199,5 @@ class QNNRegressor(QNN):
                 backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
-        self.circuit.update_parameters(theta)
         grad /= len(x_scaled)
         return grad

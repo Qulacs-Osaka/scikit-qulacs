@@ -175,6 +175,5 @@ class QNNClassifier(QNN):
                 )
             grad += self.circuit.backprop(x_scaled[sample_index], backobs)
 
-        self.circuit.update_parameters(theta)
         grad /= len(x_scaled)
         return grad
