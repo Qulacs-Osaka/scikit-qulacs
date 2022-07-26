@@ -519,7 +519,6 @@ title="Source repository"
                 <span class="p">)</span>
             <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="n">grad</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">grad</span></div>
 </pre></div>
