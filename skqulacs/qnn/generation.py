@@ -10,11 +10,10 @@ from qulacs.gate import DenseMatrix
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN
 from skqulacs.qnn.solver import Solver
 
 
-class QNNGeneretor(QNN):
+class QNNGeneretor:
     """
     quantum circuit learningを用いて生成モデルをやる
 
