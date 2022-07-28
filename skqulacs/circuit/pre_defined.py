@@ -465,6 +465,28 @@ def create_dqn_cl(n_qubit: int, c_depth: int, s_qubit: int) -> LearningCircuit:
 
     return circuit
 
+def create_dqn_cl_no_cz(n_qubit: int, c_depth: int) -> LearningCircuit:
+    # from https://arxiv.org/abs/2112.15002
+    circuit = LearningCircuit(n_qubit)
+
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+
+    for i in range(n_qubit):
+        circuit.add_input_RY_gate(i, lambda x, i=i: preprocess_x(x, i))
+        circuit.add_parametric_RY_gate(i, 0.0)
+
+    for _ in range(c_depth):
+        for i in range(n_qubit):
+            circuit.add_parametric_RX_gate(i, 0.0)
+            circuit.add_parametric_RY_gate(i, 0.0)
+            circuit.add_parametric_RX_gate(i, 0.0)
+            circuit.add_gate(CNOT(i, (i + 1) % n_qubit))
+        circuit.add_gate(CNOT(n_qubit - 1, 0))
+
+    return circuit
+
 
 def create_qcnn_ansatz(n_qubit: int, seed: int = 0) -> LearningCircuit:
     """
