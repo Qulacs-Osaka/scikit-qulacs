@@ -1,20 +1,25 @@
 import csv
 from typing import Tuple
+
 import numpy as np
 from qulacs import Observable
+from qulacs.gate import CZ
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-from skqulacs.circuit.circuit import LearningCircuit
-from qulacs.gate import CZ
 
+from skqulacs.circuit.circuit import LearningCircuit
+from skqulacs.circuit.pre_defined import (
+    create_dqn_cl,
+    create_farhi_neven_ansatz,
+)
 from skqulacs.qnn.classifier import QNNClassifier
 from skqulacs.qnn.solver import Adam
-from skqulacs.circuit.pre_defined import create_dqn_cl
-
 
 
 # Use wine dataset retrieved from: https://archive-beta.ics.uci.edu/ml/datasets/wine
-def load_dataset(file_path: str, ignore_kind: int, test_ratio: float) -> Tuple[np.array, np.array, np.array, np.array]:
+def load_dataset(
+    file_path: str, ignore_kind: int, test_ratio: float
+) -> Tuple[np.array, np.array, np.array, np.array]:
     """Load dataset from specified path.
 
     Args:
@@ -32,7 +37,9 @@ def load_dataset(file_path: str, ignore_kind: int, test_ratio: float) -> Tuple[n
             y.append(kind)
             x.append([float(feature) for feature in row[1:]])
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_ratio, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=test_ratio, shuffle=True
+    )
 
     return x_train, x_test, y_train, y_test
 
@@ -42,7 +49,7 @@ def load_dataset(file_path: str, ignore_kind: int, test_ratio: float) -> Tuple[n
 # This is the same as the number of qubits here.
 n_features = 13
 locality = 2
-circuit = create_dqn_cl(n_features,  c_depth=2)
+circuit = create_dqn_cl(n_features, c_depth=3, s_qubit=2)
 
 # Observables are hard-coded in QNNClassifier, so overwrite here.
 classifier = QNNClassifier(circuit, 2, Adam())
@@ -56,18 +63,18 @@ for i in range(n_features):
 x_train, x_test, y_train, y_test = load_dataset("wine.data", 3, 0.5)
 
 for i in range(len(y_train)):
-    y_train[i]-=1 
+    y_train[i] -= 1
 for i in range(len(y_test)):
-    y_test[i]-=1 
-classifier.fit(np.array(x_train), np.array(y_train), 100)
-y_pred = classifier.predict(np.array(x_test))
+    y_test[i] -= 1
 
+classifier.fit(np.array(x_train), np.array(y_train), 15)
+y_pred = classifier.predict(np.array(x_test))
 
 
 print(classification_report(y_test, y_pred, labels=[0, 1]))
 
-print(x_train)
-print(y_train)
-
-print(y_test)
-print(y_pred)
+"""
+create_dqn_cl だとf1-score が 0.89
+create_farhi_neven_ansatz だとf1-score が 0.85
+だからdqnのほうが良い ？
+"""
