@@ -40,7 +40,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="skqulacs.qnn.qnnbase module" href="skqulacs.qnn.qnnbase.html" />
+    <link rel="next" title="skqulacs.qnn.regressor module" href="skqulacs.qnn.regressor.html" />
     <link rel="prev" title="skqulacs.qnn.classifier module" href="skqulacs.qnn.classifier.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en">
@@ -154,11 +154,6 @@
        <li class="toctree-l4 current active">
         <a class="current reference internal" href="#">
          skqulacs.qnn.generation module
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="skqulacs.qnn.qnnbase.html">
-         skqulacs.qnn.qnnbase module
         </a>
        </li>
        <li class="toctree-l4">
@@ -395,7 +390,7 @@ title="Print to PDF"
 <dl class="py class">
 <dt class="sig sig-object py" id="skqulacs.qnn.generation.QNNGeneretor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.qnn.generation.</span></span><span class="sig-name descname"><span class="pre">QNNGeneretor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.qnn.solver.html#skqulacs.qnn.solver.Solver" title="skqulacs.qnn.solver.Solver"><span class="pre">skqulacs.qnn.solver.Solver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">karnel_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'gauss'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'exp_hamming'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'same'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gauss_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitting_qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/generation.html#QNNGeneretor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.generation.QNNGeneretor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="skqulacs.qnn.qnnbase.html#skqulacs.qnn.qnnbase.QNN" title="skqulacs.qnn.qnnbase.QNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">skqulacs.qnn.qnnbase.QNN</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>quantum circuit learningを用いて生成モデルをやる</p>
 <p>入力無し、出力される確率分布をテストデータの確率分布に近くするのが目的</p>
 <p>入力は、データの配列.入力はビット列を2進表記することによる整数しか受け取らない。</p>
@@ -468,10 +463,10 @@ title="Print to PDF"
             <p class="prev-next-title">skqulacs.qnn.classifier module</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="skqulacs.qnn.qnnbase.html" title="next page">
+    <a class='right-next' id="next-link" href="skqulacs.qnn.regressor.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">skqulacs.qnn.qnnbase module</p>
+        <p class="prev-next-title">skqulacs.qnn.regressor module</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

@@ -9,7 +9,6 @@ Submodules
 
    skqulacs.qnn.classifier
    skqulacs.qnn.generation
-   skqulacs.qnn.qnnbase
    skqulacs.qnn.regressor
    skqulacs.qnn.solver
 
