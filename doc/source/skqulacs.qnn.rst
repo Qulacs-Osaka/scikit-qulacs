@@ -8,7 +8,7 @@ Submodules
    :maxdepth: 4
 
    skqulacs.qnn.classifier
-   skqulacs.qnn.qnnbase
+   skqulacs.qnn.generation
    skqulacs.qnn.regressor
    skqulacs.qnn.solver
 

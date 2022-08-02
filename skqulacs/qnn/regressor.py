@@ -10,11 +10,10 @@ from sklearn.preprocessing import MinMaxScaler
 from typing_extensions import Literal
 
 from skqulacs.circuit import LearningCircuit
-from skqulacs.qnn.qnnbase import QNN
 from skqulacs.qnn.solver import Solver
 
 
-class QNNRegressor(QNN):
+class QNNRegressor:
     """Class to solve regression problems with quantum neural networks
     The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.
     Examples:
