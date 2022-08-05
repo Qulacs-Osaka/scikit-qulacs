@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skqulacs"
-version = "0.2.0"
+version = "0.3.0"
 description = "scikit-qulacs is a library for quantum neural network. This library is based on qulacs and named after scikit-learn."
 authors = ["Qulacs-Osaka <qulacs.osaka@gmail.com>"]
 license = "MIT"
@@ -24,7 +24,7 @@ python = ">=3.8,<3.11"
 numpy = "^1.22.0"
 scipy = "^1.8.1"
 scikit-learn = "^1.0.1"
-qulacs-osaka = "^0.4.1"
+qulacs-osaka = "^0.4.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
