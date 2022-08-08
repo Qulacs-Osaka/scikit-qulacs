@@ -550,3 +550,9 @@ class LearningCircuit:
         self._circuit.add_parametric_multi_Pauli_rotation_gate(
             target, pauli_id, initial_angle
         )
+
+    def get_circuit_info(self):
+        return self._circuit
+
+    def get_circuit_depth(self):
+        return self._circuit.calculate_depth()
