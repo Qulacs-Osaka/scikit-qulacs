@@ -454,6 +454,7 @@ def create_dqn_cl(n_qubit: int, c_depth: int, s_qubit: int) -> LearningCircuit:
         for i in range(n_qubit):
             # 元の論文ではすべての組に対して張っていたっぽいが、それはゲート数が多すぎるだろ
             circuit.add_gate(CZ(i, (i + 1) % n_qubit))
+        # circuit.add_gate(CZ(n_qubit - 1, 0))
 
         for i in range(s_qubit, n_qubit - 1):
             circuit.add_gate(CNOT(i, (i + 1) % n_qubit))
@@ -464,6 +465,7 @@ def create_dqn_cl(n_qubit: int, c_depth: int, s_qubit: int) -> LearningCircuit:
             circuit.add_parametric_RX_gate(i, 0.0)
 
     return circuit
+
 
 def create_dqn_cl_no_cz(n_qubit: int, c_depth: int) -> LearningCircuit:
     # from https://arxiv.org/abs/2112.15002
@@ -479,10 +481,10 @@ def create_dqn_cl_no_cz(n_qubit: int, c_depth: int) -> LearningCircuit:
 
     for _ in range(c_depth):
         for i in range(n_qubit):
+            circuit.add_gate(CNOT(i, (i + 1) % n_qubit))
             circuit.add_parametric_RX_gate(i, 0.0)
             circuit.add_parametric_RY_gate(i, 0.0)
             circuit.add_parametric_RX_gate(i, 0.0)
-            circuit.add_gate(CNOT(i, (i + 1) % n_qubit))
         circuit.add_gate(CNOT(n_qubit - 1, 0))
 
     return circuit
