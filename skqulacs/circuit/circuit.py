@@ -76,10 +76,11 @@ class _InputParameter:
     """
 
     pos: int
-    func: Union[InputFunc, InputFuncWithParam]
+    func: Union[InputFunc, InputFuncWithParam] = field(compare=False)
     companion_parameter_id: Optional[int]
 
 
+@dataclass
 class LearningCircuit:
     """Construct and run quantum circuit for QNN.
 
@@ -122,14 +123,18 @@ class LearningCircuit:
         >>> y_pred = qnn.predict(theta, x_list)
     """
 
-    def __init__(
-        self,
-        n_qubit: int,
-    ) -> None:
-        self.n_qubit = n_qubit
-        self._circuit = ParametricQuantumCircuit(n_qubit)
-        self._learning_parameter_list: List[_LearningParameter] = []
-        self._input_parameter_list: List[_InputParameter] = []
+    n_qubit: int
+    # ParametricQuantumCircuit does not have a function to compare by value, so exclude from comparison of LearningCircuit for now.
+    _circuit: ParametricQuantumCircuit = field(init=False, compare=False)
+    _learning_parameter_list: List[_LearningParameter] = field(
+        init=False, default_factory=list
+    )
+    _input_parameter_list: List[_InputParameter] = field(
+        init=False, default_factory=list
+    )
+
+    def __post_init__(self) -> None:
+        self._circuit = ParametricQuantumCircuit(self.n_qubit)
 
     def update_parameters(self, theta: List[float]) -> None:
         """Update learning parameter of the circuit with given `theta`.
