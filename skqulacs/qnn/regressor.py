@@ -18,6 +18,7 @@ from skqulacs.qnn.solver import Solver
 class QNNRegressor:
     """Class to solve regression problems with quantum neural networks
     The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.
+
     Args:
         circuit: Circuit to use in the learning.
         solver: Solver to use(Nelder-Mead is not recommended).
@@ -52,8 +53,8 @@ class QNNRegressor:
     observables: List[Observable] = field(init=False, default_factory=list)
     n_qubit: int = field(init=False)
     n_outputs: int = field(init=False)
-    scale_x_scaler: MinMaxScaler = field(init=False)
-    scale_y_scaler: MinMaxScaler = field(init=False)
+    x_scaler: MinMaxScaler = field(init=False)
+    y_scaler: MinMaxScaler = field(init=False)
 
     def __post_init__(self) -> None:
         self.n_qubit = self.circuit.n_qubit
@@ -74,11 +75,13 @@ class QNNRegressor:
         maxiter: Optional[int] = None,
     ) -> Tuple[float, List[float]]:
         """
-        :param x_list: List of x to fit.
-        :param y_list: List of y to fit.
-        :param maxiter: The number of iterations to pass scipy.optimize.minimize
-        :return: Loss after learning.
-        :return: Parameter theta after learning.
+        Args:
+            x_list: List of training data inputs whose shape is (n_sample, n_features).
+            y_list: List of training data outputs whose shape is (n_sample, n_output_dims).
+            maxiter: The number of iterations to pass scipy.optimize.minimize
+        Returns:
+            loss: Loss after learning.
+            theta: Parameter theta after learning.
         """
 
         if x_train.ndim == 1:
