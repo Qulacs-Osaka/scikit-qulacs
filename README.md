@@ -8,6 +8,10 @@
 
 scikit-qulacs is a library for quantum neural network. This library is based on qulacs and named after scikit-learn.
 
+## Requirements
+* pip
+* Python >= 3.8
+
 ## Installation
 ### pip
 ```bash
