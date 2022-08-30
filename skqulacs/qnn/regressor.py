@@ -14,7 +14,7 @@ from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.solver import Solver
 
 
-@dataclass
+@dataclass(eq=False)
 class QNNRegressor:
     """Class to solve regression problems with quantum neural networks
     The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.

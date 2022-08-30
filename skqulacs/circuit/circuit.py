@@ -80,7 +80,7 @@ class _InputParameter:
     companion_parameter_id: Optional[int]
 
 
-@dataclass
+@dataclass(eq=False)
 class LearningCircuit:
     """Construct and run quantum circuit for QNN.
 

@@ -1,50 +1,6 @@
 from skqulacs.circuit import LearningCircuit
 
 
-def test_equality() -> None:
-    circuit1 = LearningCircuit(2)
-    circuit1.add_input_RX_gate(0)
-    circuit1.add_parametric_input_RY_gate(1, 0.5)
-    circuit1.add_parametric_RZ_gate(0, 1.0)
-
-    circuit2 = LearningCircuit(2)
-    circuit2.add_input_RX_gate(0)
-    circuit2.add_parametric_input_RY_gate(1, 0.5)
-    circuit2.add_parametric_RZ_gate(0, 1.0)
-
-    assert circuit1 == circuit2
-
-
-def test_equality_with_gates_for_different_qubit() -> None:
-    circuit1 = LearningCircuit(2)
-    circuit1.add_input_RX_gate(0)
-    circuit1.add_parametric_input_RY_gate(0, 0.5)
-    circuit1.add_parametric_RZ_gate(0, 1.0)
-
-    circuit2 = LearningCircuit(2)
-    circuit2.add_input_RX_gate(1)
-    circuit2.add_parametric_input_RY_gate(0, 0.5)
-    circuit2.add_parametric_RZ_gate(0, 1.0)
-
-    # Limitation: LearningCircuit does not know which qubit each parameter is allocated.
-    # For this reason, `circuit1` and `circuit2` are "equal" although they have input RX gates in qubit 0 and 1 respectively.
-    assert circuit1 == circuit2
-
-
-def test_inequality_with_different_parameters() -> None:
-    circuit1 = LearningCircuit(2)
-    circuit1.add_input_RX_gate(0)
-    circuit1.add_parametric_input_RY_gate(0, 10.5)
-    circuit1.add_parametric_RZ_gate(0, 1.0)
-
-    circuit2 = LearningCircuit(2)
-    circuit2.add_input_RX_gate(0)
-    circuit2.add_parametric_input_RY_gate(0, 0.5)
-    circuit2.add_parametric_RZ_gate(0, 1.0)
-
-    assert circuit1 != circuit2
-
-
 def test_parametric_gate() -> None:
     circuit = LearningCircuit(2)
     circuit.add_input_RX_gate(1)
