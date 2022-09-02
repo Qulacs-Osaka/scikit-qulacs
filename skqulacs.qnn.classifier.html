@@ -190,6 +190,11 @@
        </li>
       </ul>
      </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="skqulacs.save.html">
+       skqulacs.save module
+      </a>
+     </li>
     </ul>
    </li>
   </ul>
@@ -395,8 +400,22 @@ title="Print to PDF"
 The prediction is made by making a vector which predicts one-hot encoding of labels.
 The prediction is made by
 1. taking expectation values of Pauli Z operator of each qubit &lt;Z_i&gt;,
-2. taking softmax function of the vector (&lt;Z_0&gt;, &lt;Z_1&gt;, …, &lt;Z_{n-1}&gt;).
-.. rubric:: Examples</p>
+2. taking softmax function of the vector (&lt;Z_0&gt;, &lt;Z_1&gt;, …, &lt;Z_{n-1}&gt;).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to use in the learning.</p></li>
+<li><p><strong>num_class</strong> – The number of classes; the number of qubits to measure. must be n_qubits &gt;= num_class .</p></li>
+<li><p><strong>solver</strong> – Solver to use(Nelder-Mead is not recommended).</p></li>
+<li><p><strong>cost</strong> – Cost function. log_loss only for now.</p></li>
+<li><p><strong>do_x_scale</strong> – Whether to scale x.</p></li>
+<li><p><strong>y_exp_ratio</strong> – coeffcient used in the application of softmax function.
+the output prediction vector is made by transforming (&lt;Z_0&gt;, &lt;Z_1&gt;, …, &lt;Z_{n-1}&gt;)
+to (y_1, y_2, …, y_(n-1)) where y_i = e^{&lt;Z_i&gt;*y_exp_scale}/(sum_j e^{&lt;Z_j&gt;*y_exp_scale})</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNClassifier</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">create_qcl_ansatz</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">4</span>
@@ -409,9 +428,24 @@ The prediction is made by
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x_list</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.circuit">
+<span class="sig-name descname"><span class="pre">circuit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.circuit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'log_loss'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'log_loss'</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.cost" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.cost_func">
 <span class="sig-name descname"><span class="pre">cost_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_scaled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_scaled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/skqulacs/qnn/classifier.html#QNNClassifier.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.cost_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.do_x_scale">
+<span class="sig-name descname"><span class="pre">do_x_scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.do_x_scale" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -426,13 +460,29 @@ The prediction is made by
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Loss after learning.</p>
+<dd class="field-even"><p>Loss after learning.
+theta: Parameter theta after learning.</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Parameter theta after learning.</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.n_qubit">
+<span class="sig-name descname"><span class="pre">n_qubit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.n_qubit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.num_class">
+<span class="sig-name descname"><span class="pre">num_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.num_class" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.observables">
+<span class="sig-name descname"><span class="pre">observables</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">qulacs_core.Observable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.observables" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.predict">
@@ -450,6 +500,26 @@ The prediction is made by
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.solver">
+<span class="sig-name descname"><span class="pre">solver</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="skqulacs.qnn.solver.html#skqulacs.qnn.solver.Solver" title="skqulacs.qnn.solver.Solver"><span class="pre">skqulacs.qnn.solver.Solver</span></a></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.solver" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.x_norm_range">
+<span class="sig-name descname"><span class="pre">x_norm_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.x_norm_range" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.x_scaler">
+<span class="sig-name descname"><span class="pre">x_scaler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sklearn.preprocessing._data.MinMaxScaler</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.x_scaler" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.classifier.QNNClassifier.y_exp_ratio">
+<span class="sig-name descname"><span class="pre">y_exp_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.2</span></em><a class="headerlink" href="#skqulacs.qnn.classifier.QNNClassifier.y_exp_ratio" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

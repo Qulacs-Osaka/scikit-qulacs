@@ -190,6 +190,11 @@
        </li>
       </ul>
      </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="skqulacs.save.html">
+       skqulacs.save module
+      </a>
+     </li>
     </ul>
    </li>
   </ul>
@@ -392,8 +397,22 @@ title="Print to PDF"
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skqulacs.qnn.regressor.</span></span><span class="sig-name descname"><span class="pre">QNNRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="skqulacs.qnn.solver.html#skqulacs.qnn.solver.Solver" title="skqulacs.qnn.solver.Solver"><span class="pre">skqulacs.qnn.solver.Solver</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'mse'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_x_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_y_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_norm_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_norm_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to solve regression problems with quantum neural networks
-The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is &lt;Z_0&gt;.
-.. rubric:: Examples</p>
+The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is &lt;Z_0&gt;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> – Circuit to use in the learning.</p></li>
+<li><p><strong>solver</strong> – Solver to use(Nelder-Mead is not recommended).</p></li>
+<li><p><strong>n_output</strong> – Dimentionality of each output data.</p></li>
+<li><p><strong>cost</strong> – Cost function. MSE only for now. MSE computes squared sum after normalization.</p></li>
+<li><p><strong>do_x_scale</strong> – Whether to scale x.</p></li>
+<li><p><strong>do_x_scale</strong> – Whether to scale y.</p></li>
+<li><p><strong>x_norm_range</strong> – Normalize x in [+-xy_norm_range].</p></li>
+<li><p><strong>y_norm_range</strong> – Normalize y in [+-y_norm_range]. Setting y_norm_range to 0.7 improves performance.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skqulacs.qnn</span> <span class="kn">import</span> <span class="n">QNNRegressor</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">create_qcl_ansatz</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">4</span>
@@ -406,9 +425,29 @@ The output is taken as expectation values of pauli Z operator acting on the firs
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">x_list</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.circuit">
+<span class="sig-name descname"><span class="pre">circuit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit" title="skqulacs.circuit.circuit.LearningCircuit"><span class="pre">skqulacs.circuit.circuit.LearningCircuit</span></a></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.circuit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'mse'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mse'</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.cost" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.cost_func">
 <span class="sig-name descname"><span class="pre">cost_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_scaled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_scaled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/skqulacs/qnn/regressor.html#QNNRegressor.cost_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.cost_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.do_x_scale">
+<span class="sig-name descname"><span class="pre">do_x_scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.do_x_scale" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.do_y_scale">
+<span class="sig-name descname"><span class="pre">do_y_scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.do_y_scale" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -417,19 +456,35 @@ The output is taken as expectation values of pauli Z operator acting on the firs
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x_list</strong> – List of x to fit.</p></li>
-<li><p><strong>y_list</strong> – List of y to fit.</p></li>
+<li><p><strong>x_list</strong> – List of training data inputs whose shape is (n_sample, n_features).</p></li>
+<li><p><strong>y_list</strong> – List of training data outputs whose shape is (n_sample, n_output_dims).</p></li>
 <li><p><strong>maxiter</strong> – The number of iterations to pass scipy.optimize.minimize</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Loss after learning.</p>
+<dd class="field-even"><p>Loss after learning.
+theta: Parameter theta after learning.</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Parameter theta after learning.</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>loss</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.n_outputs">
+<span class="sig-name descname"><span class="pre">n_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.n_outputs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.n_qubit">
+<span class="sig-name descname"><span class="pre">n_qubit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.n_qubit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.observables">
+<span class="sig-name descname"><span class="pre">observables</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">qulacs_core.Observable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.observables" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.predict">
@@ -447,6 +502,31 @@ The output is taken as expectation values of pauli Z operator acting on the firs
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.solver">
+<span class="sig-name descname"><span class="pre">solver</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="skqulacs.qnn.solver.html#skqulacs.qnn.solver.Solver" title="skqulacs.qnn.solver.Solver"><span class="pre">skqulacs.qnn.solver.Solver</span></a></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.solver" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.x_norm_range">
+<span class="sig-name descname"><span class="pre">x_norm_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.x_norm_range" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.x_scaler">
+<span class="sig-name descname"><span class="pre">x_scaler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sklearn.preprocessing._data.MinMaxScaler</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.x_scaler" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.y_norm_range">
+<span class="sig-name descname"><span class="pre">y_norm_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.7</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.y_norm_range" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skqulacs.qnn.regressor.QNNRegressor.y_scaler">
+<span class="sig-name descname"><span class="pre">y_scaler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sklearn.preprocessing._data.MinMaxScaler</span></em><a class="headerlink" href="#skqulacs.qnn.regressor.QNNRegressor.y_scaler" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
