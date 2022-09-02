@@ -11,6 +11,14 @@ Subpackages
    skqulacs.qnn
    skqulacs.qsvm
 
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   skqulacs.save
+
 Module contents
 ---------------
 
