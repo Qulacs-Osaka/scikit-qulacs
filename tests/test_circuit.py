@@ -1,7 +1,7 @@
 from skqulacs.circuit import LearningCircuit
 
 
-def test_parametric_gate():
+def test_parametric_gate() -> None:
     circuit = LearningCircuit(2)
     circuit.add_input_RX_gate(1)
     circuit.add_RX_gate(0, 0.5)
@@ -11,14 +11,14 @@ def test_parametric_gate():
     assert [0.1, 0.2] == circuit.get_parameters()
 
 
-def test_parametric_input_gate():
+def test_parametric_input_gate() -> None:
     circuit = LearningCircuit(2)
     circuit.add_parametric_input_RX_gate(1, 0.5, lambda theta, x: theta + x[0])
     circuit.run([1.0])
     assert [1.5] == circuit.get_parameters()
 
 
-def test_parametric_gates_mixed():
+def test_parametric_gates_mixed() -> None:
     circuit = LearningCircuit(2)
     circuit.add_parametric_RX_gate(0, 0.1)
     circuit.add_parametric_input_RX_gate(1, 0.5, lambda theta, x: theta + x[0])
@@ -31,12 +31,12 @@ def test_parametric_gates_mixed():
     assert [0.2, 2.0] == circuit.get_parameters()
 
 
-def test_no_arg_run():
+def test_no_arg_run() -> None:
     circuit = LearningCircuit(2)
     circuit.run()
 
 
-def test_share_learning_parameter():
+def test_share_learning_parameter() -> None:
     circuit = LearningCircuit(2)
     circuit.add_parametric_RX_gate(0, 0.0)  # parameter 0.
     circuit.add_parametric_RY_gate(
@@ -46,15 +46,7 @@ def test_share_learning_parameter():
     assert [0.1] == circuit.get_parameters()
 
 
-def test_share_input_learning_parameter():
-    circuit = LearningCircuit(2)
-    circuit.add_parametric_RX_gate(0, 0.0)
-    circuit.add_parametric_RY_gate(1, 0.0, share_with=0)
-    circuit.update_parameters([0.1])
-    assert [0.1] == circuit.get_parameters()
-
-
-def test_running_shared_parameter():
+def test_running_shared_parameter() -> None:
     circuit = LearningCircuit(2)
     shared_parameter = circuit.add_parametric_RX_gate(0, 0.0)
     circuit.add_parametric_RY_gate(1, 0.0, share_with=shared_parameter)
@@ -73,7 +65,7 @@ def test_running_shared_parameter():
         assert v == w
 
 
-def test_share_coef_input_learning_parameter():
+def test_share_coef_input_learning_parameter() -> None:
     circuit = LearningCircuit(2)
     circuit.add_parametric_RX_gate(0, 0.0)
     shared_parameter = circuit.add_parametric_RX_gate(0, 0.0)

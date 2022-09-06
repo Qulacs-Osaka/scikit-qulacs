@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -13,9 +14,21 @@ from skqulacs.circuit import LearningCircuit
 from skqulacs.qnn.solver import Solver
 
 
+@dataclass(eq=False)
 class QNNRegressor:
     """Class to solve regression problems with quantum neural networks
     The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is <Z_0>.
+
+    Args:
+        circuit: Circuit to use in the learning.
+        solver: Solver to use(Nelder-Mead is not recommended).
+        n_output: Dimentionality of each output data.
+        cost: Cost function. MSE only for now. MSE computes squared sum after normalization.
+        do_x_scale: Whether to scale x.
+        do_x_scale: Whether to scale y.
+        x_norm_range: Normalize x in [+-xy_norm_range].
+        y_norm_range: Normalize y in [+-y_norm_range]. Setting y_norm_range to 0.7 improves performance.
+
     Examples:
         >>> from skqulacs.qnn import QNNRegressor
         >>> from skqulacs.circuit import create_qcl_ansatz
@@ -29,38 +42,31 @@ class QNNRegressor:
         >>> y_pred = qnn.predict(theta, x_list)
     """
 
-    def __init__(
-        self,
-        circuit: LearningCircuit,
-        solver: Solver,
-        cost: Literal["mse"] = "mse",
-        do_x_scale: bool = True,
-        do_y_scale: bool = True,
-        x_norm_range: float = 1.0,
-        y_norm_range: float = 0.7,
-    ) -> None:
-        """
-        :param circuit: Circuit to use in the learning.
-        :param solver: Solver to use(Nelder-Mead is not recommended).
-        :param cost: Cost function. MSE only for now. MSE computes squared sum after normalization.
-        :param do_x_scale: Whether to scale x.
-        :param do_x_scale: Whether to scale y.
-        :param y_norm_range: Normalize y in [+-y_norm_range].
-        :param callback: Callback function. Available only with Adam.
-        Setting y_norm_range to 0.7 improves performance.
-        :param tol: use n_iter_no_change
-        :param n_iter_no_change: (cost reduce < tol) continues n_iter_no_change times -> stopping (Adam only)
+    circuit: LearningCircuit
+    solver: Solver
+    cost: Literal["mse"] = field(default="mse")
+    do_x_scale: bool = field(default=True)
+    do_y_scale: bool = field(default=True)
+    x_norm_range: float = field(default=1.0)
+    y_norm_range: float = field(default=0.7)
 
-        """
-        self.n_qubit = circuit.n_qubit
-        self.circuit = circuit
-        self.solver = solver
-        self.cost = cost
-        self.do_x_scale = do_x_scale
-        self.do_y_scale = do_y_scale
-        self.x_norm_range = x_norm_range
-        self.y_norm_range = y_norm_range
-        self.observables = []
+    observables: List[Observable] = field(init=False, default_factory=list)
+    n_qubit: int = field(init=False)
+    n_outputs: int = field(init=False)
+    x_scaler: MinMaxScaler = field(init=False)
+    y_scaler: MinMaxScaler = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.n_qubit = self.circuit.n_qubit
+
+        if self.do_x_scale:
+            self.scale_x_scaler = MinMaxScaler(
+                feature_range=(-self.x_norm_range, self.x_norm_range)
+            )
+        if self.do_y_scale:
+            self.scale_y_scaler = MinMaxScaler(
+                feature_range=(-self.y_norm_range, self.y_norm_range)
+            )
 
     def fit(
         self,
@@ -69,15 +75,14 @@ class QNNRegressor:
         maxiter: Optional[int] = None,
     ) -> Tuple[float, List[float]]:
         """
-        :param x_list: List of x to fit.
-        :param y_list: List of y to fit.
-        :param maxiter: The number of iterations to pass scipy.optimize.minimize
-        :return: Loss after learning.
-        :return: Parameter theta after learning.
+        Args:
+            x_list: List of training data inputs whose shape is (n_sample, n_features).
+            y_list: List of training data outputs whose shape is (n_sample, n_output_dims).
+            maxiter: The number of iterations to pass scipy.optimize.minimize
+        Returns:
+            loss: Loss after learning.
+            theta: Parameter theta after learning.
         """
-
-        x_train = np.array(x_train)
-        y_train = np.array(y_train)
 
         if x_train.ndim == 1:
             x_train = x_train.reshape((-1, 1))
@@ -86,25 +91,16 @@ class QNNRegressor:
             y_train = y_train.reshape((-1, 1))
 
         if self.do_x_scale:
-            self.scale_x_scaler = MinMaxScaler(
-                feature_range=(-self.x_norm_range, self.x_norm_range)
-            )
             x_scaled = self.scale_x_scaler.fit_transform(x_train)
         else:
             x_scaled = x_train
 
         if self.do_y_scale:
-            self.scale_y_scaler = MinMaxScaler(
-                feature_range=(-self.y_norm_range, self.y_norm_range)
-            )
             y_scaled = self.scale_y_scaler.fit_transform(y_train)
         else:
             y_scaled = y_train
 
-        if y_train.ndim == 2:
-            self.n_outputs = len(y_scaled[0])
-        else:
-            self.n_outputs = 1
+        self.n_outputs = y_scaled.shape[1]
 
         self.observables = []
         for i in range(self.n_outputs):
