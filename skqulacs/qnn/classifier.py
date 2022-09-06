@@ -42,6 +42,7 @@ class QNNClassifier:
         do_x_scale: bool = True,
         x_norm_range: float = 1.0,
         y_exp_ratio: float = 2.2,
+        manyclass: bool = False,
     ) -> None:
         """
         :param circuit: Circuit to use in the learning.
@@ -65,8 +66,12 @@ class QNNClassifier:
         self.x_norm_range = x_norm_range
         self.y_exp_ratio = y_exp_ratio
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
+        self.manyclass = manyclass
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
+        self.fitting_qubit = 1
+        while 2**self.fitting_qubit < self.num_class:
+            self.fitting_qubit += 1
 
     def fit(
         self,
@@ -125,12 +130,30 @@ class QNNClassifier:
 
     def _predict_inner(self, x_list: NDArray[np.float_]) -> NDArray[np.float_]:
         res = np.zeros((len(x_list), self.num_class))
-        for i in range(len(x_list)):
-            state = self.circuit.run(x_list[i])
-            for j in range(self.num_class):
-                res[i][j] = (
-                    self.observables[j].get_expectation_value(state) * self.y_exp_ratio
-                )
+        if self.manyclass:
+            for i in range(len(x_list)):
+                state_vec = self.circuit.run(x_list[i]).get_vector()
+                state_vec_conj = state_vec.conjugate()
+                data_per = state_vec * state_vec_conj * self.y_exp_ratio  # 2乗の和
+                if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
+                    data_per = data_per.reshape(
+                        (
+                            2 ** (self.n_qubit - self.fitting_qubit),
+                            2**self.fitting_qubit,
+                        )
+                    )
+                    data_per = data_per.sum(axis=0)
+                res[i] = data_per[0 : self.num_class]
+
+        else:
+            for i in range(len(x_list)):
+                state = self.circuit.run(x_list[i])
+                for j in range(self.num_class):
+                    res[i][j] = (
+                        self.observables[j].get_expectation_value(state)
+                        * self.y_exp_ratio
+                    )
+
         return res
 
     # TODO: Extract cost function to outer class to accept other type of ones.
