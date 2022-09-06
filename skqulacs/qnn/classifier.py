@@ -45,6 +45,10 @@ class QNNClassifier:
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
+
+    manyclassの説明
+    manyclass=Trueにした場合、各状態に対応する数字が<Z0><Z1>... の値の代わりに、[000],[001],[010]... を取る確率を使用します。
+    それにより、最大2^n_qubit クラスの分類が可能ですが、多分精度が落ちます。
     """
 
     circuit: LearningCircuit
