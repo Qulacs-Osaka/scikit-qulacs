@@ -1,2 +1,3 @@
 skqulacs==0.4.0
 pandas==1.4.4
+matplotlib==3.5.3
