@@ -66,7 +66,10 @@ html_theme_options = {
     "repository_branch": "main",
     "use_repository_button": True,
     "path_to_docs": "doc/source",
-    "launch_buttons": {"colab_url": "https://colab.research.google.com"},
+    "launch_buttons": {
+        "binderhub_url": "https://mybinder.org/v2/gh/Qulacs-Osaka/scikit-qulacs/main?labpath=doc%2Fsource%2Fnotebooks",
+        "colab_url": "https://colab.research.google.com"
+    },
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
