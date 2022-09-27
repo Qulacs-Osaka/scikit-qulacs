@@ -24,7 +24,7 @@ python = ">=3.8,<3.11"
 numpy = "^1.22.0"
 scipy = "^1.8.1"
 scikit-learn = "^1.0.1"
-qulacs-osaka = "^0.4.2"
+qulacs = "^0.5.0"
 typing-extensions = "^4.1.1"
 
 [tool.poetry.dev-dependencies]
@@ -42,7 +42,7 @@ myst-nb = "^0.16.0"
 pytest-benchmark = "^3.4.1"
 pytest-cov = "^3.0.0"
 PennyLane = "^0.24.0"
-qulacsvis = "^0.3.0"
+qulacsvis = "^0.3.1"
 
 [tool.isort]
 default_section = "THIRDPARTY"
