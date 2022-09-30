@@ -6,7 +6,7 @@ from qulacs import Observable
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
-from skqulacs.circuit.pre_defined import create_dqn_cl, create_dqn_cl_no_cz
+from skqulacs.circuit.pre_defined import create_dqn_cl
 from skqulacs.qnn.classifier import QNNClassifier
 from skqulacs.qnn.solver import Adam
 
