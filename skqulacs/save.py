@@ -1,3 +1,4 @@
+import pickle
 from pathlib import Path
 from pickle import dump, load
 from typing import List, Union
@@ -11,7 +12,7 @@ def save(parameter: List[float], path: Union[str, Path]) -> None:
         path: File path to save the model.
     """
     with open(path, "wb") as f:
-        dump(parameter, f, 5)
+        dump(parameter, f, pickle.HIGHEST_PROTOCOL)
 
 
 def restore(path: Union[str, Path]) -> List[float]:
