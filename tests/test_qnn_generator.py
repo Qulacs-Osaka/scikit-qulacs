@@ -2,6 +2,7 @@ from math import exp
 
 import numpy as np
 import pytest
+from numpy.random import default_rng
 
 from skqulacs.circuit import create_farhi_neven_ansatz
 from skqulacs.qnn import QNNGeneretor
@@ -28,7 +29,6 @@ def test_mix_gauss_mini():
     data_param = qnn.predict()
 
     for i in range(4):
-        print(data_param[i], prob_list[i], data_param[i] - prob_list[i])
         assert abs(data_param[i] - prob_list[i]) < 0.04
 
 
@@ -53,7 +53,8 @@ def test_mix_gauss():
     for i in range(64):
         prob_list[i] /= prob_sum
 
-    datas = np.random.choice(a=range(64), size=10000, p=prob_list)
+    rng = default_rng(1)
+    datas = rng.choice(a=range(64), size=10000, p=prob_list)
 
     maxiter = 120
     qnn.fit(datas, maxiter)
@@ -93,18 +94,17 @@ def test_bar_stripe():
             uuu += 1
         prob_list[uuu * 7] += 0.0625
 
-    datas = np.random.choice(a=range(512), size=100000, p=prob_list)
+    rng = default_rng(1)
+    datas = rng.choice(a=range(512), size=100000, p=prob_list)
 
     maxiter = 600
     qnn.fit(datas, maxiter)
 
     data_param = qnn.predict()
 
-    gosa = 0
+    gosa = 0.0
     for i in range(512):
         gosa += abs(data_param[i] - prob_list[i])
-        if prob_list[i] > 0.001:
-            print(i, data_param[i])
     assert gosa < 0.4
 
 
@@ -127,13 +127,14 @@ def test_bar_stripe_hamming():
         if (i & 1) > 0:
             uuu += 1
         prob_list[uuu * 7] += 0.0625
-    datas = np.random.choice(a=range(512), size=100000, p=prob_list)
+
+    rng = default_rng(1)
+    datas = rng.choice(a=range(512), size=100000, p=prob_list)
     maxiter = 500
     qnn.fit(datas, maxiter)
     data_param = qnn.predict()
-    gosa = 0
+
+    gosa = 0.0
     for i in range(512):
         gosa += abs(data_param[i] - prob_list[i])
-        if prob_list[i] > 0.001:
-            print(i, data_param[i])
     assert gosa < 0.2
