@@ -30,7 +30,9 @@ jobs:
         uses: devcontainers/ci@v0.2
         with:
           imageName: ghcr.io/qulacs-osaka/scikit-qulacs-devcontainer
-          eventFilterForPush: [push, schedule]
+          eventFilterForPush: |
+            push
+            schedule
           # Commands to run in a devcontainer to check its behavior.
           runCmd: |
             poetry install --no-interaction

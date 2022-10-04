@@ -4,7 +4,8 @@
 	"name": "Python 3",
 	"build": {
 		"dockerfile": "Dockerfile",
-		"context": ".."
+		"context": "..",
+		"cacheFrom": "ghcr.io/qulacs-osaka/scikit-qulacs-devcontainer"
 	},
 
 	// Set *default* container specific settings.json values on container create.
