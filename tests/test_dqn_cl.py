@@ -2,6 +2,7 @@ import csv
 from typing import Tuple
 
 import numpy as np
+import pytest
 from qulacs import Observable
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
@@ -42,7 +43,7 @@ def load_dataset(
     return x_train, x_test, y_train, y_test
 
 
-def create_classifier(n_features, circuit):
+def create_classifier(n_features, circuit, locality):
     # Observables are hard-coded in QNNClassifier, so overwrite here.
     classifier = QNNClassifier(circuit, 2, Adam())
     classifier.observables = [Observable(n_features) for _ in range(n_features)]
@@ -65,7 +66,7 @@ def test_dqn_cl():
     n_features = 5
     maxiter = 40
     circuit = create_dqn_cl(n_features, 5, locality)
-    classifier = create_classifier(n_features, circuit)
+    classifier = create_classifier(n_features, circuit, locality)
     classifier.fit(np.array(x_train), np.array(y_train), maxiter)
 
     y_pred = classifier.predict(np.array(x_test))
