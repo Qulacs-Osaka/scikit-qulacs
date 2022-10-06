@@ -61,7 +61,7 @@ for i in range(len(y_test)):
 
 n_features = 13
 locality = 2
-maxiter = 40
+maxiter = 8
 circuit = create_dqn_cl(n_features, 5, locality)
 classifier = create_classifier(n_features, circuit)
 classifier.fit(np.array(x_train), np.array(y_train), maxiter)
