@@ -1,0 +1,838 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Toward Trainability of Deep Quantum Neural Networks &#8212; scikit-qulacs  documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">scikit-qulacs  documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../modules.html">
+   skqulacs
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../skqulacs.html">
+     skqulacs package
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.circuit.html">
+       skqulacs.circuit package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.circuit.circuit.html">
+         skqulacs.circuit.circuit module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.circuit.pre_defined.html">
+         skqulacs.circuit.pre_defined module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.qnn.html">
+       skqulacs.qnn package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.classifier.html">
+         skqulacs.qnn.classifier module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.generation.html">
+         skqulacs.qnn.generation module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.regressor.html">
+         skqulacs.qnn.regressor module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qnn.solver.html">
+         skqulacs.qnn.solver module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../skqulacs.qsvm.html">
+       skqulacs.qsvm package
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qsvm.qsvc.html">
+         skqulacs.qsvm.qsvc module
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../skqulacs.qsvm.qsvr.html">
+         skqulacs.qsvm.qsvr module
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../skqulacs.save.html">
+       skqulacs.save module
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="index.html">
+   Notebooks
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="0_tutorial.html">
+     scikit-qulacs チュートリアル
+    </a>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="paper_reproduction.html">
+     Reproducing papers
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="arxiv_2108_01039_large_scale_quantum_machine_learning.html">
+       Reproducing arXiv:2108.01039 with scikit-qulacs
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="qcnn.html">
+       Quantum Convolutional Neural Network with scikit-qulacs
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="circuit_visualize.html">
+     Circuit visualize
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://colab.research.google.com/github/Qulacs-Osaka/scikit-qulacs/blob/main/doc/source/notebooks/dqn_cl.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Colab"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_colab.png">
+  </span>
+<span class="headerbtn__text-container">Colab</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/Qulacs-Osaka/scikit-qulacs"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/notebooks/dqn_cl.ipynb.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   インポート
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   テストデータの生成
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   分類回路の作成
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
+   実行
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Toward Trainability of Deep Quantum Neural Networks</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   インポート
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id2">
+   テストデータの生成
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   分類回路の作成
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
+   実行
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="toward-trainability-of-deep-quantum-neural-networks">
+<h1>Toward Trainability of Deep Quantum Neural Networks<a class="headerlink" href="#toward-trainability-of-deep-quantum-neural-networks" title="Permalink to this headline">#</a></h1>
+<p><a class="reference external" href="https://arxiv.org/abs/2112.15002">[2112.15002] Toward Trainability of Deep Quantum Neural Networks</a>のscikit-qulacs実装例です。</p>
+<section id="id1">
+<h2>インポート<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">scikit-qulacs</span></code>の<code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code>と<code class="docutils literal notranslate"><span class="pre">create_dqn_cl</span></code>をインポートします。<code class="docutils literal notranslate"><span class="pre">numpy</span></code>や<code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>等も併せてインポートします。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">f1_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="kn">from</span> <span class="nn">skqulacs.circuit.pre_defined</span> <span class="kn">import</span> <span class="n">create_dqn_cl</span><span class="p">,</span> <span class="n">create_dqn_cl_no_cz</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.classifier</span> <span class="kn">import</span> <span class="n">QNNClassifier</span>
+<span class="kn">from</span> <span class="nn">skqulacs.qnn.solver</span> <span class="kn">import</span> <span class="n">Adam</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h2>テストデータの生成<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<p><a class="reference external" href="https://archive-beta.ics.uci.edu/ml/datasets/wine">UCI Machine Learning Repository</a>を使用してテストデータを生成します。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use wine dataset retrieved from: https://archive-beta.ics.uci.edu/ml/datasets/wine</span>
+<span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_kind</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Load dataset from specified path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path: File path from which data is loaded.</span>
+<span class="sd">        ignore_kind: The dataset expected to have 3 classes and we need 2 classes to test. So specify here which class to ignore in loading.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="n">ignore_kind</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+
+    <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_ratio</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h2>分類回路の作成<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">QNNClassifier</span></code>を使用して分類回路を作成します。
+第一引数に回路を指定します。第二引数に分類数を指定します。ここでは二値問題のため2を指定してください。<br />
+第三引数に探索アルゴリズムを指定します。<code class="docutils literal notranslate"><span class="pre">Adam</span></code>を指定してください。
+<code class="docutils literal notranslate"><span class="pre">create_classifier()</span></code>の第一引数は量子ビット数を指定してください。第二引数に学習用回路を指定してください。
+学習用回路はこの後作成します。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_classifier</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">circuit</span><span class="p">):</span>
+    <span class="c1"># Observables are hard-coded in QNNClassifier, so overwrite here.</span>
+    <span class="n">classifier</span> <span class="o">=</span> <span class="n">QNNClassifier</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Adam</span><span class="p">())</span>
+    <span class="n">classifier</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">locality</span><span class="p">:</span>
+            <span class="n">classifier</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">classifier</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;I </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">classifier</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id4">
+<h2>実行<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">load_dataset()</span></code>を呼び出してテストデータを生成します。
+<code class="docutils literal notranslate"><span class="pre">create_dqn_cl()</span></code>で学習用回路を作成し、<code class="docutils literal notranslate"><span class="pre">create_classifier()</span></code>に渡して、分類回路を作成します。
+<code class="docutils literal notranslate"><span class="pre">qcl.fit()</span></code>を実行し学習を行います。<br />
+<code class="docutils literal notranslate"><span class="pre">qcl.predict()</span></code>で推論を行います。<br />
+<code class="docutils literal notranslate"><span class="pre">sklearn.metrics</span></code>の<code class="docutils literal notranslate"><span class="pre">f1_score</span></code>を使用して結果の精度を計算します。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;../../../datasets/wine.data&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)):</span>
+    <span class="n">y_train</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_test</span><span class="p">)):</span>
+    <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+
+<span class="n">n_features</span> <span class="o">=</span> <span class="mi">13</span>
+<span class="n">locality</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">maxiter</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CL&quot;</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_dqn_cl</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">locality</span><span class="p">)</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">create_classifier</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">circuit</span><span class="p">)</span>
+<span class="n">result_cl</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">loop_size</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">loop_size</span><span class="p">):</span>
+    <span class="n">classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_train</span><span class="p">),</span> <span class="n">maxiter</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">)</span>
+    <span class="n">result_cl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;iteration:&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">maxiter</span><span class="p">,</span> <span class="s2">&quot; score:&quot;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no CL&quot;</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">create_dqn_cl_no_cz</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">create_classifier</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">circuit</span><span class="p">)</span>
+<span class="n">result_no_cl</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">loop_size</span><span class="p">):</span>
+    <span class="n">classifier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_train</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_train</span><span class="p">),</span> <span class="n">maxiter</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">)</span>
+    <span class="n">result_no_cl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;iteration:&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">maxiter</span><span class="p">,</span> <span class="s2">&quot; score:&quot;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CL
+iteration: 5  score: 0.28481262327416174
+iteration: 10  score: 0.6028136727487844
+iteration: 15  score: 0.770327320576786
+iteration: 20  score: 0.8008593936500358
+iteration: 25  score: 0.8466696139109934
+iteration: 30  score: 0.8773356911287946
+iteration: 35  score: 0.8925147431275766
+iteration: 40  score: 0.9080017683465961
+iteration: 45  score: 0.9080017683465961
+iteration: 50  score: 0.9080017683465961
+iteration: 55  score: 0.9234074590961676
+iteration: 60  score: 0.9234074590961676
+iteration: 65  score: 0.9386678455643973
+iteration: 70  score: 0.9539348899118185
+iteration: 75  score: 0.9539348899118185
+iteration: 80  score: 0.9539348899118185
+iteration: 85  score: 0.9539348899118185
+iteration: 90  score: 0.9693339227821987
+iteration: 95  score: 0.9693339227821987
+iteration: 100  score: 0.9693339227821987
+iteration: 105  score: 0.9693339227821987
+iteration: 110  score: 0.9693339227821987
+iteration: 115  score: 0.9693339227821987
+iteration: 120  score: 0.9693339227821987
+iteration: 125  score: 0.9693339227821987
+iteration: 130  score: 0.9693339227821987
+iteration: 135  score: 0.9846449633039395
+iteration: 140  score: 0.9846449633039395
+iteration: 145  score: 0.9846449633039395
+iteration: 150  score: 0.9846449633039395
+iteration: 155  score: 0.9846449633039395
+iteration: 160  score: 0.9846449633039395
+iteration: 165  score: 0.9846449633039395
+iteration: 170  score: 0.9846449633039395
+iteration: 175  score: 0.9846449633039395
+iteration: 180  score: 0.9846449633039395
+iteration: 185  score: 0.9846449633039395
+iteration: 190  score: 0.9846449633039395
+iteration: 195  score: 0.9846449633039395
+iteration: 200  score: 0.9846449633039395
+iteration: 205  score: 0.9846449633039395
+iteration: 210  score: 0.9693339227821987
+iteration: 215  score: 0.9693339227821987
+iteration: 220  score: 0.9693339227821987
+iteration: 225  score: 0.9693339227821987
+iteration: 230  score: 0.9693339227821987
+iteration: 235  score: 0.9693339227821987
+iteration: 240  score: 0.9693339227821987
+iteration: 245  score: 0.9693339227821987
+iteration: 250  score: 0.9693339227821987
+iteration: 255  score: 0.9693339227821987
+iteration: 260  score: 0.9693339227821987
+iteration: 265  score: 0.9693339227821987
+iteration: 270  score: 0.9693339227821987
+iteration: 275  score: 0.9693339227821987
+iteration: 280  score: 0.9693339227821987
+iteration: 285  score: 0.9693339227821987
+iteration: 290  score: 0.9693339227821987
+iteration: 295  score: 0.9693339227821987
+iteration: 300  score: 0.9693339227821987
+iteration: 305  score: 0.9693339227821987
+iteration: 310  score: 0.9693339227821987
+iteration: 315  score: 0.9693339227821987
+iteration: 320  score: 0.9693339227821987
+iteration: 325  score: 0.9693339227821987
+iteration: 330  score: 0.9693339227821987
+iteration: 335  score: 0.9693339227821987
+iteration: 340  score: 0.9693339227821987
+iteration: 345  score: 0.9693339227821987
+iteration: 350  score: 0.9693339227821987
+iteration: 355  score: 0.9693339227821987
+iteration: 360  score: 0.9693339227821987
+iteration: 365  score: 0.9693339227821987
+iteration: 370  score: 0.9693339227821987
+iteration: 375  score: 0.9693339227821987
+iteration: 380  score: 0.9693339227821987
+iteration: 385  score: 0.9693339227821987
+iteration: 390  score: 0.9693339227821987
+iteration: 395  score: 0.9693339227821987
+iteration: 400  score: 0.9693339227821987
+no CL
+iteration: 5  score: 0.6558974358974359
+iteration: 10  score: 0.7841054778554779
+iteration: 15  score: 0.8157342657342658
+iteration: 20  score: 0.8468106845715954
+iteration: 25  score: 0.8621334263731016
+iteration: 30  score: 0.8621334263731016
+iteration: 35  score: 0.8773356911287946
+iteration: 40  score: 0.8773356911287946
+iteration: 45  score: 0.8773356911287946
+iteration: 50  score: 0.8773356911287946
+iteration: 55  score: 0.8773356911287946
+iteration: 60  score: 0.8773356911287946
+iteration: 65  score: 0.8773356911287946
+iteration: 70  score: 0.8773356911287946
+iteration: 75  score: 0.8773356911287946
+iteration: 80  score: 0.8773356911287946
+iteration: 85  score: 0.8773356911287946
+iteration: 90  score: 0.8773356911287946
+iteration: 95  score: 0.8773356911287946
+iteration: 100  score: 0.8925147431275766
+iteration: 105  score: 0.8925147431275766
+iteration: 110  score: 0.8925147431275766
+iteration: 115  score: 0.8925147431275766
+iteration: 120  score: 0.8925147431275766
+iteration: 125  score: 0.8925147431275766
+iteration: 130  score: 0.8925147431275766
+iteration: 135  score: 0.8925147431275766
+iteration: 140  score: 0.8925147431275766
+iteration: 145  score: 0.8925147431275766
+iteration: 150  score: 0.8925147431275766
+iteration: 155  score: 0.8925147431275766
+iteration: 160  score: 0.8925147431275766
+iteration: 165  score: 0.8925147431275766
+iteration: 170  score: 0.8925147431275766
+iteration: 175  score: 0.8925147431275766
+iteration: 180  score: 0.9076923076923077
+iteration: 185  score: 0.9076923076923077
+iteration: 190  score: 0.9076923076923077
+iteration: 195  score: 0.9076923076923077
+iteration: 200  score: 0.9076923076923077
+iteration: 205  score: 0.9076923076923077
+iteration: 210  score: 0.8925147431275766
+iteration: 215  score: 0.8925147431275766
+iteration: 220  score: 0.8925147431275766
+iteration: 225  score: 0.8925147431275766
+iteration: 230  score: 0.8925147431275766
+iteration: 235  score: 0.8925147431275766
+iteration: 240  score: 0.8925147431275766
+iteration: 245  score: 0.8925147431275766
+iteration: 250  score: 0.8925147431275766
+iteration: 255  score: 0.8925147431275766
+iteration: 260  score: 0.8925147431275766
+iteration: 265  score: 0.8925147431275766
+iteration: 270  score: 0.8925147431275766
+iteration: 275  score: 0.8925147431275766
+iteration: 280  score: 0.9080017683465961
+iteration: 285  score: 0.9080017683465961
+iteration: 290  score: 0.9080017683465961
+iteration: 295  score: 0.9080017683465961
+iteration: 300  score: 0.9080017683465961
+iteration: 305  score: 0.9080017683465961
+iteration: 310  score: 0.9080017683465961
+iteration: 315  score: 0.9080017683465961
+iteration: 320  score: 0.9080017683465961
+iteration: 325  score: 0.9080017683465961
+iteration: 330  score: 0.9080017683465961
+iteration: 335  score: 0.9080017683465961
+iteration: 340  score: 0.9080017683465961
+iteration: 345  score: 0.9080017683465961
+iteration: 350  score: 0.9080017683465961
+iteration: 355  score: 0.9080017683465961
+iteration: 360  score: 0.9080017683465961
+iteration: 365  score: 0.9080017683465961
+iteration: 370  score: 0.9080017683465961
+iteration: 375  score: 0.9080017683465961
+iteration: 380  score: 0.9080017683465961
+iteration: 385  score: 0.9080017683465961
+iteration: 390  score: 0.9080017683465961
+iteration: 395  score: 0.9080017683465961
+iteration: 400  score: 0.9080017683465961
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop_size</span><span class="o">*</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">maxiter</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result_cl</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CL&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop_size</span><span class="o">*</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">maxiter</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result_no_cl</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;no CL&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop_size</span><span class="o">*</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;iteration&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d42398afcfacf658ae3c86917178c1484c2cff9244a9dd980f628e9fab4fea86.png" src="../_images/d42398afcfacf658ae3c86917178c1484c2cff9244a9dd980f628e9fab4fea86.png" />
+</div>
+</div>
+<p>CLレイヤをつけた回路の方が速く学習が進みます。</p>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Qulacs-Osaka<br/>
+  
+      &copy; Copyright 2021, Qulacs-Osaka.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
