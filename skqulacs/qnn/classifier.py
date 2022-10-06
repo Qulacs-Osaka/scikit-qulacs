@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
@@ -63,15 +64,15 @@ class QNNClassifier:
     observables: List[Observable] = field(init=False)
     n_qubit: int = field(init=False)
     x_scaler: MinMaxScaler = field(init=False)
+    fitting_qubit: int = field(init=False)
 
     def __post_init__(self) -> None:
         self.n_qubit = self.circuit.n_qubit
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
-        self.fitting_qubit = 1
-        while 2**self.fitting_qubit < self.num_class:
-            self.fitting_qubit += 1
+
+        self.fitting_qubit = math.ceil(math.log2(self.num_class - 0.001))
 
         if self.do_x_scale:
             self.scale_x_scaler = MinMaxScaler(
