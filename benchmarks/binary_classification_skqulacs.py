@@ -94,6 +94,6 @@ def binary_classification_skqulacs(
     num_class = 2
     circuit = create_circuit(6)
     qcl = QNNClassifier(circuit, num_class, Adam(), do_x_scale=False)
-    qcl.fit(x_train, y_train, 100)
+    qcl.fit(x_train, y_train, 50)
     y_pred = qcl.predict(x_test)
     f1_score(y_test, y_pred) > 0.95
