@@ -12,6 +12,8 @@ from skqulacs.qnn.solver import Adam
 
 # This script aims to reproduce Ⅳ.B Binary classification in https://arxiv.org/pdf/2112.15002.pdf.
 
+locality = 2
+
 
 def load_dataset(
     file_path: str, ignore_kind: int, test_ratio: float
@@ -52,10 +54,6 @@ def create_classifier(n_features, circuit):
     return classifier
 
 
-# test_dqn_clは量子ビット数が13のためテストに時間がかかりすぎるので自動テストから外します。
-
-
-@pytest.mark.skip("This test takes too long time to finish")
 def test_dqn_cl():
     # Use wine dataset retrieved from: https://archive-beta.ics.uci.edu/ml/datasets/wine
     x_train, x_test, y_train, y_test = load_dataset("datasets/wine.data", 3, 0.5)
@@ -64,12 +62,12 @@ def test_dqn_cl():
     for i in range(len(y_test)):
         y_test[i] -= 1
 
-    n_features = 13
-    locality = 2
+    n_features = 5
     maxiter = 40
     circuit = create_dqn_cl(n_features, 5, locality)
     classifier = create_classifier(n_features, circuit)
     classifier.fit(np.array(x_train), np.array(y_train), maxiter)
 
     y_pred = classifier.predict(np.array(x_test))
-    assert f1_score(y_test, y_pred, average="weighted") > 0.9
+    score = f1_score(y_test, y_pred, average="weighted")
+    assert score > 0.8
