@@ -6,7 +6,7 @@ from qulacs import Observable
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
-from skqulacs.circuit.pre_defined import create_dqn_cl
+from skqulacs.circuit.pre_defined import create_dqn_cl, create_dqn_cl_no_cz
 from skqulacs.qnn.classifier import QNNClassifier
 from skqulacs.qnn.solver import Adam
 
@@ -62,9 +62,28 @@ def test_dqn_cl():
     for i in range(len(y_test)):
         y_test[i] -= 1
 
-    n_features = 5
-    maxiter = 40
+    n_features = 6
+    maxiter = 30
     circuit = create_dqn_cl(n_features, 5, locality)
+    classifier = create_classifier(n_features, circuit, locality)
+    classifier.fit(np.array(x_train), np.array(y_train), maxiter)
+
+    y_pred = classifier.predict(np.array(x_test))
+    score = f1_score(y_test, y_pred, average="weighted")
+    assert score > 0.8
+
+
+def test_dqn_cl_no_cz():
+    # Use wine dataset retrieved from: https://archive-beta.ics.uci.edu/ml/datasets/wine
+    x_train, x_test, y_train, y_test = load_dataset("datasets/wine.data", 3, 0.5)
+    for i in range(len(y_train)):
+        y_train[i] -= 1
+    for i in range(len(y_test)):
+        y_test[i] -= 1
+
+    n_features = 6
+    maxiter = 30
+    circuit = create_dqn_cl_no_cz(n_features, 5)
     classifier = create_classifier(n_features, circuit, locality)
     classifier.fit(np.array(x_train), np.array(y_train), maxiter)
 
