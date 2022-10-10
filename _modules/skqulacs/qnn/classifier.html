@@ -381,11 +381,14 @@ title="Source repository"
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; from skqulacs.qnn import QNNClassifier</span>
 <span class="sd">        &gt;&gt;&gt; from skqulacs.circuit import create_qcl_ansatz</span>
+<span class="sd">        &gt;&gt;&gt; from skqulacs.qnn.solver import Bfgs</span>
 <span class="sd">        &gt;&gt;&gt; n_qubits = 4</span>
 <span class="sd">        &gt;&gt;&gt; depth = 3</span>
 <span class="sd">        &gt;&gt;&gt; evo_time = 0.5</span>
+<span class="sd">        &gt;&gt;&gt; num_class = 3</span>
+<span class="sd">        &gt;&gt;&gt; solver = Bfgs()</span>
 <span class="sd">        &gt;&gt;&gt; circuit = create_qcl_ansatz(n_qubits, depth, evo_time)</span>
-<span class="sd">        &gt;&gt;&gt; model = QNNRClassifier(circuit)</span>
+<span class="sd">        &gt;&gt;&gt; model = QNNClassifier(circuit, num_class, solver)</span>
 <span class="sd">        &gt;&gt;&gt; _, theta = model.fit(x_train, y_train, maxiter=1000)</span>
 <span class="sd">        &gt;&gt;&gt; x_list = np.arange(x_min, x_max, 0.02)</span>
 <span class="sd">        &gt;&gt;&gt; y_pred = qnn.predict(theta, x_list)</span>
