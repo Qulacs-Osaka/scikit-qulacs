@@ -37,11 +37,14 @@ class QNNClassifier:
     Examples:
         >>> from skqulacs.qnn import QNNClassifier
         >>> from skqulacs.circuit import create_qcl_ansatz
+        >>> from skqulacs.qnn.solver import Bfgs
         >>> n_qubits = 4
         >>> depth = 3
         >>> evo_time = 0.5
+        >>> num_class = 3
+        >>> solver = Bfgs()
         >>> circuit = create_qcl_ansatz(n_qubits, depth, evo_time)
-        >>> model = QNNRClassifier(circuit)
+        >>> model = QNNClassifier(circuit, num_class, solver)
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
