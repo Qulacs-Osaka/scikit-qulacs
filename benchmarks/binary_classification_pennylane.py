@@ -143,7 +143,7 @@ def train(
     best_weights = weights
     best_bias = bias
     best_acc_val = 0.0
-    n_epoch = 20
+    n_epoch = 10
     for epoch in range(n_epoch):
         # Update the weights by one optimizer step
         batch_index = rng.integers(0, len(x_train), (batch_size,))
