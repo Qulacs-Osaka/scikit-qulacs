@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
-from qulacs import Observable
+from qulacs import Observable, QuantumState
 from scipy.special import softmax
 from sklearn.metrics import log_loss
 from sklearn.preprocessing import MinMaxScaler
@@ -48,6 +49,10 @@ class QNNClassifier:
         >>> _, theta = model.fit(x_train, y_train, maxiter=1000)
         >>> x_list = np.arange(x_min, x_max, 0.02)
         >>> y_pred = qnn.predict(theta, x_list)
+
+    manyclassの説明
+    manyclass=Trueにした場合、各状態に対応する数字が<Z0><Z1>... の値の代わりに、[000],[001],[010]... を取る確率を使用します。
+    それにより、最大2^n_qubit クラスの分類が可能ですが、多分精度が落ちます。
     """
 
     circuit: LearningCircuit
@@ -57,16 +62,20 @@ class QNNClassifier:
     do_x_scale: bool = field(default=True)
     x_norm_range: float = field(default=1.0)
     y_exp_ratio: float = field(default=2.2)
+    manyclass: bool = field(default=False)
 
     observables: List[Observable] = field(init=False)
     n_qubit: int = field(init=False)
     x_scaler: MinMaxScaler = field(init=False)
+    fitting_qubit: int = field(init=False)
 
     def __post_init__(self) -> None:
         self.n_qubit = self.circuit.n_qubit
         self.observables = [Observable(self.n_qubit) for _ in range(self.n_qubit)]
         for i in range(self.n_qubit):
             self.observables[i].add_operator(1.0, f"Z {i}")
+
+        self.fitting_qubit = math.ceil(math.log2(self.num_class - 0.001))
 
         if self.do_x_scale:
             self.scale_x_scaler = MinMaxScaler(
@@ -129,12 +138,32 @@ class QNNClassifier:
 
     def _predict_inner(self, x_list: NDArray[np.float_]) -> NDArray[np.float_]:
         res = np.zeros((len(x_list), self.num_class))
-        for i in range(len(x_list)):
-            state = self.circuit.run(x_list[i])
-            for j in range(self.num_class):
-                res[i][j] = (
-                    self.observables[j].get_expectation_value(state) * self.y_exp_ratio
-                )
+        if self.manyclass:
+            for i in range(len(x_list)):
+                state_vec = self.circuit.run(x_list[i]).get_vector()
+                state_vec_conj = state_vec.conjugate()
+                data_per = (state_vec * state_vec_conj) * self.y_exp_ratio  # 2乗の和
+
+                if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
+                    data_per = data_per.reshape(
+                        (
+                            2 ** (self.n_qubit - self.fitting_qubit),
+                            2**self.fitting_qubit,
+                        )
+                    )
+                    data_per = data_per.sum(axis=0)
+
+                res[i] = data_per[0 : self.num_class]
+
+        else:
+            for i in range(len(x_list)):
+                state = self.circuit.run(x_list[i])
+                for j in range(self.num_class):
+                    res[i][j] = (
+                        self.observables[j].get_expectation_value(state)
+                        * self.y_exp_ratio
+                    )
+
         return res
 
     # TODO: Extract cost function to outer class to accept other type of ones.
@@ -161,22 +190,37 @@ class QNNClassifier:
         y_scaled: NDArray[np.int_],
     ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
-
         y_pred = self._predict_inner(x_scaled)
         y_pred_sm = softmax(y_pred, axis=1)
         grad = np.zeros(len(theta))
         for sample_index in range(len(x_scaled)):
-            backobs = Observable(self.n_qubit)
-            for current_class in range(self.num_class):
-                expected = 0.0
-                if current_class == y_scaled[sample_index]:
-                    expected = 1.0
-                backobs.add_operator(
-                    (-expected + y_pred_sm[sample_index][current_class])
-                    * self.y_exp_ratio,
-                    f"Z {current_class}",
+            if self.manyclass:
+                aaa = y_pred_sm[sample_index]
+                aaa[y_scaled[sample_index]] -= 1.0
+                aaa *= self.y_exp_ratio
+                aaa_kazu = np.concatenate(
+                    [aaa, np.zeros(2**self.fitting_qubit - self.num_class)]
                 )
-            grad += self.circuit.backprop(x_scaled[sample_index], backobs)
+                convconv_diff = np.tile(
+                    aaa_kazu, 2 ** (self.n_qubit - self.fitting_qubit)
+                )
+                state_vec = self.circuit.run(x_scaled[sample_index]).get_vector()
+                ret = QuantumState(self.n_qubit)
+                ret.load(convconv_diff * state_vec * 2)
+                grad += self.circuit.backprop_inner_product(x_scaled[sample_index], ret)
+
+            else:
+                backobs = Observable(self.n_qubit)
+                for current_class in range(self.num_class):
+                    expected = 0.0
+                    if current_class == y_scaled[sample_index]:
+                        expected = 1.0
+                    backobs.add_operator(
+                        (-expected + y_pred_sm[sample_index][current_class])
+                        * self.y_exp_ratio,
+                        f"Z {current_class}",
+                    )
+                grad += self.circuit.backprop(x_scaled[sample_index], backobs)
 
         grad /= len(x_scaled)
         return grad

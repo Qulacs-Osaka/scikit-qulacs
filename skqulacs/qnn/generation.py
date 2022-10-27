@@ -201,10 +201,7 @@ class QNNGeneretor:
         data_diff = pre - train_scaled
         conv_diff = self.conving(data_diff)
 
-        convconv_diff = np.tile(
-            conv_diff, 2 ** (self.n_qubit - self.fitting_qubit)
-        )  # 得られた確率ベクトルの添え字の大きい桁を無視する。
-        # 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -> [0.2,-0.1,0,-0.1]
+        convconv_diff = np.tile(conv_diff, 2 ** (self.n_qubit - self.fitting_qubit))
         state_vec = prein.get_vector()
         ret = QuantumState(self.n_qubit)
         ret.load(convconv_diff * state_vec * 4)
