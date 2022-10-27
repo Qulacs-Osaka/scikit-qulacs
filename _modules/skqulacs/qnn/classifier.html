@@ -344,12 +344,13 @@ title="Source repository"
   <h1>Source code for skqulacs.qnn.classifier</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">QuantumState</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">softmax</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
@@ -392,6 +393,10 @@ title="Source repository"
 <span class="sd">        &gt;&gt;&gt; _, theta = model.fit(x_train, y_train, maxiter=1000)</span>
 <span class="sd">        &gt;&gt;&gt; x_list = np.arange(x_min, x_max, 0.02)</span>
 <span class="sd">        &gt;&gt;&gt; y_pred = qnn.predict(theta, x_list)</span>
+
+<span class="sd">    manyclassの説明</span>
+<span class="sd">    manyclass=Trueにした場合、各状態に対応する数字が&lt;Z0&gt;&lt;Z1&gt;... の値の代わりに、[000],[001],[010]... を取る確率を使用します。</span>
+<span class="sd">    それにより、最大2^n_qubit クラスの分類が可能ですが、多分精度が落ちます。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span>
@@ -401,16 +406,20 @@ title="Source repository"
     <span class="n">do_x_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">x_norm_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
     <span class="n">y_exp_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">2.2</span><span class="p">)</span>
+    <span class="n">manyclass</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">observables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">x_scaler</span><span class="p">:</span> <span class="n">MinMaxScaler</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fitting_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">n_qubit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_class</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_x_scale</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scale_x_scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span>
@@ -473,12 +482,32 @@ title="Source repository"
 
     <span class="k">def</span> <span class="nf">_predict_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_list</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">):</span>
-                <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span>
-                <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manyclass</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)):</span>
+                <span class="n">state_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+                <span class="n">state_vec_conj</span> <span class="o">=</span> <span class="n">state_vec</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+                <span class="n">data_per</span> <span class="o">=</span> <span class="p">(</span><span class="n">state_vec</span> <span class="o">*</span> <span class="n">state_vec_conj</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span>  <span class="c1"># 2乗の和</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">:</span>  <span class="c1"># いくつかのビットを捨てる</span>
+                    <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">),</span>
+                            <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_per</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_list</span><span class="p">)):</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">):</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_expectation_value</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span>
+                    <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">res</span>
 
     <span class="c1"># TODO: Extract cost function to outer class to accept other type of ones.</span>
@@ -505,22 +534,37 @@ title="Source repository"
         <span class="n">y_scaled</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-
         <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
         <span class="n">y_pred_sm</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">sample_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)):</span>
-            <span class="n">backobs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">current_class</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">):</span>
-                <span class="n">expected</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="k">if</span> <span class="n">current_class</span> <span class="o">==</span> <span class="n">y_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]:</span>
-                    <span class="n">expected</span> <span class="o">=</span> <span class="mf">1.0</span>
-                <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span>
-                    <span class="p">(</span><span class="o">-</span><span class="n">expected</span> <span class="o">+</span> <span class="n">y_pred_sm</span><span class="p">[</span><span class="n">sample_index</span><span class="p">][</span><span class="n">current_class</span><span class="p">])</span>
-                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">current_class</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">manyclass</span><span class="p">:</span>
+                <span class="n">aaa</span> <span class="o">=</span> <span class="n">y_pred_sm</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span>
+                <span class="n">aaa</span><span class="p">[</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]]</span> <span class="o">-=</span> <span class="mf">1.0</span>
+                <span class="n">aaa</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span>
+                <span class="n">aaa_kazu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">aaa</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">)]</span>
                 <span class="p">)</span>
-            <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
+                <span class="n">convconv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+                    <span class="n">aaa_kazu</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">state_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">convconv_diff</span> <span class="o">*</span> <span class="n">state_vec</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop_inner_product</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">],</span> <span class="n">ret</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">backobs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">current_class</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_class</span><span class="p">):</span>
+                    <span class="n">expected</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">if</span> <span class="n">current_class</span> <span class="o">==</span> <span class="n">y_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]:</span>
+                        <span class="n">expected</span> <span class="o">=</span> <span class="mf">1.0</span>
+                    <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span>
+                        <span class="p">(</span><span class="o">-</span><span class="n">expected</span> <span class="o">+</span> <span class="n">y_pred_sm</span><span class="p">[</span><span class="n">sample_index</span><span class="p">][</span><span class="n">current_class</span><span class="p">])</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_exp_ratio</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">current_class</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">sample_index</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
 
         <span class="n">grad</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">grad</span></div>

@@ -545,10 +545,7 @@ title="Source repository"
         <span class="n">data_diff</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">-</span> <span class="n">train_scaled</span>
         <span class="n">conv_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conving</span><span class="p">(</span><span class="n">data_diff</span><span class="p">)</span>
 
-        <span class="n">convconv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
-            <span class="n">conv_diff</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># 得られた確率ベクトルの添え字の大きい桁を無視する。</span>
-        <span class="c1"># 例: [0.1,0.3,-0.2,0.1  ,  0.1,-0.4,0.2,-0.2] -&gt; [0.2,-0.1,0,-0.1]</span>
+        <span class="n">convconv_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">conv_diff</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">))</span>
         <span class="n">state_vec</span> <span class="o">=</span> <span class="n">prein</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
         <span class="n">ret</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">convconv_diff</span> <span class="o">*</span> <span class="n">state_vec</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
