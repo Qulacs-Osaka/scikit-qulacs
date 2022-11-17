@@ -52,7 +52,7 @@ class QNNRegressor:
 
     observables: List[Observable] = field(init=False, default_factory=list)
     n_qubit: int = field(init=False)
-    n_outputs: int = field(init=False)
+    n_outputs: int = field(default = 1)
     x_scaler: MinMaxScaler = field(init=False)
     y_scaler: MinMaxScaler = field(init=False)
 
@@ -67,6 +67,10 @@ class QNNRegressor:
             self.scale_y_scaler = MinMaxScaler(
                 feature_range=(-self.y_norm_range, self.y_norm_range)
             )
+        for i in range(self.n_outputs):
+            observable = Observable(self.n_qubit)
+            observable.add_operator(1.0, f"Z {i}")
+            self.observables.append(observable)
 
     def fit(
         self,
@@ -188,11 +192,35 @@ class QNNRegressor:
             if self.n_outputs >= 2:
                 for i in range(self.n_outputs):
                     backobs.add_operator(
-                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs, f"Z {i}"
+                        2*(-y_scaled[h][i] + mto[h][i]) / self.n_outputs, f"Z {i}"  #I add a 2* as a derivative of the RMSE error
                     )
             else:
-                backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
+                backobs.add_operator(2*(-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
             grad += self.circuit.backprop(x_scaled[h], backobs)
 
         grad /= len(x_scaled)
         return grad
+
+
+    def _func_grad(
+            self,
+            theta: List[float],
+            x_scaled: NDArray[np.float_]
+        ) -> NDArray[np.float_]:
+            self.circuit.update_parameters(theta)
+
+            grad = np.zeros(len(theta))
+
+            for h in range(len(x_scaled)):
+                backobs = Observable(self.n_qubit)
+                if self.n_outputs >= 2:
+                    for i in range(self.n_outputs):
+                        backobs.add_operator(
+                            1., f"Z {i}"
+                        )
+                else:
+                    backobs.add_operator(1. , "Z 0")
+                grad += self.circuit.backprop(x_scaled[h], backobs)
+
+            grad /= len(x_scaled)
+            return grad
