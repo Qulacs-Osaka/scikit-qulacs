@@ -150,23 +150,16 @@ class Grad_Descent(Solver):
         theta: List[float],
         x: NDArray[np.float_],
         y: NDArray[np.float_],
-        #maxiter: Optional[int],
         lr : 0.1,
     ) -> Tuple[float, List[float]]:
-        #derivative of Cost function
-        #backprop
-        # for now full gradient
         theta_now = theta
         grad = jac(
             theta_now,
             x,
             y,
             )
-        #multiply them
         #make gradient step
         new_theta = theta - lr*grad
-        #print("new_theta", new_theta)
         #compute loss
-        #return loss and new params bades on gd
         loss = cost_func(new_theta, x, y)
         return loss, new_theta
