@@ -208,14 +208,14 @@ class QNNRegressor:
             if self.n_outputs >= 2:
                 for i in range(len(self.observables_str)):
                     backobs.add_operator(
-                        2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
+                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
                         self.observables_str[
                             i
                         ],  # I add a 2* as a derivative of the RMSE error
                     )
             else:
                 backobs.add_operator(
-                    2 * (-y_scaled[h] + mto[h][0]) / self.n_outputs,
+                    (-y_scaled[h] + mto[h][0]) / self.n_outputs,
                     self.observables_str[0],
                 )
             grad = grad + self.circuit.backprop(x_scaled[h], backobs)
