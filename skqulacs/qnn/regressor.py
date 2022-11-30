@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from re import I
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -51,10 +50,10 @@ class QNNRegressor:
     x_norm_range: float = field(default=1.0)
     y_norm_range: float = field(default=0.7)
     observables_str: List[str] = field(init=True, default_factory=list)
-    
+
     observables: List[Observable] = field(init=False, default_factory=list)
     n_qubit: int = field(init=False)
-    n_outputs: int = field(default = 1)
+    n_outputs: int = field(default=1)
     x_scaler: MinMaxScaler = field(init=False)
     y_scaler: MinMaxScaler = field(init=False)
 
@@ -70,18 +69,18 @@ class QNNRegressor:
                 feature_range=(-self.y_norm_range, self.y_norm_range)
             )
         if self.observables_str != []:
-            #add the right observables
+            # add the right observables
             for i in self.observables_str:
                 observable = Observable(self.n_qubit)
                 observable.add_operator(1.0, i)
                 self.observables.append(observable)
         else:
-            #just add Zi for number of i outputs
+            # just add Zi for number of i outputs
             for i in range(self.n_outputs):
                 observable = Observable(self.n_qubit)
                 observable.add_operator(1.0, f"Z {i}")
                 self.observables.append(observable)
-                ob = "Z "+str(i)
+                ob = "Z " + str(i)
                 self.observables_str.append(ob)
 
     def fit(
@@ -198,35 +197,34 @@ class QNNRegressor:
             if self.n_outputs >= 2:
                 for i in self.observables_str:
                     backobs.add_operator(
-                        2*(-y_scaled[h][i] + mto[h][i]) / self.n_outputs, i  #I add a 2* as a derivative of the RMSE error
+                        2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
+                        i,  # I add a 2* as a derivative of the RMSE error
                     )
             else:
-                backobs.add_operator(2*(-y_scaled[h] + mto[h][0]) / self.n_outputs, self.observables_str[0])
-            grad += self.circuit.backprop(x_scaled[h], backobs)
+                backobs.add_operator(
+                    2 * (-y_scaled[h] + mto[h][0]) / self.n_outputs,
+                    self.observables_str[0],
+                )
+            grad = grad + self.circuit.backprop(x_scaled[h], backobs)
 
         grad /= len(x_scaled)
         return grad
 
-
     def _func_grad(
-            self,
-            theta: List[float],
-            x_scaled: NDArray[np.float_]
-        ) -> NDArray[np.float_]:
-            self.circuit.update_parameters(theta)
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+    ) -> NDArray[np.float_]:
+        self.circuit.update_parameters(theta)
+        grad = np.zeros(len(theta))
+        for h in range(len(x_scaled)):
+            backobs = Observable(self.n_qubit)
+            if self.n_outputs >= 2:
+                for i in self.observables_str:
+                    backobs.add_operator(1.0, i)
+            else:
+                backobs.add_operator(1.0, self.observables_str[0])
+            grad += self.circuit.backprop(x_scaled[h], backobs)
 
-            grad = np.zeros(len(theta))
-
-            for h in range(len(x_scaled)):
-                backobs = Observable(self.n_qubit)
-                if self.n_outputs >= 2:
-                    for i in self.observables_str:
-                        backobs.add_operator(
-                            1., i
-                        )
-                else:
-                    backobs.add_operator(1. , self.observables_str[0])
-                grad += self.circuit.backprop(x_scaled[h], backobs)
-
-            grad /= len(x_scaled)
-            return grad
+        grad /= len(x_scaled)
+        return grad

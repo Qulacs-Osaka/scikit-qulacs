@@ -1,16 +1,17 @@
+import random
 from typing import Callable, Optional, Tuple
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
 from numpy.typing import NDArray
 from sklearn.metrics import mean_squared_error
 
-from skqulacs.circuit import create_qcl_ansatz, create_shirai_ansatz
+from skqulacs.circuit import create_qcl_ansatz
 from skqulacs.qnn import QNNRegressor
-from skqulacs.qnn.solver import Adam, Bfgs, Grad_Descent, Solver
-import random
+from skqulacs.qnn.solver import Grad_Descent, Solver
+
 
 def generate_noisy_data(
     x_min: float,
@@ -37,7 +38,6 @@ def generate_noisy_data(
     return x_train, y_train
 
 
-
 def sine(x: NDArray[np.float_]) -> NDArray[np.float_]:
     return np.sin(np.pi * x[0])
 
@@ -46,28 +46,27 @@ def sine(x: NDArray[np.float_]) -> NDArray[np.float_]:
     ("solver"),
     [(Grad_Descent())],
 )
-
-
-def test_noisy_sine(solver: Solver) -> None:
+def test_noisy_sine(
+    solver: Solver,
+) -> Tuple[
+    NDArray[np.float_], NDArray[np.float_], NDArray[np.float_], NDArray[np.float_]
+]:
     x_min = -1.0
     x_max = 1.0
     num_x = 500
     x_train, y_train = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
-    #print("y_train", y_train)
     n_qubit = 3
     depth = 3
     time_step = 0.5
-    
     batch_size = 50
     epochs = 10
     lr = 0.1
-    
     losses = []
     circuit = create_qcl_ansatz(n_qubit, depth, time_step, 0)
     qnn = QNNRegressor(circuit, solver)
     for epoch in range(epochs):
         indexes = [idx for idx in range(num_x)]
-        for bc in range(num_x//batch_size):
+        for bc in range(num_x // batch_size):
             selected = random.sample(indexes, batch_size)
             for el in selected:
                 indexes.remove(el)
@@ -83,22 +82,21 @@ def test_noisy_sine(solver: Solver) -> None:
 
 def main() -> None:
     x_test, y_test, y_pred, losses = test_noisy_sine(Grad_Descent())
-    #print("y test", y_test)
-    #print("y pred", y_pred)
     loss = mean_squared_error(y_pred, y_test)
     print("loss", loss)
     assert loss < 0.03
-    #plt.plot(x_test, y_test, "o", label="Test")
-    #plt.plot(x_test, y_pred, "o", label="Prediction")
-    #plt.legend()
-    #plt.show()
-    #plt.savefig("ytest_vs_ypred_batch.jpg")
-    #plt.clf()
-    #xs = [i for i in range(len(losses))]
-    #plt.plot(xs, losses, "o", label="lossesVSiterations")
-    #plt.legend()
-    #plt.show()
-    #plt.savefig("losses_iterations_batch.jpg")
+    # plt.plot(x_test, y_test, "o", label="Test")
+    # plt.plot(x_test, y_pred, "o", label="Prediction")
+    # plt.legend()
+    # plt.show()
+    # plt.savefig("ytest_vs_ypred_batch.jpg")
+    # plt.clf()
+    # xs = [i for i in range(len(losses))]
+    # plt.plot(xs, losses, "o", label="lossesVSiterations")
+    # plt.legend()
+    # plt.show()
+    # plt.savefig("losses_iterations_batch.jpg")
+
 
 if __name__ == "__main__":
     main()

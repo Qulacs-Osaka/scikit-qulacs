@@ -506,11 +506,11 @@ class LearningCircuit:
             raise NotImplementedError
 
         return parameter_id
-    
+
     def _add_multi_qubit_parametric_R_gate_inner(
         self,
         target: List[int],
-        pauli_id: List[int], 
+        pauli_id: List[int],
         initial_angle: float,
         share_with: Optional[int],
         share_with_coef: Optional[float],
