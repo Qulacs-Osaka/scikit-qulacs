@@ -74,14 +74,6 @@ class QNNRegressor:
                 observable = Observable(self.n_qubit)
                 observable.add_operator(1.0, i)
                 self.observables.append(observable)
-        else:
-            # just add Zi for number of i outputs
-            for i in range(self.n_outputs):
-                observable = Observable(self.n_qubit)
-                observable.add_operator(1.0, f"Z {i}")
-                self.observables.append(observable)
-                ob = "Z " + str(i)
-                self.observables_str.append(ob)
 
     def fit(
         self,
@@ -116,6 +108,16 @@ class QNNRegressor:
             y_scaled = y_train
 
         self.n_outputs = y_scaled.shape[1]
+
+        if (
+            self.observables_str == []
+        ):  # if this was originally 0, it was not said that the observables are correct. But a eclarations also above allows to not fit in many cases.
+            for i in range(self.n_outputs):
+                observable = Observable(self.n_qubit)
+                observable.add_operator(1.0, f"Z {i}")
+                self.observables.append(observable)
+                ob = "Z " + str(i)
+                self.observables_str.append(ob)
 
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
@@ -169,6 +171,15 @@ class QNNRegressor:
         x_scaled: NDArray[np.float_],
         y_scaled: NDArray[np.float_],
     ) -> float:
+        if (
+            self.observables_str == []
+        ):  # if this was originally 0, it was not said that the observables are correct. But a eclarations also above allows to not fit in many cases.
+            for i in range(self.n_outputs):
+                observable = Observable(self.n_qubit)
+                observable.add_operator(1.0, f"Z {i}")
+                self.observables.append(observable)
+                ob = "Z " + str(i)
+                self.observables_str.append(ob)
         if self.cost == "mse":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
@@ -195,10 +206,12 @@ class QNNRegressor:
         for h in range(len(x_scaled)):
             backobs = Observable(self.n_qubit)
             if self.n_outputs >= 2:
-                for i in self.observables_str:
+                for i in range(len(self.observables_str)):
                     backobs.add_operator(
                         2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
-                        i,  # I add a 2* as a derivative of the RMSE error
+                        self.observables_str[
+                            i
+                        ],  # I add a 2* as a derivative of the RMSE error
                     )
             else:
                 backobs.add_operator(
