@@ -33,7 +33,7 @@ def generate_noisy_data(
     rng = default_rng(seed)
     x_train = rng.uniform(x_min, x_max, x_shape)
     y_train = np.array([function(x) for x in x_train])
-    #y_train += mag_noise * rng.random(y_train.shape)
+    y_train += mag_noise * rng.random(y_train.shape)
     return x_train, y_train
 
 
@@ -59,7 +59,7 @@ def test_noisy_sine(solver: Solver) -> None:
     time_step = 0.5
     
     batch_size = 50
-    epochs = 500
+    epochs = 10
     lr = 0.1
     
     losses = []
@@ -85,19 +85,20 @@ def main() -> None:
     x_test, y_test, y_pred, losses = test_noisy_sine(Grad_Descent())
     #print("y test", y_test)
     #print("y pred", y_pred)
-    plt.plot(x_test, y_test, "o", label="Test")
-    plt.plot(x_test, y_pred, "o", label="Prediction")
-    plt.legend()
-    plt.show()
-    plt.savefig("ytest_vs_ypred_batch.jpg")
-    plt.clf()
-    xs = [i for i in range(len(losses))]
-    #print("iteration", xs)
-    #print("losses", losses)
-    plt.plot(xs, losses, "o", label="lossesVSiterations")
-    plt.legend()
-    plt.show()
-    plt.savefig("losses_iterations_batch.jpg")
+    loss = mean_squared_error(y_pred, y_test)
+    print("loss", loss)
+    assert loss < 0.03
+    #plt.plot(x_test, y_test, "o", label="Test")
+    #plt.plot(x_test, y_pred, "o", label="Prediction")
+    #plt.legend()
+    #plt.show()
+    #plt.savefig("ytest_vs_ypred_batch.jpg")
+    #plt.clf()
+    #xs = [i for i in range(len(losses))]
+    #plt.plot(xs, losses, "o", label="lossesVSiterations")
+    #plt.legend()
+    #plt.show()
+    #plt.savefig("losses_iterations_batch.jpg")
 
 
 if __name__ == "__main__":
