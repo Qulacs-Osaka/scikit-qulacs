@@ -100,6 +100,5 @@ def main() -> None:
     #plt.show()
     #plt.savefig("losses_iterations_batch.jpg")
 
-
 if __name__ == "__main__":
     main()
