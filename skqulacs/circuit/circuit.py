@@ -525,11 +525,6 @@ class LearningCircuit:
             )
             learning_parameter.append_position(new_gate_pos, None)
             self._learning_parameter_list.append(learning_parameter)
-        else:
-            parameter_id = share_with
-            sharing_parameter = self._learning_parameter_list[parameter_id]
-            sharing_parameter.append_position(new_gate_pos, share_with_coef)
-
         self._circuit.add_parametric_multi_Pauli_rotation_gate(
             target, pauli_id, initial_angle
         )

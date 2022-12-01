@@ -199,14 +199,14 @@ class QNNRegressor:
             if self.n_outputs >= 2:
                 for i in range(len(self.observables_str)):
                     backobs.add_operator(
-                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
+                        2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
                         self.observables_str[
                             i
                         ],  # I add a 2* as a derivative of the RMSE error
                     )
             else:
                 backobs.add_operator(
-                    (-y_scaled[h] + mto[h][0]) / self.n_outputs,
+                    2 * (-y_scaled[h] + mto[h][0]) / self.n_outputs,
                     self.observables_str[0],
                 )
             grad = grad + self.circuit.backprop(x_scaled[h], backobs)
@@ -221,14 +221,13 @@ class QNNRegressor:
     ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
         grad = np.zeros(len(theta))
+        backobs = Observable(self.n_qubit)
+        if self.n_outputs >= 2:
+            for i in self.observables_str:
+                backobs.add_operator(1.0, i)
+        else:
+            backobs.add_operator(1.0, self.observables_str[0])
         for h in range(len(x_scaled)):
-            backobs = Observable(self.n_qubit)
-            if self.n_outputs >= 2:
-                for i in self.observables_str:
-                    backobs.add_operator(1.0, i)
-            else:
-                backobs.add_operator(1.0, self.observables_str[0])
             grad += self.circuit.backprop(x_scaled[h], backobs)
-
         grad /= len(x_scaled)
         return grad
