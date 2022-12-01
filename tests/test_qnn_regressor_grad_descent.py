@@ -79,12 +79,30 @@ def test_noisy_sine(
     return x_test, y_test, y_pred, losses
 
 
+def just_gradients(str_ob) -> Tuple[NDArray[np.float_]]:
+    x_min = -1.0
+    x_max = 1.0
+    num_x = 300
+    x_train, y_train = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
+    n_qubit = 3
+    depth = 5
+    circuit = create_multi_qubit_param_rotational_ansatz(n_qubit, c_depth=depth)
+    qnn = QNNRegressor(circuit, Grad_Descent(), observables_str=str_ob)
+    theta = circuit.get_parameters()
+    grads_circuit = qnn._func_grad(theta, x_train)
+    return grads_circuit
+
+
 def main() -> None:
     np.random.seed(0)
     random.seed(0)
     x_test, y_test, y_pred, losses = test_noisy_sine(Grad_Descent())
     loss = mean_squared_error(y_pred, y_test)
     print("loss", loss)
+    # This is how you compute the gradients of the circuit (based on the observable you select) without Loss
+    # see function _func_grad()
+    grads_circuit = just_gradients(["Z 1"])
+    print(grads_circuit)
     # plt.plot(x_test, y_test, "o", label="Test")
     # plt.plot(x_test, y_pred, "o", label="Prediction")
     # plt.legend()

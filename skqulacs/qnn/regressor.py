@@ -171,15 +171,6 @@ class QNNRegressor:
         x_scaled: NDArray[np.float_],
         y_scaled: NDArray[np.float_],
     ) -> float:
-        if (
-            self.observables_str == []
-        ):  # if this was originally 0, it was not said that the observables are correct. But a eclarations also above allows to not fit in many cases.
-            for i in range(self.n_outputs):
-                observable = Observable(self.n_qubit)
-                observable.add_operator(1.0, f"Z {i}")
-                self.observables.append(observable)
-                ob = "Z " + str(i)
-                self.observables_str.append(ob)
         if self.cost == "mse":
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
