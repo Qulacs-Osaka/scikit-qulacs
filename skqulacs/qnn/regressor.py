@@ -221,13 +221,7 @@ class QNNRegressor:
     ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
         grad = np.zeros(len(theta))
-        backobs = Observable(self.n_qubit)
-        if self.n_outputs >= 2:
-            for i in self.observables_str:
-                backobs.add_operator(1.0, i)
-        else:
-            backobs.add_operator(1.0, self.observables_str[0])
         for h in range(len(x_scaled)):
-            grad += self.circuit.backprop(x_scaled[h], backobs)
+            grad += self.circuit.backprop(x_scaled[h], self.observables)
         grad /= len(x_scaled)
         return grad
