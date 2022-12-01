@@ -89,7 +89,9 @@ def just_gradients(str_ob) -> Tuple[NDArray[np.float_]]:
     circuit = create_multi_qubit_param_rotational_ansatz(n_qubit, c_depth=depth)
     qnn = QNNRegressor(circuit, Grad_Descent(), observables_str=str_ob)
     theta = circuit.get_parameters()
-    grads_circuit = qnn._func_grad(theta / 2, x_train)
+    print("theta", theta)
+    print("self.observables", qnn.observables_str)
+    grads_circuit = qnn._func_grad(theta, x_train)
     return grads_circuit
 
 
