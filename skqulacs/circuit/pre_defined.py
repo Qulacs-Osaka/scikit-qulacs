@@ -3,7 +3,7 @@ from math import factorial
 from typing import List, Optional
 
 import numpy as np
-from numpy.random import Generator, default_rng, randint
+from numpy.random import Generator, default_rng
 from numpy.typing import NDArray
 from qulacs.gate import CNOT, CZ, DenseMatrix
 
@@ -606,7 +606,6 @@ def create_multi_qubit_param_rotational_ansatz(
         xa = x[index % len(x)]
         return xa
 
-    np.random.seed(seed)
     rng = default_rng(seed)
     circuit = LearningCircuit(n_qubit)
     # embedding, at first just one time
@@ -616,7 +615,8 @@ def create_multi_qubit_param_rotational_ansatz(
     for _ in range(c_depth):
         for i in range(n_qubit):
             angle = 2.0 * np.pi * rng.random()
-            cops = randint(1, 4, size=2)
+            circuit.add_parametric_RX_gate(i, 0.0)
+            cops = rng.integers(1, 4, 2)
             circuit._add_multi_qubit_parametric_R_gate_inner(
                 [i, (i + 1) % n_qubit], cops, angle, None, None
             )

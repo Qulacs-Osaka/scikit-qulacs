@@ -143,7 +143,7 @@ class Adam(Solver):
 
 
 @dataclass
-class Grad_Descent(Solver):
+class GradientDescent(Solver):
     def run(
         self,
         cost_func: CostFunc,
@@ -151,7 +151,7 @@ class Grad_Descent(Solver):
         theta: List[float],
         x: NDArray[np.float_],
         y: NDArray[np.float_],
-        lr: 0.1,
+        lr: float = 0.1,
     ) -> Tuple[float, List[float]]:
         theta_now = theta
         grad = jac(

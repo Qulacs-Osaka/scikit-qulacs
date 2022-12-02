@@ -79,7 +79,7 @@ class QNNRegressor:
         self,
         x_train: NDArray[np.float_],
         y_train: NDArray[np.float_],
-        maxiter: Optional[int] = None,
+        maxiter_or_lr: Optional[int] = None,
     ) -> Tuple[float, List[float]]:
         """
         Args:
@@ -126,7 +126,7 @@ class QNNRegressor:
             theta_init,
             x_scaled,
             y_scaled,
-            maxiter,
+            maxiter_or_lr,
         )
 
     def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -202,7 +202,7 @@ class QNNRegressor:
                         2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
                         self.observables_str[
                             i
-                        ],  # I add a 2* as a derivative of the RMSE error
+                        ],  # 2* because of the derivative of the RMSE error
                     )
             else:
                 backobs.add_operator(
