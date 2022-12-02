@@ -79,7 +79,7 @@ def test_noisy_sine(
     return x_test, y_test, y_pred, losses
 
 
-def just_gradients(str_ob) -> Tuple[NDArray[np.float_]]:
+def test_just_gradients(str_ob) -> Tuple[NDArray[np.float_]]:
     x_min = -1.0
     x_max = 1.0
     num_x = 300
@@ -100,7 +100,7 @@ def main() -> None:
     random.seed(0)
     # This is how you compute the gradients of the circuit (based on the observable you select) without Loss
     # see function _func_grad()
-    grads_circuit = just_gradients(["Z 1"])
+    grads_circuit = test_just_gradients(["Z 1"])
     print(grads_circuit)
     x_test, y_test, y_pred, losses = test_noisy_sine(Grad_Descent())
     loss = mean_squared_error(y_pred, y_test)
