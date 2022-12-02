@@ -79,7 +79,11 @@ def test_noisy_sine(
     return x_test, y_test, y_pred, losses
 
 
-def test_just_gradients(str_ob: List[str]) -> Tuple[NDArray[np.float_]]:
+@pytest.mark.parametrize(
+    ("obs"),
+    [(["Z 1"])],
+)
+def test_just_gradients(obs: List[str]) -> Tuple[NDArray[np.float_]]:
     x_min = -1.0
     x_max = 1.0
     num_x = 300
@@ -87,7 +91,7 @@ def test_just_gradients(str_ob: List[str]) -> Tuple[NDArray[np.float_]]:
     n_qubit = 3
     depth = 5
     circuit = create_multi_qubit_param_rotational_ansatz(n_qubit, c_depth=depth)
-    qnn = QNNRegressor(circuit, Grad_Descent(), observables_str=str_ob)
+    qnn = QNNRegressor(circuit, Grad_Descent(), observables_str=obs)
     theta = circuit.get_parameters()
     # print("theta", theta)
     # print("self.observables", qnn.observables_str)
