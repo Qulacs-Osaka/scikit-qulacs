@@ -214,7 +214,7 @@ class QNNRegressor:
         grad /= len(x_scaled)
         return grad
 
-    def _func_grad(
+    def func_grad(
         self,
         theta: List[float],
         x_scaled: NDArray[np.float_],

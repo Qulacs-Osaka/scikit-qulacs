@@ -91,7 +91,7 @@ def just_gradients(str_ob) -> Tuple[NDArray[np.float_]]:
     theta = circuit.get_parameters()
     print("theta", theta)
     print("self.observables", qnn.observables_str)
-    grads_circuit = qnn._func_grad(np.square(theta), x_train)
+    grads_circuit = qnn.func_grad(np.square(theta), x_train)
     return grads_circuit
 
 
