@@ -76,7 +76,9 @@ def test_noisy_sine(
             losses.append(opt_loss)
     x_test, y_test = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
     y_pred = qnn.predict(x_test)
-    return x_test, y_test, y_pred, losses
+    MSE = mean_squared_error(y_pred, y_test)
+    assert MSE < 0.045
+    return x_test, y_test, y_pred, losses, MSE
 
 
 @pytest.mark.parametrize(
@@ -106,10 +108,8 @@ def main() -> None:
     # see function _func_grad()
     grads_circuit = test_just_gradients(["Z 2"])
     print("Averaged gradients", grads_circuit)
-    x_test, y_test, y_pred, losses = test_noisy_sine(GradientDescent())
-    loss = mean_squared_error(y_pred, y_test)
-    print("Loss value(MSE) on test set: ", loss)
-    assert loss < 0.045
+    x_test, y_test, y_pred, losses, MSE = test_noisy_sine(GradientDescent())
+    print("Loss value(MSE) on test set: ", MSE)
     # plt.plot(x_test, y_test, "o", label="Test")
     # plt.plot(x_test, y_pred, "o", label="Prediction")
     # plt.legend()
