@@ -597,3 +597,27 @@ def create_qcnn_ansatz(n_qubit: int, seed: Optional[int] = 0) -> LearningCircuit
         circuit = pooling_circuit(circuit, t[0], t[1])
 
     return circuit
+
+
+def create_multi_qubit_param_rotational_ansatz(
+    n_qubit: int, c_depth: int = 1, seed: Optional[int] = 0
+) -> LearningCircuit:
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
+        xa = x[index % len(x)]
+        return xa
+
+    rng = default_rng(seed)
+    circuit = LearningCircuit(n_qubit)
+    # embedding, at first just one time
+    for qb in range(n_qubit):
+        circuit.add_input_RY_gate(qb, lambda x, i=qb: preprocess_x(x, qb))
+    # now iterate over layers
+    for _ in range(c_depth):
+        for i in range(n_qubit):
+            angle = 2.0 * np.pi * rng.random()
+            circuit.add_parametric_RX_gate(i, 0.0)
+            cops = rng.integers(1, 4, 2)
+            circuit._add_multi_qubit_parametric_R_gate_inner(
+                [i, (i + 1) % n_qubit], cops, angle, None, None
+            )
+    return circuit

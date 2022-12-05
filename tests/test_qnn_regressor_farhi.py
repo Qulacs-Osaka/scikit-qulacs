@@ -87,7 +87,6 @@ def test_noisy_sine(solver: Solver, maxiter: int) -> None:
 
     circuit = create_farhi_neven_ansatz(n_qubit, depth, 0)
     qnn = QNNRegressor(circuit, solver)
-
     qnn.fit(x_train, y_train, maxiter)
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_x)
     y_pred = qnn.predict(x_test)
@@ -102,6 +101,7 @@ def main() -> None:
     plt.plot(x_test, y_pred, "o", label="Prediction")
     plt.legend()
     plt.show()
+    # plt.savefig("test_qnn_regresspr_fahri.jpg")
 
 
 if __name__ == "__main__":

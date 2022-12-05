@@ -140,3 +140,27 @@ class Adam(Solver):
         loss = cost_func(theta_now, x, y)
         theta_opt = theta_now
         return loss, theta_opt
+
+
+@dataclass
+class GradientDescent(Solver):
+    def run(
+        self,
+        cost_func: CostFunc,
+        jac: Jacobian,
+        theta: List[float],
+        x: NDArray[np.float_],
+        y: NDArray[np.float_],
+        lr: float = 0.1,
+    ) -> Tuple[float, List[float]]:
+        theta_now = theta
+        grad = jac(
+            theta_now,
+            x,
+            y,
+        )
+        # make gradient step
+        new_theta = theta - lr * grad
+        # compute loss
+        loss = cost_func(new_theta, x, y)
+        return loss, new_theta

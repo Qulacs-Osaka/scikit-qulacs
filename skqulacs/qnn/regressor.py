@@ -49,10 +49,11 @@ class QNNRegressor:
     do_y_scale: bool = field(default=True)
     x_norm_range: float = field(default=1.0)
     y_norm_range: float = field(default=0.7)
+    observables_str: List[str] = field(init=True, default_factory=list)
 
     observables: List[Observable] = field(init=False, default_factory=list)
     n_qubit: int = field(init=False)
-    n_outputs: int = field(init=False)
+    n_outputs: int = field(default=1)
     x_scaler: MinMaxScaler = field(init=False)
     y_scaler: MinMaxScaler = field(init=False)
 
@@ -67,12 +68,18 @@ class QNNRegressor:
             self.scale_y_scaler = MinMaxScaler(
                 feature_range=(-self.y_norm_range, self.y_norm_range)
             )
+        if self.observables_str != []:
+            # add the right observables
+            for i in self.observables_str:
+                observable = Observable(self.n_qubit)
+                observable.add_operator(1.0, i)
+                self.observables.append(observable)
 
     def fit(
         self,
         x_train: NDArray[np.float_],
         y_train: NDArray[np.float_],
-        maxiter: Optional[int] = None,
+        maxiter_or_lr: Optional[int] = None,
     ) -> Tuple[float, List[float]]:
         """
         Args:
@@ -102,11 +109,15 @@ class QNNRegressor:
 
         self.n_outputs = y_scaled.shape[1]
 
-        self.observables = []
-        for i in range(self.n_outputs):
-            observable = Observable(self.n_qubit)
-            observable.add_operator(1.0, f"Z {i}")
-            self.observables.append(observable)
+        if (
+            self.observables_str == []
+        ):  # if this was originally 0, it was not said that the observables are correct. But a eclarations also above allows to not fit in many cases.
+            for i in range(self.n_outputs):
+                observable = Observable(self.n_qubit)
+                observable.add_operator(1.0, f"Z {i}")
+                self.observables.append(observable)
+                ob = "Z " + str(i)
+                self.observables_str.append(ob)
 
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
@@ -115,7 +126,7 @@ class QNNRegressor:
             theta_init,
             x_scaled,
             y_scaled,
-            maxiter,
+            maxiter_or_lr,
         )
 
     def predict(self, x_test: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -186,13 +197,34 @@ class QNNRegressor:
         for h in range(len(x_scaled)):
             backobs = Observable(self.n_qubit)
             if self.n_outputs >= 2:
-                for i in range(self.n_outputs):
+                for i in range(len(self.observables_str)):
                     backobs.add_operator(
-                        (-y_scaled[h][i] + mto[h][i]) / self.n_outputs, f"Z {i}"
+                        2 * (-y_scaled[h][i] + mto[h][i]) / self.n_outputs,
+                        self.observables_str[
+                            i
+                        ],  # 2* because of the derivative of the RMSE error
                     )
             else:
-                backobs.add_operator((-y_scaled[h] + mto[h][0]) / self.n_outputs, "Z 0")
-            grad += self.circuit.backprop(x_scaled[h], backobs)
+                backobs.add_operator(
+                    2 * (-y_scaled[h] + mto[h][0]) / self.n_outputs,
+                    self.observables_str[0],
+                )
+            grad = grad + self.circuit.backprop(x_scaled[h], backobs)
 
+        grad /= len(x_scaled)
+        return grad
+
+    def func_grad(
+        self,
+        theta: List[float],
+        x_scaled: NDArray[np.float_],
+    ) -> NDArray[np.float_]:
+        self.circuit.update_parameters(theta)
+        grad = np.zeros(len(theta))
+        for h in range(len(x_scaled)):
+            backobs = Observable(self.n_qubit)
+            for i in self.observables_str:
+                backobs.add_operator(1.0, i)
+            grad += self.circuit.backprop(x_scaled[h], backobs)
         grad /= len(x_scaled)
         return grad

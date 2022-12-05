@@ -451,6 +451,13 @@ class LearningCircuit:
         """
         self._add_parametric_input_R_gate_inner(index, parameter, _Axis.Z, input_func)
 
+    def add_parametric_multi_Pauli_rotation_gate(
+        self, target: List[int], pauli_id: List[int], initial_angle: float
+    ):
+        self._circuit.add_parametric_multi_Pauli_rotation_gate(
+            target, pauli_id, initial_angle
+        )
+
     def _add_R_gate_inner(
         self,
         index: int,
@@ -497,6 +504,30 @@ class LearningCircuit:
             self._circuit.add_parametric_RZ_gate(index, parameter)
         else:
             raise NotImplementedError
+
+        return parameter_id
+
+    def _add_multi_qubit_parametric_R_gate_inner(
+        self,
+        target: List[int],
+        pauli_id: List[int],
+        initial_angle: float,
+        share_with: Optional[int],
+        share_with_coef: Optional[float],
+    ) -> int:
+        new_gate_pos = self._new_parameter_position()
+
+        if share_with is None:
+            parameter_id = len(self._learning_parameter_list)
+            learning_parameter = _LearningParameter(
+                parameter_id,
+                initial_angle,
+            )
+            learning_parameter.append_position(new_gate_pos, None)
+            self._learning_parameter_list.append(learning_parameter)
+        self._circuit.add_parametric_multi_Pauli_rotation_gate(
+            target, pauli_id, initial_angle
+        )
 
         return parameter_id
 
@@ -548,13 +579,6 @@ class LearningCircuit:
             self._circuit.add_parametric_RZ_gate(index, parameter)
         else:
             raise NotImplementedError
-
-    def add_parametric_multi_Pauli_rotation_gate(
-        self, target: List[int], pauli_id: List[int], initial_angle: float
-    ):
-        self._circuit.add_parametric_multi_Pauli_rotation_gate(
-            target, pauli_id, initial_angle
-        )
 
     def get_circuit_info(self):
         return self._circuit
