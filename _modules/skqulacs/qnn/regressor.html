@@ -393,10 +393,11 @@ title="Source repository"
     <span class="n">do_y_scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">x_norm_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
     <span class="n">y_norm_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">observables_str</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
     <span class="n">observables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">n_outputs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">n_outputs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">x_scaler</span><span class="p">:</span> <span class="n">MinMaxScaler</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">y_scaler</span><span class="p">:</span> <span class="n">MinMaxScaler</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -411,12 +412,18 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">scale_y_scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span>
                 <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_norm_range</span><span class="p">)</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="c1"># add the right observables</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="p">:</span>
+                <span class="n">observable</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+                <span class="n">observable</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QNNRegressor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x_train</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
         <span class="n">y_train</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
-        <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxiter_or_lr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -446,11 +453,15 @@ title="Source repository"
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">=</span> <span class="n">y_scaled</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">):</span>
-            <span class="n">observable</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
-            <span class="n">observable</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="p">):</span>  <span class="c1"># if this was originally 0, it was not said that the observables are correct. But a eclarations also above allows to not fit in many cases.</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">):</span>
+                <span class="n">observable</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+                <span class="n">observable</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+                <span class="n">ob</span> <span class="o">=</span> <span class="s2">&quot;Z &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
 
         <span class="n">theta_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
@@ -459,7 +470,7 @@ title="Source repository"
             <span class="n">theta_init</span><span class="p">,</span>
             <span class="n">x_scaled</span><span class="p">,</span>
             <span class="n">y_scaled</span><span class="p">,</span>
-            <span class="n">maxiter</span><span class="p">,</span>
+            <span class="n">maxiter_or_lr</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="QNNRegressor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
@@ -530,16 +541,37 @@ title="Source repository"
         <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)):</span>
             <span class="n">backobs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="p">)):</span>
                     <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span>
-                        <span class="p">(</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="p">[</span>
+                            <span class="n">i</span>
+                        <span class="p">],</span>  <span class="c1"># 2* because of the derivative of the RMSE error</span>
                     <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">((</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">,</span> <span class="s2">&quot;Z 0&quot;</span><span class="p">)</span>
-            <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
+                <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span>
+                    <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">y_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">+</span> <span class="n">mto</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_outputs</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
 
         <span class="n">grad</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">grad</span></div>
+        <span class="k">return</span> <span class="n">grad</span>
+
+<div class="viewcode-block" id="QNNRegressor.func_grad"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.func_grad">[docs]</a>    <span class="k">def</span> <span class="nf">func_grad</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">x_scaled</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)):</span>
+            <span class="n">backobs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables_str</span><span class="p">:</span>
+                <span class="n">backobs</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">[</span><span class="n">h</span><span class="p">],</span> <span class="n">backobs</span><span class="p">)</span>
+        <span class="n">grad</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grad</span></div></div>
 </pre></div>
 
               </div>

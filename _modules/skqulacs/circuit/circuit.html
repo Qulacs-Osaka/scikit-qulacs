@@ -795,6 +795,13 @@ title="Source repository"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametric_input_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">input_func</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="LearningCircuit.add_parametric_multi_Pauli_rotation_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_multi_Pauli_rotation_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">pauli_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">initial_angle</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">pauli_id</span><span class="p">,</span> <span class="n">initial_angle</span>
+        <span class="p">)</span></div>
+
     <span class="k">def</span> <span class="nf">_add_R_gate_inner</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -841,6 +848,30 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+        <span class="k">return</span> <span class="n">parameter_id</span>
+
+    <span class="k">def</span> <span class="nf">_add_multi_qubit_parametric_R_gate_inner</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">pauli_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">initial_angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">new_gate_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_parameter_position</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">share_with</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parameter_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">)</span>
+            <span class="n">learning_parameter</span> <span class="o">=</span> <span class="n">_LearningParameter</span><span class="p">(</span>
+                <span class="n">parameter_id</span><span class="p">,</span>
+                <span class="n">initial_angle</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">learning_parameter</span><span class="o">.</span><span class="n">append_position</span><span class="p">(</span><span class="n">new_gate_pos</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">learning_parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">pauli_id</span><span class="p">,</span> <span class="n">initial_angle</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parameter_id</span>
 
@@ -892,13 +923,6 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_RZ_gate</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-<div class="viewcode-block" id="LearningCircuit.add_parametric_multi_Pauli_rotation_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_multi_Pauli_rotation_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">pauli_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">initial_angle</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span> <span class="n">pauli_id</span><span class="p">,</span> <span class="n">initial_angle</span>
-        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.get_circuit_info"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_circuit_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span></div>
