@@ -49,12 +49,12 @@ def create_circuit(depth: int) -> LearningCircuit:
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
 
-        circuit.add_gate(Pauli([0], [1]))  # Pauli X on 0th qubit
+        circuit.add_X_gate(0)
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
-        circuit.add_gate(Pauli([0], [1]))
+        circuit.add_X_gate(0)
 
     def add_layer(circuit: LearningCircuit, rng: Generator) -> None:
         circuit.add_parametric_RZ_gate(0, rng.random())
