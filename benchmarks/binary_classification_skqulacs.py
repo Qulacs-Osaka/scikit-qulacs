@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from binary_classification_common import preprocess_input
 from numpy.random import Generator, default_rng
-from qulacs.gate import Pauli
 from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
@@ -49,12 +48,12 @@ def create_circuit(depth: int) -> LearningCircuit:
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
 
-        circuit.add_gate(Pauli([0], [1]))  # Pauli X on 0th qubit
+        circuit.add_X_gate(0)
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
         circuit.add_CNOT_gate(0, 1)
         circuit.add_input_RY_gate(1)
-        circuit.add_gate(Pauli([0], [1]))
+        circuit.add_X_gate(0)
 
     def add_layer(circuit: LearningCircuit, rng: Generator) -> None:
         circuit.add_parametric_RZ_gate(0, rng.random())
