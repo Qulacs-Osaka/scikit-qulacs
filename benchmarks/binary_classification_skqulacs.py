@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from binary_classification_common import preprocess_input
 from numpy.random import Generator, default_rng
-from qulacs.gate import Pauli
 from sklearn import datasets
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
