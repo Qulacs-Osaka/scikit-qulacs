@@ -39,7 +39,7 @@ Sphinx = "^4.3.0"
 sphinx-book-theme = "^0.3.0"
 ipykernel = "^6.16.0"
 myst-nb = "^0.16.0"
-pytest-benchmark = "^3.4.1"
+pytest-benchmark = "^4.0.0"
 pytest-cov = "^4.0.0"
 PennyLane = "^0.24.0"
 
