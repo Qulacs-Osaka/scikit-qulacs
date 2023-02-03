@@ -360,7 +360,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="QNNRegressor"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">QNNRegressor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class to solve regression problems with quantum neural networks</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to solve regression problems with quantum neural networks</span>
 <span class="sd">    The output is taken as expectation values of pauli Z operator acting on the first qubit, i.e., output is &lt;Z_0&gt;.</span>
 
 <span class="sd">    Args:</span>
@@ -425,7 +425,7 @@ title="Source repository"
         <span class="n">y_train</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
         <span class="n">maxiter_or_lr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            x_list: List of training data inputs whose shape is (n_sample, n_features).</span>
 <span class="sd">            y_list: List of training data outputs whose shape is (n_sample, n_output_dims).</span>
@@ -474,7 +474,7 @@ title="Source repository"
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="QNNRegressor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.regressor.html#skqulacs.qnn.regressor.QNNRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Predict outcome for each input data in `x_test`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict outcome for each input data in `x_test`.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            x_test: Input data whose shape is (n_samples, n_features).</span>

@@ -352,7 +352,7 @@ title="Source repository"
 
 
 <span class="k">class</span> <span class="nc">_Axis</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Specifying axis. Used in inner private method in LearningCircuit.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specifying axis. Used in inner private method in LearningCircuit.&quot;&quot;&quot;</span>
 
     <span class="n">X</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
@@ -368,7 +368,7 @@ title="Source repository"
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">_PositionDetail</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit.positions_in_circuit`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit.positions_in_circuit`.</span>
 <span class="sd">    This class manages indexe and coefficients (optional) of gate.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        gate_pos: Indices of a parameter in LearningCircuit._circuit.</span>
@@ -381,7 +381,7 @@ title="Source repository"
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">_LearningParameter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage a parameter of `ParametricQuantumCircuit`.</span>
 <span class="sd">    This class manages index and value of parameter.</span>
 <span class="sd">    There is two member variables to note: `positions_in_circuit` and `parameter_id`.</span>
 <span class="sd">    `positions_in_circuit` is indices of parameters in `ParametricQuantumCircuit` held by `LearningCircuit`.</span>
@@ -414,7 +414,7 @@ title="Source repository"
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">_InputParameter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Manage transformation of an input.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage transformation of an input.</span>
 <span class="sd">    `func` transforms the given input and the outcome is stored at `pos`-th parameter in `LearningCircuit._circuit`.</span>
 <span class="sd">    If the `func` needs a learning parameter, supply `companion_parameter_id` with the learning parameter&#39;s `parameter_id`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -426,7 +426,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="LearningCircuit"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Construct and run quantum circuit for QNN.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct and run quantum circuit for QNN.</span>
 
 <span class="sd">    ## About parameters</span>
 
@@ -481,7 +481,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span> <span class="o">=</span> <span class="n">ParametricQuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LearningCircuit.update_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update learning parameter of the circuit with given `theta`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update learning parameter of the circuit with given `theta`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            theta: New learning parameters.</span>
@@ -496,7 +496,7 @@ title="Source repository"
                 <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.get_parameters"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of learning parameters&#39; values.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of learning parameters&#39; values.&quot;&quot;&quot;</span>
         <span class="n">theta_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">theta_list</span></div>
 
@@ -514,7 +514,7 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LearningCircuit.run"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Determine parameters for input gate based on `x` and apply the circuit to |0&gt; state.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine parameters for input gate based on `x` and apply the circuit to |0&gt; state.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            x: Input data whose shape is (n_features,).</span>
@@ -529,7 +529,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">state</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.run_x_no_change"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.run_x_no_change">[docs]</a>    <span class="k">def</span> <span class="nf">run_x_no_change</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumState</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the circuit while x is not changed from the previous run.</span>
 <span class="sd">        (can change parameters)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -539,7 +539,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">state</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.backprop"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop">[docs]</a>    <span class="k">def</span> <span class="nf">backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">obs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        backprop(self, x: List[float], obs)-&gt;List[Float]</span>
 
 <span class="sd">        xは入力の状態で、yは出力値の微分値</span>
@@ -565,7 +565,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">ans</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.backprop_inner_product"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop_inner_product">[docs]</a>    <span class="k">def</span> <span class="nf">backprop_inner_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        backprop(self, x: List[float],  state)-&gt;List[Float]</span>
 
 <span class="sd">        inner_productでbackpropします。</span>
@@ -581,13 +581,13 @@ title="Source repository"
         <span class="k">return</span> <span class="n">ans</span></div>
 
     <span class="k">def</span> <span class="nf">_new_parameter_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a position of a new parameter to be registered to `ParametricQuantumCircuit`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a position of a new parameter to be registered to `ParametricQuantumCircuit`.</span>
 <span class="sd">        This function does not actually register a new parameter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
 
 <div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add arbitrary gate.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add arbitrary gate.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            gate: Gate to add.</span>
@@ -595,28 +595,28 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_X_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_X_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_X_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add X gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_X_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_Y_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Y_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Y_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add Y gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_Y_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_Z_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_Z_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_Z_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add Z gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_Z_gate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_RX_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RX_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RX_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
 <span class="sd">            angle: Rotation angle.</span>
@@ -624,7 +624,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_RY_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RY_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RY_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
 <span class="sd">            angle: Rotation angle.</span>
@@ -632,7 +632,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_RZ_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_RZ_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_RZ_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
 <span class="sd">            angle: Rotation angle.</span>
@@ -640,7 +640,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_R_gate_inner</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_CNOT_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_CNOT_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_CNOT_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            control_index: Index of control qubit.</span>
 <span class="sd">            target_index: Index of target qubit.</span>
@@ -648,7 +648,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_CNOT_gate</span><span class="p">(</span><span class="n">control_index</span><span class="p">,</span> <span class="n">target_index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LearningCircuit.add_H_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_H_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_H_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to put H gate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -659,7 +659,7 @@ title="Source repository"
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
 <span class="sd">            input_func: Function transforming input value.</span>
@@ -671,7 +671,7 @@ title="Source repository"
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
 <span class="sd">            input_func: Function transforming input value.</span>
@@ -683,7 +683,7 @@ title="Source repository"
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
 <span class="sd">            input_func: Function transforming input value.</span>
@@ -697,7 +697,7 @@ title="Source repository"
         <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
@@ -718,7 +718,7 @@ title="Source repository"
         <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
@@ -739,7 +739,7 @@ title="Source repository"
         <span class="n">share_with</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">share_with_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
@@ -759,7 +759,7 @@ title="Source repository"
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RX gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
@@ -773,7 +773,7 @@ title="Source repository"
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RY gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>
@@ -787,7 +787,7 @@ title="Source repository"
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">input_func</span><span class="p">:</span> <span class="n">InputFuncWithParam</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">theta</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            index: Index of qubit to add RZ gate.</span>
 <span class="sd">            parameter: Initial parameter of this gate.</span>

@@ -362,7 +362,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="QNNClassifier"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">QNNClassifier</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class to solve classification problems by quantum neural networks</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to solve classification problems by quantum neural networks</span>
 <span class="sd">    The prediction is made by making a vector which predicts one-hot encoding of labels.</span>
 <span class="sd">    The prediction is made by</span>
 <span class="sd">    1. taking expectation values of Pauli Z operator of each qubit &lt;Z_i&gt;,</span>
@@ -432,7 +432,7 @@ title="Source repository"
         <span class="n">y_train</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
         <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            x_train: List of training data inputs whose shape is (n_sample, n_features).</span>
 <span class="sd">            y_train: List of labels to fit. Labels must be represented as integers. Shape is (n_samples,)</span>
@@ -462,7 +462,7 @@ title="Source repository"
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="QNNClassifier.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.classifier.html#skqulacs.qnn.classifier.QNNClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Predict outcome for each input data in `x_test`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict outcome for each input data in `x_test`.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            x_test: Input data whose shape is (n_samples, n_features).</span>

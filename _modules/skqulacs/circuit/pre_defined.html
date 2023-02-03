@@ -357,7 +357,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_qcl_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_qcl_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_qcl_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a circuit used in this page: https://dojo.qulacs.org/ja/latest/notebooks/5.2_Quantum_Circuit_Learning.html</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits</span>
 <span class="sd">        c_depth: circuit depth</span>
@@ -401,7 +401,7 @@ title="Source repository"
 <span class="k">def</span> <span class="nf">_create_time_evol_gate</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mf">0.77</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;create a hamiltonian dynamics with transverse field ising model with random interaction and random magnetic field</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create a hamiltonian dynamics with transverse field ising model with random interaction and random magnetic field</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits</span>
 <span class="sd">        time_step: evolution time</span>
@@ -443,7 +443,7 @@ title="Source repository"
 
 
 <span class="k">def</span> <span class="nf">_make_fullgate</span><span class="p">(</span><span class="n">list_SiteAndOperator</span><span class="p">,</span> <span class="n">n_qubit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Receive `list_SiteAndOperator = [ [i_0, O_0], [i_1, O_1], ...]` and</span>
 <span class="sd">    insert identity to qubits which is not present in the list to create (2**n_qubit, 2**n_qubit) matrix</span>
 <span class="sd">    I(0) * ... * O_0(i_0) * ... * O_1(i_1) ...</span>
@@ -464,7 +464,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_farhi_neven_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_farhi_neven_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_farhi_neven_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;create circuit proposed in https://arxiv.org/abs/1802.06002.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create circuit proposed in https://arxiv.org/abs/1802.06002.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubits: number of qubits</span>
 <span class="sd">        c_depth: depth of the circuit</span>
@@ -504,7 +504,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_farhi_neven_watle_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_farhi_neven_watle_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_farhi_neven_watle_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;create modified version of circuit proposed in https://arxiv.org/abs/1802.06002.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create modified version of circuit proposed in https://arxiv.org/abs/1802.06002.</span>
 <span class="sd">    made by WA_TLE.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubits: number of qubits</span>
@@ -573,7 +573,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="create_ibm_embedding_circuit"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_ibm_embedding_circuit">[docs]</a><span class="k">def</span> <span class="nf">create_ibm_embedding_circuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;create circuit proposed in https://arxiv.org/abs/1802.06002.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create circuit proposed in https://arxiv.org/abs/1802.06002.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubits: number of qubits</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -618,7 +618,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_shirai_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_shirai_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_shirai_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;create circuit proposed in http://arxiv.org/abs/2111.02951.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create circuit proposed in http://arxiv.org/abs/2111.02951.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits</span>
 <span class="sd">        c_depth: circuit depth as defined in http://arxiv.org/abs/2111.02951</span>
@@ -693,7 +693,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_npqc_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_npqc_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_npqc_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(a).</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits. must be even.</span>
@@ -748,7 +748,7 @@ title="Source repository"
 <div class="viewcode-block" id="create_yzcx_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_yzcx_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_yzcx_ansatz</span><span class="p">(</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates circuit used in http://arxiv.org/abs/2108.01039, Fig. 5(c).</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits. must be even.</span>
@@ -835,7 +835,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="create_qcnn_ansatz"><a class="viewcode-back" href="../../../skqulacs.circuit.pre_defined.html#skqulacs.circuit.pre_defined.create_qcnn_ansatz">[docs]</a><span class="k">def</span> <span class="nf">create_qcnn_ansatz</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LearningCircuit</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates circuit used in https://www.tensorflow.org/quantum/tutorials/qcnn?hl=en, Section 1.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubit: number of qubits. must be even.</span>

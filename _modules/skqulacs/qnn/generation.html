@@ -358,7 +358,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="QNNGeneretor"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor">[docs]</a><span class="k">class</span> <span class="nc">QNNGeneretor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    quantum circuit learningを用いて生成モデルをやる</span>
 
 <span class="sd">    入力無し、出力される確率分布をテストデータの確率分布に近くするのが目的</span>
@@ -379,7 +379,7 @@ title="Source repository"
         <span class="n">gauss_sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">fitting_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param circuit: 回路そのもの</span>
 
 <span class="sd">        :param fitting_qubit: circuitのqubitとは別で、データのqubit数を示す。</span>
@@ -413,7 +413,7 @@ title="Source repository"
 <div class="viewcode-block" id="QNNGeneretor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param train_scaled: trainの確率分布を入力</span>
 
 <span class="sd">        :param maxiter: scipy.optimize.minimizeのイテレーション回数</span>
@@ -439,7 +439,7 @@ title="Source repository"
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="QNNGeneretor.predict"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        予想される確率分布を、np.ndarray[float]の形で返す。</span>
 
 <span class="sd">        Returns:</span>
