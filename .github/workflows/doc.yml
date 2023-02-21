@@ -41,10 +41,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install --no-interaction --no-root --with doc
 
       - name: Install library
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --with doc
 
       - name: Build documentation
         run: |
