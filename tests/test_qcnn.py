@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
@@ -51,16 +50,3 @@ def test_qcnn(solver: Solver, maxiter: int):
     y_pred = qcl.predict(x_test)
     score = f1_score(y_test, y_pred, average="weighted")
     assert score > 0.9
-    return x_test, y_test, y_pred
-
-
-def main():
-    x_test, y_test, y_pred = test_qcnn(Adam(), 20)
-    plt.plot(x_test, y_test, "o", label="Test")
-    plt.plot(x_test, y_pred, "o", label="Prediction")
-    plt.legend()
-    plt.show()
-
-
-if __name__ == "__main__":
-    main()

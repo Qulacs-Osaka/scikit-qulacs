@@ -1,6 +1,5 @@
 from typing import Callable, Optional, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
@@ -61,7 +60,6 @@ def test_noisy_two_vars_two_outputs(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.11
-    return x_test, y_test, y_pred
 
 
 def sine_two_vars(x: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -86,7 +84,6 @@ def test_noisy_sine_two_vars(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.1
-    return x_test, y_test, y_pred
 
 
 def sine(x: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -114,17 +111,3 @@ def test_noisy_sine(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.03
-    return x_test, y_test, y_pred
-
-
-def main() -> None:
-    x_test, y_test, y_pred = test_noisy_sine(Bfgs(), 50)
-    plt.plot(x_test, y_test, "o", label="Test")
-    plt.plot(x_test, y_pred, "o", label="Prediction")
-    plt.legend()
-    plt.show()
-    # plt.savefig("test_qnn_regressor.jpg")
-
-
-if __name__ == "__main__":
-    main()

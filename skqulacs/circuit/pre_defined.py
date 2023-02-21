@@ -84,7 +84,9 @@ def _create_time_evol_gate(
     return time_evol_gate
 
 
-def _make_hamiltonian(n_qubit, rng: Optional[Generator] = None, seed: Optional[int] = 0):
+def _make_hamiltonian(
+    n_qubit, rng: Optional[Generator] = None, seed: Optional[int] = 0
+):
     if rng is None:
         rng = default_rng(seed)
     X_mat = np.array([[0, 1], [1, 0]])

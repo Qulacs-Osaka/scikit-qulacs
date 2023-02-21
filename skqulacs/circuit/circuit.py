@@ -225,7 +225,9 @@ class LearningCircuit:
 
         return ans
 
-    def backprop_inner_product(self, x: List[float], state: QuantumState) -> List[float]:
+    def backprop_inner_product(
+        self, x: List[float], state: QuantumState
+    ) -> List[float]:
         """
         backprop(self, x: List[float],  state)->List[Float]
 
