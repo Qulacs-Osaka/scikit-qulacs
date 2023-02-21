@@ -141,12 +141,12 @@ class QNNRegressor:
         if x_test.ndim == 1:
             x_test = x_test.reshape((-1, 1))
         if self.do_x_scale:
-            x_scaled = self.scale_x_scaler.transform(x_test)
+            x_scaled: NDArray[np.float_] = self.scale_x_scaler.transform(x_test)
         else:
             x_scaled = x_test
 
         if self.do_y_scale:
-            y_pred = self.scale_y_scaler.inverse_transform(
+            y_pred: NDArray[np.float_] = self.scale_y_scaler.inverse_transform(
                 self._predict_inner(x_scaled)
             )
         else:

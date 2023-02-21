@@ -24,4 +24,5 @@ def restore(path: Union[str, Path]) -> List[float]:
         path: File path from which a learning parameter is loaded.
     """
     with open(path, "rb") as f:
-        return load(f)
+        parameter: List[float] = load(f)
+        return parameter
