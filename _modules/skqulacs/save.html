@@ -367,7 +367,8 @@ title="Source repository"
 <span class="sd">        path: File path from which a learning parameter is loaded.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+        <span class="n">parameter</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parameter</span></div>
 </pre></div>
 
               </div>

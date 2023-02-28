@@ -347,7 +347,12 @@ title="Source repository"
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">ParametricQuantumCircuit</span><span class="p">,</span> <span class="n">QuantumState</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Observable</span><span class="p">,</span>
+    <span class="n">ParametricQuantumCircuit</span><span class="p">,</span>
+    <span class="n">QuantumGateBase</span><span class="p">,</span>
+    <span class="n">QuantumState</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_Axis</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -401,7 +406,7 @@ title="Source repository"
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">is_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">is_input</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">is_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">positions_in_circuit</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameter_id</span> <span class="o">=</span> <span class="n">parameter_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
@@ -523,7 +528,7 @@ title="Source repository"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
         <span class="n">state</span><span class="o">.</span><span class="n">set_zero_state</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span></div>
 
@@ -537,7 +542,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">update_quantum_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.backprop"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop">[docs]</a>    <span class="k">def</span> <span class="nf">backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">obs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="LearningCircuit.backprop"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop">[docs]</a>    <span class="k">def</span> <span class="nf">backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">obs</span><span class="p">:</span> <span class="n">Observable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        backprop(self, x: List[float], obs)-&gt;List[Float]</span>
 
@@ -553,7 +558,7 @@ title="Source repository"
 <span class="sd">        -&gt;うまくやってbackpropする。</span>
 <span class="sd">        現実だと不可能な演算も含むが、気にしない</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">backprop</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span>
@@ -563,13 +568,15 @@ title="Source repository"
 
         <span class="k">return</span> <span class="n">ans</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.backprop_inner_product"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop_inner_product">[docs]</a>    <span class="k">def</span> <span class="nf">backprop_inner_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="LearningCircuit.backprop_inner_product"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.backprop_inner_product">[docs]</a>    <span class="k">def</span> <span class="nf">backprop_inner_product</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">state</span><span class="p">:</span> <span class="n">QuantumState</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        backprop(self, x: List[float],  state)-&gt;List[Float]</span>
 
 <span class="sd">        inner_productでbackpropします。</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_input</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">backprop_inner_product</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="n">ans</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learning_parameter_list</span><span class="p">:</span>
@@ -585,7 +592,7 @@ title="Source repository"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">get_parameter_count</span><span class="p">()</span>
 
-<div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="LearningCircuit.add_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">QuantumGateBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add arbitrary gate.</span>
 
 <span class="sd">        Args:</span>
@@ -796,7 +803,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="LearningCircuit.add_parametric_multi_Pauli_rotation_gate"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.add_parametric_multi_Pauli_rotation_gate">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">pauli_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">initial_angle</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">add_parametric_multi_Pauli_rotation_gate</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span> <span class="n">pauli_id</span><span class="p">,</span> <span class="n">initial_angle</span>
         <span class="p">)</span></div>
@@ -804,7 +811,7 @@ title="Source repository"
     <span class="k">def</span> <span class="nf">_add_R_gate_inner</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">angle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">_Axis</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="n">_Axis</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
@@ -923,10 +930,10 @@ title="Source repository"
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="LearningCircuit.get_circuit_info"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_circuit_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.get_circuit_info"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_circuit_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParametricQuantumCircuit</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span></div>
 
-<div class="viewcode-block" id="LearningCircuit.get_circuit_depth"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_circuit_depth">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LearningCircuit.get_circuit_depth"><a class="viewcode-back" href="../../../skqulacs.circuit.circuit.html#skqulacs.circuit.circuit.LearningCircuit.get_circuit_depth">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_circuit</span><span class="o">.</span><span class="n">calculate_depth</span><span class="p">()</span></div></div>
 </pre></div>
 

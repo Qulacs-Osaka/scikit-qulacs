@@ -520,7 +520,8 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
             <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span>
             <span class="n">y_pred_sm</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y_scaled</span><span class="p">,</span> <span class="n">y_pred_sm</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y_scaled</span><span class="p">,</span> <span class="n">y_pred_sm</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">loss</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>

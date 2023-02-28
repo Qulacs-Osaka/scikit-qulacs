@@ -344,7 +344,7 @@ title="Source repository"
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">sqrt</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
@@ -410,7 +410,7 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_operator</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Z </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QNNGeneretor.fit"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param train_scaled: trainの確率分布を入力</span>
@@ -425,7 +425,7 @@ title="Source repository"
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_direct_distribution</span><span class="p">(</span><span class="n">train_scaled</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QNNGeneretor.fit_direct_distribution"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.fit_direct_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">fit_direct_distribution</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">maxiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
         <span class="n">theta_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
@@ -448,7 +448,7 @@ title="Source repository"
         <span class="n">y_pred_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_inner</span><span class="p">()</span><span class="o">.</span><span class="n">get_vector</span><span class="p">()</span>
         <span class="n">y_pred_conj</span> <span class="o">=</span> <span class="n">y_pred_in</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
 
-        <span class="n">data_per</span> <span class="o">=</span> <span class="n">y_pred_in</span> <span class="o">*</span> <span class="n">y_pred_conj</span>  <span class="c1"># 2乗の和</span>
+        <span class="n">data_per</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_pred_in</span> <span class="o">*</span> <span class="n">y_pred_conj</span>  <span class="c1"># 2乗の和</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_qubit</span><span class="p">:</span>  <span class="c1"># いくつかのビットを捨てる</span>
             <span class="n">data_per</span> <span class="o">=</span> <span class="n">data_per</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
@@ -480,7 +480,7 @@ title="Source repository"
 
         <span class="k">return</span> <span class="p">(</span><span class="n">data_per</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QNNGeneretor.conving"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.conving">[docs]</a>    <span class="k">def</span> <span class="nf">conving</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_diff</span><span class="p">):</span>
+<div class="viewcode-block" id="QNNGeneretor.conving"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.conving">[docs]</a>    <span class="k">def</span> <span class="nf">conving</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_diff</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
         <span class="c1"># data_diffは、現在の分布ー正しい分布</span>
         <span class="c1"># (data_diff) (カーネル行列) (data_diffの行ベクトル)を計算すると、cost_funcになる。</span>
         <span class="c1"># ここでは、(data_diff) (カーネル行列)  のベクトルを求める。</span>
@@ -530,14 +530,25 @@ title="Source repository"
                 <span class="sa">f</span><span class="s2">&quot;Cost function </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="QNNGeneretor.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">_unuse</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="QNNGeneretor.cost_func"><a class="viewcode-back" href="../../../skqulacs.qnn.generation.html#skqulacs.qnn.generation.QNNGeneretor.cost_func">[docs]</a>    <span class="k">def</span> <span class="nf">cost_func</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">train_scaled</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
+        <span class="n">_unused</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="c1"># y-xを求める</span>
         <span class="n">data_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span> <span class="o">-</span> <span class="n">train_scaled</span>
         <span class="n">conv_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conving</span><span class="p">(</span><span class="n">data_diff</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data_diff</span><span class="p">,</span> <span class="n">conv_diff</span><span class="p">)</span></div>
+        <span class="n">cost</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data_diff</span><span class="p">,</span> <span class="n">conv_diff</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cost</span></div>
 
-    <span class="k">def</span> <span class="nf">_cost_func_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">train_scaled</span><span class="p">,</span> <span class="n">_unuse</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">_cost_func_grad</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">train_scaled</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span>
+        <span class="n">_unused</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="c1"># y-xを求める</span>
         <span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="n">prein</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_and_inner</span><span class="p">()</span>
@@ -549,7 +560,10 @@ title="Source repository"
         <span class="n">ret</span> <span class="o">=</span> <span class="n">QuantumState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">)</span>
         <span class="n">ret</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">convconv_diff</span> <span class="o">*</span> <span class="n">state_vec</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
         <span class="c1"># 各要素ごとに積を取り、4を掛けている。4なのは、2乗だから2をかけるのと、実際はカーネルの左と右両方にベクトルあるから2を掛ける。</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop_inner_product</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">ret</span><span class="p">))</span></div>
+        <span class="n">grad</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">backprop_inner_product</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">ret</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">grad</span></div>
 </pre></div>
 
               </div>

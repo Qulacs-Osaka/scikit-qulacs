@@ -341,8 +341,11 @@ title="Source repository"
               <div>
                 
   <h1>Source code for skqulacs.qsvm.qsvc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">QuantumState</span>
 <span class="kn">from</span> <span class="nn">qulacs.state</span> <span class="kn">import</span> <span class="n">inner_product</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
 
@@ -358,8 +361,8 @@ title="Source repository"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">svc</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumState</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="QSVC.fit"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -381,7 +384,7 @@ title="Source repository"
 
         <span class="bp">self</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="QSVC.predict"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]):</span>
+<div class="viewcode-block" id="QSVC.predict"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        predict labels of given data</span>
 <span class="sd">        :param xs: inputs to predict labels</span>
@@ -392,7 +395,8 @@ title="Source repository"
             <span class="n">x_qc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)):</span>
                 <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="n">x_qc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span></div></div>
+        <span class="n">predicted</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">predicted</span></div></div>
 </pre></div>
 
               </div>
