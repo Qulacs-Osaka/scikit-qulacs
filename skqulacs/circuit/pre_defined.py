@@ -28,7 +28,8 @@ def create_qcl_ansatz(
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
-        return min(1, max(-1, xa))
+        clamped: float = min(1, max(-1, xa))
+        return clamped
 
     circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
@@ -55,7 +56,7 @@ def create_qcl_ansatz(
 
 
 def _create_time_evol_gate(
-    n_qubit, time_step=0.77, rng: Generator = None, seed: Optional[int] = 0
+    n_qubit, time_step=0.77, rng: Optional[Generator] = None, seed: Optional[int] = 0
 ):
     """create a hamiltonian dynamics with transverse field ising model with random interaction and random magnetic field
     Args:
@@ -83,7 +84,9 @@ def _create_time_evol_gate(
     return time_evol_gate
 
 
-def _make_hamiltonian(n_qubit, rng: Generator = None, seed: Optional[int] = 0):
+def _make_hamiltonian(
+    n_qubit, rng: Optional[Generator] = None, seed: Optional[int] = 0
+):
     if rng is None:
         rng = default_rng(seed)
     X_mat = np.array([[0, 1], [1, 0]])
@@ -127,9 +130,10 @@ def create_farhi_neven_ansatz(
         seed: random seed determining the shuffling of the qubits between layers
     """
 
-    def preprocess_x(x: NDArray[np.float_], index: int):
+    def preprocess_x(x: NDArray[np.float_], index: int) -> float:
         xa = x[index % len(x)]
-        return min(1, max(-1, xa))
+        clamped = min(1, max(-1, xa))
+        return clamped
 
     circuit = LearningCircuit(n_qubit)
     for i in range(n_qubit):
@@ -235,7 +239,7 @@ def create_ibm_embedding_circuit(n_qubit: int) -> LearningCircuit:
     """
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     circuit = LearningCircuit(n_qubit)
@@ -282,7 +286,7 @@ def create_shirai_ansatz(
     """
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     rng = default_rng(seed)
@@ -364,7 +368,7 @@ def create_npqc_ansatz(
         )
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     circuit = LearningCircuit(n_qubit)
@@ -385,7 +389,7 @@ def create_npqc_ansatz(
             recC = c_kai + 1
             recA = 0
             while recC % 2 == 0:
-                recC /= 2
+                recC //= 2
                 recA += 1
             circuit.add_gate(CZ(i, (i + recA * 2 + 1) % n_qubit))
             circuit.add_input_RY_gate(
@@ -413,7 +417,7 @@ def create_yzcx_ansatz(
     """
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     rng = default_rng(seed)
@@ -443,7 +447,7 @@ def create_dqn_cl(n_qubit: int, c_depth: int, s_qubit: int) -> LearningCircuit:
     circuit = LearningCircuit(n_qubit)
 
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     for i in range(n_qubit):
@@ -579,7 +583,7 @@ def create_qcnn_ansatz(n_qubit: int, seed: Optional[int] = 0) -> LearningCircuit
     # 次の階層の[1, 3],[5, 7]となります。階層の数字は下の層の通し番号が大きい方がペアになります。
     # 最終的に[3, 7]の一番上の層が作られます。
     # ツリー構造ですが、データはフラットな2次元配列になります。
-    def tree(ns):
+    def tree(ns: List[int]) -> dict:
         n = len(ns)
         if n <= 0:
             return
@@ -603,7 +607,7 @@ def create_multi_qubit_param_rotational_ansatz(
     n_qubit: int, c_depth: int = 1, seed: Optional[int] = 0
 ) -> LearningCircuit:
     def preprocess_x(x: NDArray[np.float_], index: int) -> float:
-        xa = x[index % len(x)]
+        xa: float = x[index % len(x)]
         return xa
 
     rng = default_rng(seed)

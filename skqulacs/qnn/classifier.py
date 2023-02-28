@@ -177,7 +177,8 @@ class QNNClassifier:
             self.circuit.update_parameters(theta)
             y_pred = self._predict_inner(x_scaled)
             y_pred_sm = softmax(y_pred, axis=1)
-            return log_loss(y_scaled, y_pred_sm)
+            loss: float = log_loss(y_scaled, y_pred_sm)
+            return loss
         else:
             raise NotImplementedError(
                 f"Cost function {self.cost} is not implemented yet."

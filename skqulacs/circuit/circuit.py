@@ -4,7 +4,12 @@ from typing import Callable, List, Optional, Union
 
 import numpy as np
 from numpy.typing import NDArray
-from qulacs import ParametricQuantumCircuit, QuantumState
+from qulacs import (
+    Observable,
+    ParametricQuantumCircuit,
+    QuantumGateBase,
+    QuantumState,
+)
 
 
 class _Axis(Enum):
@@ -58,7 +63,7 @@ class _LearningParameter:
     value: float
     is_input: bool = field(default=False)
 
-    def __init__(self, parameter_id, value, is_input=False) -> None:
+    def __init__(self, parameter_id: int, value: float, is_input: bool = False) -> None:
         self.positions_in_circuit = []
         self.parameter_id = parameter_id
         self.value = value
@@ -180,7 +185,7 @@ class LearningCircuit:
         """
         state = QuantumState(self.n_qubit)
         state.set_zero_state()
-        self._set_input(x)
+        self._set_input(np.array(x))
         self._circuit.update_quantum_state(state)
         return state
 
@@ -194,7 +199,7 @@ class LearningCircuit:
         self._circuit.update_quantum_state(state)
         return state
 
-    def backprop(self, x: List[float], obs) -> List[float]:
+    def backprop(self, x: List[float], obs: Observable) -> List[float]:
         """
         backprop(self, x: List[float], obs)->List[Float]
 
@@ -210,7 +215,7 @@ class LearningCircuit:
         ->うまくやってbackpropする。
         現実だと不可能な演算も含むが、気にしない
         """
-        self._set_input(x)
+        self._set_input(np.array(x))
         ret = self._circuit.backprop(obs)
         ans = [0.0] * len(self._learning_parameter_list)
         for parameter in self._learning_parameter_list:
@@ -220,13 +225,15 @@ class LearningCircuit:
 
         return ans
 
-    def backprop_inner_product(self, x: List[float], state) -> List[float]:
+    def backprop_inner_product(
+        self, x: List[float], state: QuantumState
+    ) -> List[float]:
         """
         backprop(self, x: List[float],  state)->List[Float]
 
         inner_productでbackpropします。
         """
-        self._set_input(x)
+        self._set_input(np.array(x))
         ret = self._circuit.backprop_inner_product(state)
         ans = [0.0] * len(self._learning_parameter_list)
         for parameter in self._learning_parameter_list:
@@ -242,7 +249,7 @@ class LearningCircuit:
         """
         return self._circuit.get_parameter_count()
 
-    def add_gate(self, gate) -> None:
+    def add_gate(self, gate: QuantumGateBase) -> None:
         """Add arbitrary gate.
 
         Args:
@@ -453,7 +460,7 @@ class LearningCircuit:
 
     def add_parametric_multi_Pauli_rotation_gate(
         self, target: List[int], pauli_id: List[int], initial_angle: float
-    ):
+    ) -> None:
         self._circuit.add_parametric_multi_Pauli_rotation_gate(
             target, pauli_id, initial_angle
         )
@@ -461,7 +468,7 @@ class LearningCircuit:
     def _add_R_gate_inner(
         self,
         index: int,
-        angle: Optional[float],
+        angle: float,
         target: _Axis,
     ) -> None:
         if target == _Axis.X:
@@ -580,8 +587,8 @@ class LearningCircuit:
         else:
             raise NotImplementedError
 
-    def get_circuit_info(self):
+    def get_circuit_info(self) -> ParametricQuantumCircuit:
         return self._circuit
 
-    def get_circuit_depth(self):
+    def get_circuit_depth(self) -> int:
         return self._circuit.calculate_depth()

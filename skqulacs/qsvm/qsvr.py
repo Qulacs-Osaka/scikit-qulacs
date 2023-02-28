@@ -1,5 +1,8 @@
+from typing import List
+
 import numpy as np
 from numpy.typing import NDArray
+from qulacs import QuantumState
 from qulacs.state import inner_product
 from sklearn import svm
 
@@ -15,10 +18,10 @@ class QSVR:
         """
         self.svr = svm.SVR(kernel="precomputed")
         self.circuit = circuit
-        self.data_states = []
+        self.data_states: List[QuantumState] = []
         self.n_qubit = 0
 
-    def fit(self, x: NDArray[np.float_], y: NDArray[np.int_]):
+    def fit(self, x: NDArray[np.float_], y: NDArray[np.int_]) -> None:
         """
         train the machine.
         :param x: training inputs
@@ -38,7 +41,7 @@ class QSVR:
 
         self.svr.fit(kar, y)
 
-    def predict(self, xs: NDArray[np.float_]):
+    def predict(self, xs: NDArray[np.float_]) -> NDArray[np.float_]:
         """
         predict y values for each of xs
         :param xs: inputs to make predictions
@@ -49,4 +52,5 @@ class QSVR:
             x_qc = self.circuit.run(xs[i])
             for j in range(len(self.data_states)):
                 kar[i][j] = abs(inner_product(x_qc, self.data_states[j])) ** 2
-        return self.svr.predict(kar)
+        predicted: NDArray[np.float_] = self.svr.predict(kar)
+        return predicted

@@ -1,7 +1,6 @@
 import random
 from typing import Callable, List, Optional, Tuple
 
-# us this if you need to plot ==> import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
@@ -48,9 +47,7 @@ def sine(x: NDArray[np.float_]) -> NDArray[np.float_]:
 )
 def test_noisy_sine(
     solver: Solver,
-) -> Tuple[
-    NDArray[np.float_], NDArray[np.float_], NDArray[np.float_], NDArray[np.float_]
-]:
+) -> None:
     x_min = -1.0
     x_max = 1.0
     num_x = 200
@@ -78,7 +75,6 @@ def test_noisy_sine(
     y_pred = qnn.predict(x_test)
     MSE = mean_squared_error(y_pred, y_test)
     assert MSE < 0.051
-    return x_test, y_test, y_pred, losses, MSE
 
 
 @pytest.mark.parametrize(
@@ -95,33 +91,4 @@ def test_just_gradients(obs: List[str]) -> Tuple[NDArray[np.float_]]:
     circuit = create_multi_qubit_param_rotational_ansatz(n_qubit, c_depth=depth)
     qnn = QNNRegressor(circuit, GradientDescent(), observables_str=obs)
     theta = circuit.get_parameters()
-    # print("theta", theta)
-    # print("self.observables", qnn.observables_str)
-    grads_circuit = qnn.func_grad(np.square(theta), x_train)
-    return grads_circuit
-
-
-def main() -> None:
-    np.random.seed(0)
-    random.seed(0)
-    # This is how you compute the gradients of the circuit (based on the observable you select) without Loss
-    # see function _func_grad()
-    grads_circuit = test_just_gradients(["Z 2"])
-    print("Averaged gradients", grads_circuit)
-    x_test, y_test, y_pred, losses, MSE = test_noisy_sine(GradientDescent())
-    print("Loss value(MSE) on test set: ", MSE)
-    # plt.plot(x_test, y_test, "o", label="Test")
-    # plt.plot(x_test, y_pred, "o", label="Prediction")
-    # plt.legend()
-    # plt.show()
-    # plt.savefig("ytest_vs_ypred_batch.jpg")
-    # plt.clf()
-    # xs = [i for i in range(len(losses))]
-    # plt.plot(xs, losses, "o", label="lossesVSiterations")
-    # plt.legend()
-    # plt.show()
-    # plt.savefig("losses_iterations_batch.jpg")
-
-
-if __name__ == "__main__":
-    main()
+    qnn.func_grad(np.square(theta), x_train)
