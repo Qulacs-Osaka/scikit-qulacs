@@ -132,7 +132,7 @@ def test_noisy_sine_gradient_descent() -> None:
     qnn = QNNRegressor(circuit, solver, observables_str=["Z 2"])
     loader = DataLoader(x_train, y_train, batch_size=batch_size, shuffle=True, seed=0)
     for _ in range(epochs):
-        for (x_batch, y_batch) in loader:
+        for x_batch, y_batch in loader:
             qnn.fit(x_batch, y_batch, lr)
     x_test, y_test = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
     y_pred = qnn.predict(x_test)

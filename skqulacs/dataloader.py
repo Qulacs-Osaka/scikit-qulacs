@@ -13,17 +13,22 @@ class DataLoader:
     Their size is specified by `batch_size` argument.
     You can specify whether to shuffle the data or not by `shuffle` argument.
     """
+
     x: NDArray[np.float_]
     y: NDArray[np.float_]
     batch_size: int = 1
     shuffle: bool = False
     seed: Optional[int] = None
 
+    def __post_init__(self):
+        if self.x.shape[0] != self.y.shape[0]:
+            raise ValueError("x and y must have the same length.")
+
     def __iter__(self) -> "_DataLoaderIterator":
         return _DataLoaderIterator(self)
 
     def __len__(self) -> int:
-        return len(self.x)
+        return len(self.x) / self.batch_size
 
 
 @dataclass
