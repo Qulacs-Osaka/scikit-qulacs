@@ -28,7 +28,7 @@ class DataLoader:
         return _DataLoaderIterator(self)
 
     def __len__(self) -> int:
-        return len(self.x) / self.batch_size
+        return (len(self.x) + self.batch_size - 1) // self.batch_size
 
 
 @dataclass
