@@ -17,6 +17,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   skqulacs.dataloader
    skqulacs.save
 
 Module contents
