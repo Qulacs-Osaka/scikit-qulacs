@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 from numpy.random import Generator
@@ -35,7 +35,7 @@ class DataLoader:
 class _DataLoaderIterator:
     loader: DataLoader
     rng: Generator = field(init=False)
-    indices: list[int] = field(init=False, default_factory=list)
+    indices: List[int] = field(init=False, default_factory=list)
     current_index: int = field(init=False, default=0)
 
     def __post_init__(self):
