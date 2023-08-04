@@ -1748,14 +1748,14 @@ files = [
 
 [[package]]
 name = "pydata-sphinx-theme"
-version = "0.13.1"
+version = "0.13.3"
 description = "Bootstrap-based Sphinx theme from the PyData community"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pydata_sphinx_theme-0.13.1-py3-none-any.whl", hash = "sha256:ce29c1de7961d616dfa25f4c3a9619818d4bb2d4a9985ed078367af294fbccc2"},
-    {file = "pydata_sphinx_theme-0.13.1.tar.gz", hash = "sha256:a37d967207c2d787cfe5cf74abfc6b3bcaf0606cac6b283a3876e603d67d6a71"},
+    {file = "pydata_sphinx_theme-0.13.3-py3-none-any.whl", hash = "sha256:bf41ca6c1c6216e929e28834e404bfc90e080b51915bbe7563b5e6fda70354f0"},
+    {file = "pydata_sphinx_theme-0.13.3.tar.gz", hash = "sha256:827f16b065c4fd97e847c11c108bf632b7f2ff53a3bca3272f63f3f3ff782ecc"},
 ]
 
 [package.dependencies]
@@ -1766,6 +1766,7 @@ docutils = "!=0.17.0"
 packaging = "*"
 pygments = ">=2.7"
 sphinx = ">=4.2"
+typing-extensions = "*"
 
 [package.extras]
 dev = ["nox", "pre-commit", "pydata-sphinx-theme[doc,test]", "pyyaml"]
@@ -2407,18 +2408,18 @@ test = ["cython", "html5lib", "pytest", "pytest-cov", "typed-ast"]
 
 [[package]]
 name = "sphinx-book-theme"
-version = "1.0.0"
+version = "1.0.1"
 description = "A clean book theme for scientific explanations and documentation with Sphinx"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "sphinx_book_theme-1.0.0-py3-none-any.whl", hash = "sha256:f6baba7888d5a63328a210e9960a7a6e951e9632d74edb6fce48c9d5d8c28768"},
-    {file = "sphinx_book_theme-1.0.0.tar.gz", hash = "sha256:7c76ea51347e55d801504bfb1b2433cba49e7212a25fbebd0ce44b3c098ea946"},
+    {file = "sphinx_book_theme-1.0.1-py3-none-any.whl", hash = "sha256:d15f8248b3718a9a6be0ba617a32d1591f9fa39c614469bface777ba06a73b75"},
+    {file = "sphinx_book_theme-1.0.1.tar.gz", hash = "sha256:927b399a6906be067e49c11ef1a87472f1b1964075c9eea30fb82c64b20aedee"},
 ]
 
 [package.dependencies]
-pydata-sphinx-theme = ">=0.13.0"
+pydata-sphinx-theme = ">=0.13.3"
 sphinx = ">=4,<7"
 
 [package.extras]
