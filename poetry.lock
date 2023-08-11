@@ -774,14 +774,14 @@ files = [
 
 [[package]]
 name = "ipykernel"
-version = "6.21.3"
+version = "6.25.1"
 description = "IPython Kernel for Jupyter"
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "ipykernel-6.21.3-py3-none-any.whl", hash = "sha256:24ebd9715e317c185e37156ab3a87382410185230dde7aeffce389d6c7d4428a"},
-    {file = "ipykernel-6.21.3.tar.gz", hash = "sha256:c8ff581905d70e7299bc1473a2f7c113bec1744fb3746d58e5b4b93bd8ee7001"},
+    {file = "ipykernel-6.25.1-py3-none-any.whl", hash = "sha256:c8a2430b357073b37c76c21c52184db42f6b4b0e438e1eb7df3c4440d120497c"},
+    {file = "ipykernel-6.25.1.tar.gz", hash = "sha256:050391364c0977e768e354bdb60cbbfbee7cbb943b1af1618382021136ffd42f"},
 ]
 
 [package.dependencies]
