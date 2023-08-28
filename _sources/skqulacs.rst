@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    skqulacs.circuit
+   skqulacs.qkrr
    skqulacs.qnn
    skqulacs.qsvm
 

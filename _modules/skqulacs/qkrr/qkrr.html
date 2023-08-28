@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skqulacs.qsvm.qsvc &#8212; scikit-qulacs  documentation</title>
+    <title>skqulacs.qkrr.qkrr &#8212; scikit-qulacs  documentation</title>
   
   
   
@@ -41,7 +41,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/skqulacs/qsvm/qsvc';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/skqulacs/qkrr/qkrr';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -277,36 +277,41 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for skqulacs.qsvm.qsvc</h1><div class="highlight"><pre>
+  <h1>Source code for skqulacs.qkrr.qkrr</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
 <span class="kn">from</span> <span class="nn">qulacs</span> <span class="kn">import</span> <span class="n">QuantumState</span>
 <span class="kn">from</span> <span class="nn">qulacs.state</span> <span class="kn">import</span> <span class="n">inner_product</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">loguniform</span>
+<span class="kn">from</span> <span class="nn">sklearn.kernel_ridge</span> <span class="kn">import</span> <span class="n">KernelRidge</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">RandomizedSearchCV</span>
 
 <span class="kn">from</span> <span class="nn">skqulacs.circuit</span> <span class="kn">import</span> <span class="n">LearningCircuit</span>
 
 
-<div class="viewcode-block" id="QSVC"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC">[docs]</a><span class="k">class</span> <span class="nc">QSVC</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;class to solve classfication problems with support vector machine with quantum kernel&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QKRR"><a class="viewcode-back" href="../../../skqulacs.qkrr.qkrr.html#skqulacs.qkrr.qkrr.QKRR">[docs]</a><span class="k">class</span> <span class="nc">QKRR</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;class to solve regression problems with kernel ridge regressor with a quantum kernel&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">LearningCircuit</span><span class="p">,</span> <span class="n">n_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param circuit: circuit to generate quantum feature</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">svc</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krr</span> <span class="o">=</span> <span class="n">KernelRidge</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_ridge_tuned</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">circuit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumState</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_iteration</span> <span class="o">=</span> <span class="n">n_iteration</span>
 
-<div class="viewcode-block" id="QSVC.fit"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]):</span>
+<div class="viewcode-block" id="QKRR.fit"><a class="viewcode-back" href="../../../skqulacs.qkrr.qkrr.html#skqulacs.qkrr.qkrr.QKRR.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        train the machine.</span>
 <span class="sd">        :param x: training inputs</span>
-<span class="sd">        :param y: training labels</span>
+<span class="sd">        :param y: training teacher values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
         <span class="c1"># Compute UΦx to get kernel of `x` and `y`.</span>
@@ -319,20 +324,43 @@ document.write(`
                     <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QSVC.predict"><a class="viewcode-back" href="../../../skqulacs.qsvm.qsvc.html#skqulacs.qsvm.qsvc.QSVC.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
+        <span class="c1"># hyperparameter tuning</span>
+        <span class="n">alpha_low</span> <span class="o">=</span> <span class="mf">1e-3</span>
+        <span class="n">alpha_high</span> <span class="o">=</span> <span class="mf">1e2</span>
+        <span class="n">n_iteration</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">param_distributions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">loguniform</span><span class="p">(</span>
+                <span class="n">alpha_low</span><span class="p">,</span> <span class="n">alpha_high</span>
+            <span class="p">),</span>  <span class="c1"># Hyperparameter in the cost function for the regularizaton</span>
+            <span class="c1"># &quot;kernel__length_scale&quot;: loguniform(1e-3, 1e3), # Hyperparameter of the Kernel (If we apply the Quantum Kernel, this must be ignored)</span>
+            <span class="c1"># &quot;kernel__periodicity&quot;: loguniform(1e0, 1e1), # For periodic Kernel</span>
+        <span class="p">}</span>
+        <span class="n">kernel_ridge_tuned</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">krr</span><span class="p">,</span>
+            <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_distributions</span><span class="p">,</span>
+            <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iteration</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel_ridge_tuned</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">kar</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">kernel_ridge_tuned</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_ridge_tuned</span> <span class="o">=</span> <span class="n">kernel_ridge_tuned</span></div>
+
+<div class="viewcode-block" id="QKRR.predict"><a class="viewcode-back" href="../../../skqulacs.qkrr.qkrr.html#skqulacs.qkrr.qkrr.QKRR.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        predict labels of given data</span>
-<span class="sd">        :param xs: inputs to predict labels</span>
-<span class="sd">        :return: List[float], predicted labels</span>
+<span class="sd">        predict y values for each of xs</span>
+<span class="sd">        :param xs: inputs to make predictions</span>
+<span class="sd">        :return: List[int], predicted values of y</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)):</span>
             <span class="n">x_qc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">)):</span>
                 <span class="n">kar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inner_product</span><span class="p">(</span><span class="n">x_qc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_states</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="n">predicted</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span>
+        <span class="n">predicted</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">kar</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">predicted</span></div></div>
 </pre></div>
 
