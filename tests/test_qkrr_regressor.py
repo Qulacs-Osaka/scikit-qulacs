@@ -5,7 +5,7 @@ from numpy.random import RandomState
 from sklearn.metrics import mean_squared_error
 
 from skqulacs.circuit import create_ibm_embedding_circuit
-from skqulacs.qsvm import QSVR
+from skqulacs.qkrr import QKRR
 
 
 def func_to_learn(x):
@@ -13,11 +13,9 @@ def func_to_learn(x):
 
 
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
-
     seed = 0
     random.seed(seed)
     random_state = RandomState(seed)
-
     x_train = []
     y_train = []
     for _ in range(num_x):
@@ -39,9 +37,11 @@ def test_noisy_sine():
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 6
     circuit = create_ibm_embedding_circuit(n_qubit)
-    qsvm = QSVR(circuit)
-    qsvm.fit(x_train, y_train)
-    y_pred = qsvm.predict(x_test)
+    qkrr = QKRR(circuit, n_iteration=100)
+    print(qkrr.n_iteration)
+    qkrr.fit(x_train, y_train)
+    y_pred = qkrr.predict(x_test)
+    print(y_pred)
     loss = mean_squared_error(y_pred, y_test)
     print(loss)
     assert loss < 0.008

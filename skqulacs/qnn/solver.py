@@ -77,7 +77,7 @@ class Bfgs(Solver):
             args=(x, y),
             method="BFGS",
             jac=jac,
-            options={"maxiter": maxiter},
+            options={"disp": True, "maxiter": maxiter},
         )
         loss = result.fun
         theta_opt = result.x
