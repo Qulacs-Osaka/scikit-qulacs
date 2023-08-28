@@ -13,7 +13,6 @@ def func_to_learn(x):
 
 
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
-
     seed = 0
     random.seed(seed)
     random_state = RandomState(seed)
