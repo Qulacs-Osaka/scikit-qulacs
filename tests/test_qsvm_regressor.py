@@ -15,6 +15,7 @@ def func_to_learn(x):
 def generate_noisy_sine(x_min: float, x_max: float, num_x: int):
 
     seed = 0
+    random.seed(seed)
     random_state = RandomState(seed)
 
     x_train = []
@@ -42,4 +43,7 @@ def test_noisy_sine():
     qsvm.fit(x_train, y_train)
     y_pred = qsvm.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
+    print(loss)
     assert loss < 0.008
+
+test_noisy_sine()
