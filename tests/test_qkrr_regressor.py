@@ -38,7 +38,7 @@ def test_noisy_sine():
     x_test, y_test = generate_noisy_sine(x_min, x_max, num_test)
     n_qubit = 6
     circuit = create_ibm_embedding_circuit(n_qubit)
-    qkrr = QKRR(circuit,n_iteration=100)
+    qkrr = QKRR(circuit, n_iteration=100)
     print(qkrr.n_iteration)
     qkrr.fit(x_train, y_train)
     y_pred = qkrr.predict(x_test)
@@ -46,5 +46,6 @@ def test_noisy_sine():
     loss = mean_squared_error(y_pred, y_test)
     print(loss)
     assert loss < 0.008
+
 
 test_noisy_sine()

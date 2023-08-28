@@ -10,6 +10,7 @@ from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import loguniform
 
+
 class QKRR:
     """class to solve regression problems with kernel ridge regressor with a quantum kernel"""
 
@@ -42,16 +43,18 @@ class QKRR:
                 kar[i][j] = (
                     abs(inner_product(self.data_states[i], self.data_states[j])) ** 2
                 )
-        
+
         self.krr.fit(kar, y)
 
-        # hyperparameter tuning       
+        # hyperparameter tuning
         alpha_low = 1e-3
         alpha_high = 1e2
         n_iteration = 5
         random_state = 0
         param_distributions = {
-            "alpha": loguniform(alpha_low, alpha_high), # Hyperparameter in the cost function for the regularizaton
+            "alpha": loguniform(
+                alpha_low, alpha_high
+            ),  # Hyperparameter in the cost function for the regularizaton
             # "kernel__length_scale": loguniform(1e-3, 1e3), # Hyperparameter of the Kernel (If we apply the Quantum Kernel, this must be ignored)
             # "kernel__periodicity": loguniform(1e0, 1e1), # For periodic Kernel
         }
@@ -64,7 +67,7 @@ class QKRR:
 
         kernel_ridge_tuned.fit(kar, y)
         print(kernel_ridge_tuned.best_params_)
-        self.kernel_ridge_tuned = kernel_ridge_tuned 
+        self.kernel_ridge_tuned = kernel_ridge_tuned
 
     def predict(self, xs: NDArray[np.float_]) -> NDArray[np.float_]:
         """
@@ -79,4 +82,3 @@ class QKRR:
                 kar[i][j] = abs(inner_product(x_qc, self.data_states[j])) ** 2
         predicted: NDArray[np.float_] = self.krr.predict(kar)
         return predicted
-
