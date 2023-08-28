@@ -46,4 +46,5 @@ def test_noisy_sine():
     print(loss)
     assert loss < 0.008
 
+
 test_noisy_sine()
