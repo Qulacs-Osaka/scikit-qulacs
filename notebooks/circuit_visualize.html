@@ -463,7 +463,11 @@ n_qubit: int, c_depth: int, seed: Optional[int] = None
 <img alt="../_images/86551c068f1536e61d17a14e68f09fd4d4a20870c33009292bdf7e654a3c6f94.png" src="../_images/86551c068f1536e61d17a14e68f09fd4d4a20870c33009292bdf7e654a3c6f94.png" />
 </div>
 </div>
-</section>
+<p>create_farhi_neven_ansatz()とcreate_farhi_neven_watle_ansatz()の違いは、入力データをembeddingする回路の係数です。
+create_farhi_neven_ansatz()の場合は、量子回路のどのビット位置のインプットデータを埋め込む回転ゲートの係数も同じ値を使用します。
+create_farhi_neven_watle_ansatz()の場合は、ビット位置によって係数を変化させます。
+量子回路のビット位置が小さい側は係数式（y=x^2）を使用し、大きい側は係数式（y=2x-x^2）を使用します。</p>
+<img src="figures/circuit_visualize/farhi_neven_watle_ansatz_coef.png"></section>
 <section id="ibm-embedding-circuit">
 <h2>ibm_embedding_circuit<a class="headerlink" href="#ibm-embedding-circuit" title="Permalink to this headline">#</a></h2>
 <p>create_ibm_embedding_circuit(n_qubit: int)</p>
