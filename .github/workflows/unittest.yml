@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.7.14', '3.8', '3.9', '3.10']  # 3.7.14 is the version at Google Colab.
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
@@ -33,10 +33,10 @@ jobs:
 
     - name: Install dependencies
       if: steps.cached-poetry-deps.outputs.cache-hit != 'true'
-      run: poetry install --no-interaction --no-root
+      run: poetry install --no-interaction --no-root --with bench
 
     - name: Install library
-      run: poetry install --no-interaction
+      run: poetry install --no-interaction --with bench
 
     - name: Check format and lint
       run: |

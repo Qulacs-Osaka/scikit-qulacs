@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from math import exp, sqrt
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -67,7 +67,7 @@ class QNNGeneretor:
             self.observables[i].add_operator(1.0, f"Z {i}")
 
     def fit(
-        self, train_data, maxiter: Optional[int] = None
+        self, train_data: NDArray[np.float_], maxiter: Optional[int] = None
     ) -> Tuple[float, List[float]]:
         """
         :param train_scaled: trainの確率分布を入力
@@ -82,7 +82,7 @@ class QNNGeneretor:
         return self.fit_direct_distribution(train_scaled, maxiter)
 
     def fit_direct_distribution(
-        self, train_scaled, maxiter: Optional[int] = None
+        self, train_scaled: NDArray[np.float_], maxiter: Optional[int] = None
     ) -> Tuple[float, List[float]]:
         theta_init = self.circuit.get_parameters()
         return self.solver.run(
@@ -105,7 +105,7 @@ class QNNGeneretor:
         y_pred_in = self._predict_inner().get_vector()
         y_pred_conj = y_pred_in.conjugate()
 
-        data_per = y_pred_in * y_pred_conj  # 2乗の和
+        data_per: NDArray[np.float_] = y_pred_in * y_pred_conj  # 2乗の和
 
         if self.n_qubit != self.fitting_qubit:  # いくつかのビットを捨てる
             data_per = data_per.reshape(
@@ -137,7 +137,7 @@ class QNNGeneretor:
 
         return (data_per, state)
 
-    def conving(self, data_diff):
+    def conving(self, data_diff: NDArray[np.float_]) -> NDArray[np.float_]:
         # data_diffは、現在の分布ー正しい分布
         # (data_diff) (カーネル行列) (data_diffの行ベクトル)を計算すると、cost_funcになる。
         # ここでは、(data_diff) (カーネル行列)  のベクトルを求める。
@@ -187,14 +187,25 @@ class QNNGeneretor:
                 f"Cost function {self.cost} is not implemented yet."
             )
 
-    def cost_func(self, theta, train_scaled, _unuse=[]):
+    def cost_func(
+        self,
+        theta: List[float],
+        train_scaled: NDArray[np.float_],
+        _unused: List[Any] = [],
+    ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
         # y-xを求める
         data_diff = self.predict() - train_scaled
         conv_diff = self.conving(data_diff)
-        return np.dot(data_diff, conv_diff)
+        cost: NDArray[np.float_] = np.dot(data_diff, conv_diff)
+        return cost
 
-    def _cost_func_grad(self, theta, train_scaled, _unuse=[]):
+    def _cost_func_grad(
+        self,
+        theta: List[float],
+        train_scaled: NDArray[np.float_],
+        _unused: List[Any] = [],
+    ) -> NDArray[np.float_]:
         self.circuit.update_parameters(theta)
         # y-xを求める
         (pre, prein) = self._predict_and_inner()
@@ -206,4 +217,7 @@ class QNNGeneretor:
         ret = QuantumState(self.n_qubit)
         ret.load(convconv_diff * state_vec * 4)
         # 各要素ごとに積を取り、4を掛けている。4なのは、2乗だから2をかけるのと、実際はカーネルの左と右両方にベクトルあるから2を掛ける。
-        return np.array(self.circuit.backprop_inner_product([0], ret))
+        grad: NDArray[np.float_] = np.array(
+            self.circuit.backprop_inner_product([0], ret)
+        )
+        return grad

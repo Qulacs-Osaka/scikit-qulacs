@@ -1,6 +1,5 @@
 from typing import Callable, Optional, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.random import default_rng
@@ -8,8 +7,12 @@ from numpy.typing import NDArray
 from sklearn.metrics import mean_squared_error
 
 from skqulacs.circuit import create_qcl_ansatz
+from skqulacs.circuit.pre_defined import (
+    create_multi_qubit_param_rotational_ansatz,
+)
+from skqulacs.dataloader import DataLoader
 from skqulacs.qnn import QNNRegressor
-from skqulacs.qnn.solver import Adam, Bfgs, Solver
+from skqulacs.qnn.solver import Adam, Bfgs, GradientDescent, Solver
 
 
 def generate_noisy_data(
@@ -61,7 +64,6 @@ def test_noisy_two_vars_two_outputs(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.11
-    return x_test, y_test, y_pred
 
 
 def sine_two_vars(x: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -86,7 +88,6 @@ def test_noisy_sine_two_vars(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.1
-    return x_test, y_test, y_pred
 
 
 def sine(x: NDArray[np.float_]) -> NDArray[np.float_]:
@@ -114,17 +115,26 @@ def test_noisy_sine(solver: Solver, maxiter: int) -> None:
     y_pred = qnn.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.03
-    return x_test, y_test, y_pred
 
 
-def main() -> None:
-    x_test, y_test, y_pred = test_noisy_sine(Bfgs(), 50)
-    plt.plot(x_test, y_test, "o", label="Test")
-    plt.plot(x_test, y_pred, "o", label="Prediction")
-    plt.legend()
-    plt.show()
-    # plt.savefig("test_qnn_regressor.jpg")
-
-
-if __name__ == "__main__":
-    main()
+def test_noisy_sine_gradient_descent() -> None:
+    x_min = -1.0
+    x_max = 1.0
+    num_x = 200
+    x_train, y_train = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
+    n_qubit = 3
+    depth = 15
+    batch_size = 50
+    epochs = 100
+    lr = 0.1
+    circuit = create_multi_qubit_param_rotational_ansatz(n_qubit, c_depth=depth)
+    solver = GradientDescent()
+    qnn = QNNRegressor(circuit, solver, observables_str=["Z 2"])
+    loader = DataLoader(x_train, y_train, batch_size=batch_size, shuffle=True, seed=0)
+    for _ in range(epochs):
+        for x_batch, y_batch in loader:
+            qnn.fit(x_batch, y_batch, lr)
+    x_test, y_test = generate_noisy_data(x_min, x_max, (num_x, 1), sine)
+    y_pred = qnn.predict(x_test)
+    error = mean_squared_error(y_pred, y_test)
+    assert error < 0.05

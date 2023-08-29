@@ -1,5 +1,8 @@
+from typing import List
+
 import numpy as np
 from numpy.typing import NDArray
+from qulacs import QuantumState
 from qulacs.state import inner_product
 from sklearn import svm
 
@@ -15,8 +18,8 @@ class QSVC:
         """
         self.svc = svm.SVC(kernel="precomputed")
         self.circuit = circuit
-        self.data_states = []
-        self.n_qubit = 0
+        self.data_states: List[QuantumState] = []
+        self.n_qubit: int = 0
 
     def fit(self, x: NDArray[np.float_], y: NDArray[np.int_]):
         """
@@ -38,7 +41,7 @@ class QSVC:
 
         self.svc.fit(kar, y)
 
-    def predict(self, xs: NDArray[np.float_]):
+    def predict(self, xs: NDArray[np.float_]) -> NDArray[np.float_]:
         """
         predict labels of given data
         :param xs: inputs to predict labels
@@ -49,4 +52,5 @@ class QSVC:
             x_qc = self.circuit.run(xs[i])
             for j in range(len(self.data_states)):
                 kar[i][j] = abs(inner_product(x_qc, self.data_states[j])) ** 2
-        return self.svc.predict(kar)
+        predicted: NDArray[np.float_] = self.svc.predict(kar)
+        return predicted

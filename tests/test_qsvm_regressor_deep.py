@@ -44,11 +44,3 @@ def test_noisy_sine():
     y_pred = qsvm.predict(x_test)
     loss = mean_squared_error(y_pred, y_test)
     assert loss < 0.005
-
-
-def main():
-    test_noisy_sine()
-
-
-if __name__ == "__main__":
-    main()
