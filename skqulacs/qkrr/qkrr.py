@@ -80,5 +80,5 @@ class QKRR:
             x_qc = self.circuit.run(xs[i])
             for j in range(len(self.data_states)):
                 kar[i][j] = abs(inner_product(x_qc, self.data_states[j])) ** 2
-        predicted: NDArray[np.float_] = self.krr.predict(kar)
+        predicted: NDArray[np.float_] = self.kernel_ridge_tuned.predict(kar)
         return predicted
