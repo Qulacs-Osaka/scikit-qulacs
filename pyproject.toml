@@ -50,7 +50,7 @@ optional = true
 
 [tool.poetry.group.bench.dependencies]
 pytest-benchmark = "^4.0.0"
-PennyLane = "^0.24.0"
+PennyLane = "^0.40.0"
 
 [tool.isort]
 default_section = "THIRDPARTY"
