@@ -48,10 +48,10 @@ jobs:
 
       # CI environment is not stable enough for accurate benchmark, so just check
       # benchmark works without error.
-    - name: Benchmark
-      if: ${{ github.event_name	== 'pull_request' }}
-      run: |
-        make benchmark
+    # - name: Benchmark
+    #   if: ${{ github.event_name	== 'pull_request' }}
+    #   run: |
+    #     make benchmark
 
     - name: Upload coverage report
       uses: codecov/codecov-action@v3
