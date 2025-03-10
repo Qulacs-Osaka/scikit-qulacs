@@ -40,8 +40,8 @@ mypy = "^1.0.1"
 optional = true
 
 [tool.poetry.group.doc.dependencies]
-Sphinx = "^4.3.0"
-sphinx-book-theme = "^1.0.0"
+Sphinx = "^5.2.3"
+sphinx-book-theme = "^1.0.1"
 ipykernel = "^6.16.0"
 myst-nb = "^0.17.0"
 
