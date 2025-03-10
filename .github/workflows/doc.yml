@@ -34,7 +34,7 @@ jobs:
       # https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
       - name: Load cached venv
         id: cached-poetry-deps
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./.venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
