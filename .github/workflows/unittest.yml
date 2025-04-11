@@ -54,4 +54,4 @@ jobs:
     #     make benchmark
 
     - name: Upload coverage report
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
