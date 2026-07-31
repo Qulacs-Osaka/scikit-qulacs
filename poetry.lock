@@ -2042,32 +2042,37 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
 name = "qulacs"
-version = "0.6.11"
+version = "0.6.14"
 description = "Quantum circuit simulator for research"
 optional = false
 python-versions = "*"
 files = [
-    {file = "qulacs-0.6.11-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:35b007c96fc357b64d7c0c2fb5f6a7337708cca1180658607904a408e62037da"},
-    {file = "qulacs-0.6.11-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:56fb790d9ee6f24b39ed691d906983b54b7992f7a011b2c6c436188c5ce626ab"},
-    {file = "qulacs-0.6.11-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:117813f4238e4594a72468823bad715361983742ea8d1948a2aaf62965460f20"},
-    {file = "qulacs-0.6.11-cp310-cp310-win_amd64.whl", hash = "sha256:b199964dbaf6785233a39d4cde8f0e139bf360c75f8f99b31c0bb37179eacd84"},
-    {file = "qulacs-0.6.11-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:50431a7571504f620127e564947ab03d3be32a2b0fcca5c7f9391bab125601a2"},
-    {file = "qulacs-0.6.11-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:db64865730f099fd4e880453c8874cb593c42a036007465ce59208240b9f83b3"},
-    {file = "qulacs-0.6.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2bf675de5f608824a84f107f48472df2d4a4133ae1b0d5c13d8157a47b6efa78"},
-    {file = "qulacs-0.6.11-cp311-cp311-win_amd64.whl", hash = "sha256:98a5b6957807c4e5f6ad12f5bad71a4b90d8211c80c38b074304f58dad7b0988"},
-    {file = "qulacs-0.6.11-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:739b1a63ef909caa5f579cba78dc77e3ab00cfe261b3384f81f4591b9aa3458c"},
-    {file = "qulacs-0.6.11-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:03a1df7d8e5fd3c402ab7214a3e2486e33fb0b1f0b9a0cfcd0c0e568871dff09"},
-    {file = "qulacs-0.6.11-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6da7a659c73c0a575af16ab7bd9ef1673a24fc5baf8e82b1401a798b82406362"},
-    {file = "qulacs-0.6.11-cp312-cp312-win_amd64.whl", hash = "sha256:07e6ff93d875907423aedea41cadaa5c7ee96001d4a79603ecdb725bfedc33c7"},
-    {file = "qulacs-0.6.11-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:98c8e5981317c3c2e8fd8c7d9824067306e1a794ff1a0f5545096c298b090cb6"},
-    {file = "qulacs-0.6.11-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:07b5e714aeefa177a7b39d2430d06afddbf92778cc0fc7d18c3cae4271de94e7"},
-    {file = "qulacs-0.6.11-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:97b1b72a6d47e525c5d7ff4a9a9fe2d3f7cd61051ea9d4a177dd006588fe4c62"},
-    {file = "qulacs-0.6.11-cp38-cp38-win_amd64.whl", hash = "sha256:f943b07e8d299376fb032920d70fa66c62d2f99f2c6da7a1175c4a60858c1bee"},
-    {file = "qulacs-0.6.11-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:42abca915c49b082df7e85c7e6d86dfe62f173fcdb82f9f65830a79ee2467cfe"},
-    {file = "qulacs-0.6.11-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:9241e1e97298515dc0466eabc87aabb8ee00a1134c64973cb03581b9a3aa1e7c"},
-    {file = "qulacs-0.6.11-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:679d13a65d2f68587b5bde2a0cefa7e8cc0d3f0075561ecdb1d130cff36e2c5b"},
-    {file = "qulacs-0.6.11-cp39-cp39-win_amd64.whl", hash = "sha256:2c2f10adefcbb667fbea7a0b1db59f876190f508eb843965bb8a8f59d5b0a1c5"},
-    {file = "qulacs-0.6.11.tar.gz", hash = "sha256:3dfa030c6d90e78c8dfe840423a53fb1d7e7e4a63bb7180e1b46a4d25d2c72bf"},
+    {file = "qulacs-0.6.14-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c913d5ec4b2eb6350b467209441d43618b60a5577ea3e685ea12794d679465b0"},
+    {file = "qulacs-0.6.14-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:4eee5a6d680224cb49a0bbdd8362286bd352065a68b26b700c175f19ad59280d"},
+    {file = "qulacs-0.6.14-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:ddf8fbfb9f360de871f3801f5b398833c9c84dbf93955fd2429fab17b2077803"},
+    {file = "qulacs-0.6.14-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5dc1c8e79e644f7ca2e81e6037c896a325d69d883911491358b68bbd88af934d"},
+    {file = "qulacs-0.6.14-cp310-cp310-win_amd64.whl", hash = "sha256:9680bf33edd7f289ffb66657919074f3a32705717f948c186a5bc591c9cd9754"},
+    {file = "qulacs-0.6.14-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:f179783eab0422868483dd40cd064fd7c873ddbd3a6abfd5f488ba82d08b3822"},
+    {file = "qulacs-0.6.14-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:96afb60264db6565fc87f290b0302bf306a1775cf3a6aa62320d2f6d5452cedb"},
+    {file = "qulacs-0.6.14-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:57f7b6d806c7a4ff0adc1388d26abcc4ca1bb4d5c2197c3778d3874f83f8820a"},
+    {file = "qulacs-0.6.14-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d7e471d4ae8f484858bcd22ed21c419e549c7e48ae62ab325ed5fc4c7dee7620"},
+    {file = "qulacs-0.6.14-cp311-cp311-win_amd64.whl", hash = "sha256:51be8d3a176bbfa90cb209a7c536e62efa1daee61bc67ad20f0761d71e12a3e9"},
+    {file = "qulacs-0.6.14-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:2f8313ecd58d4a5975494ba8d195b9261b54ee95da7b556a06b2b317700c5156"},
+    {file = "qulacs-0.6.14-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b432bc36d6bee9dcd55e014e48ca40de49ddb1629f67863db587f5b202ea6991"},
+    {file = "qulacs-0.6.14-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:ce53e7f4bea4ad6b6f53ae93d8633967be448b095f9ccef57db7f8394dfd7591"},
+    {file = "qulacs-0.6.14-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d46469d8e50ba26c4c56929924d13c18cf819fb722c09477bfa30af1c66f7a36"},
+    {file = "qulacs-0.6.14-cp312-cp312-win_amd64.whl", hash = "sha256:8ea6df202851ce0dd3cd5a1bb185f3b6074678055056662965c2cdc962e310a9"},
+    {file = "qulacs-0.6.14-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:ef4f534c1e3bdf145743618c23aac7312c626b2ae32f30542e0d2bffb21722ba"},
+    {file = "qulacs-0.6.14-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:becf66f24c1eeb54d82c1f5010286c6bac0198d103df7b24cc3f4e6ea20ba9a8"},
+    {file = "qulacs-0.6.14-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0d4ebb1ad9d18679dcf0939ceb45ea6c238afb1e20edf9fb213d2f8ba1425871"},
+    {file = "qulacs-0.6.14-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fecc4d8488a69a426fee96293d084341d80c94843fdfb7ea47c9be3efbc13bd7"},
+    {file = "qulacs-0.6.14-cp313-cp313-win_amd64.whl", hash = "sha256:1436704bcd72eed20612e5948d6a8d5d5b30350d48dfd41fcf6c9a231993e602"},
+    {file = "qulacs-0.6.14-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:a929653e88909412d946237c44a515ae933a52a9050ab3d04e13728fd3d20a1e"},
+    {file = "qulacs-0.6.14-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:e4b55d9e51c79ca715e974e2dc96d9b36033df4709058a1633f9514f93bbcd1f"},
+    {file = "qulacs-0.6.14-cp39-cp39-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:d5e2615097993d130fa2852f48cd647672c7f04b02aecce577f27494e3e2746e"},
+    {file = "qulacs-0.6.14-cp39-cp39-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:576a8bc6006e4b83befcab71b764790fffa9b1d15d3ccf81473c21833df79410"},
+    {file = "qulacs-0.6.14-cp39-cp39-win_amd64.whl", hash = "sha256:0e8bb917229e236ff36daa15b6493d3741e3f28227064ed64c425d16d3fff4b3"},
+    {file = "qulacs-0.6.14.tar.gz", hash = "sha256:fcb3e67ce521e90c1ff6c3c2bda473ec045cc3a8e7600e11e2ea0bfc54c5f14a"},
 ]
 
 [package.dependencies]
@@ -2077,7 +2082,7 @@ scipy = "*"
 [package.extras]
 ci = ["black", "flake8", "isort", "mypy", "openfermion", "pybind11-stubgen", "pytest"]
 dev = ["black", "flake8", "isort", "mypy", "openfermion", "pybind11-stubgen", "pytest"]
-doc = ["breathe", "exhale", "ipykernel", "mypy", "myst-parser", "nbsphinx", "pybind11-stubgen", "sphinx (==7.*)", "sphinx-autoapi (==3.0.0)", "sphinx-copybutton", "sphinx-rtd-theme"]
+doc = ["breathe", "exhale", "ipykernel", "mypy", "myst-parser", "nbsphinx", "pybind11-stubgen", "sphinx (==9.*)", "sphinx-autoapi (==3.6.*)", "sphinx-copybutton", "sphinx-rtd-theme"]
 test = ["openfermion"]
 
 [[package]]
